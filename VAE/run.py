@@ -23,7 +23,7 @@ if not os.path.exists(MODELDIR):
 if not os.path.exists(OUTPUTDIR):
     os.makedirs(OUTPUTDIR)
 
-CATEGORIES = ["one_dog"]#["5000_dogs"]#["small_dog"]
+CATEGORIES = ["5000_dogs"]#["small_dog"]#["one_dog"]#
 
 IMG_SIZE = 100
 training_data = []
@@ -76,7 +76,6 @@ optimizer = torch.optim.Adam(autoencoder.parameters(),lr = 1e-3)
 #LOAD
 try:
     autoencoder.load_state_dict(torch.load(os.path.join(MODELDIR,"model.file")))
-    autoencoder.eval()
     tmp_epoch = joblib.load(os.path.join(MODELDIR,'current_epoch.file'))
     print("Model lock'n'loaded")
 
@@ -125,6 +124,8 @@ for epoch in range(tmp_epoch+1,100000):
         loss.backward()
         optimizer.step()
     print("After epoch %i, loss = %f"%(epoch,loss.item()))
+        #testing
+
 
     if epoch%10==0:
         autoencoder.eval()
@@ -137,6 +138,15 @@ for epoch in range(tmp_epoch+1,100000):
         autoencoder.is_training = True
         #B/W
         plt.imsave(os.path.join(OUTPUTDIR,"epoch_%i.png"%epoch) , random_out[0,0, :, :].cpu().detach(), cmap='gray')
+
+        fig = plt.figure(figsize=(4,2))
+        fig.add_subplot(1,2,1)
+        plt.imshow(batch[0][0].cpu().detach(),cmap='gray')
+        fig.add_subplot(1,2,2)
+        plt.imshow(autoencoder(batch[0][np.newaxis,:,:,:])[0][0][0].cpu().detach(),cmap='gray')
+        plt.savefig(os.path.join(OUTPUTDIR,'epoch_%i_b_f.png'%epoch))
+        plt.close()
+
         #img = (random_out[0,:, :, :]*127.5+127.5).cpu().detach().numpy().astype("uint8")
         #img = np.swapaxes(img,0,1)
         #img = np.swapaxes(img,1,2)
