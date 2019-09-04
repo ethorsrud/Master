@@ -127,9 +127,6 @@ discriminator.model.alpha = fade_alpha
 
 generator = generator.cuda()
 discriminator = discriminator.cuda()
-generator.train()
-discriminator.train()
-
 
 #LOAD
 try:
@@ -143,6 +140,13 @@ try:
 except:
     print("No model found, creating new")
     pass
+
+
+generator.train()
+discriminator.train()
+
+
+
 
 
 losses_d = []
