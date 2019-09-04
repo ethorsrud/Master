@@ -6,7 +6,7 @@ import sys
 import mne
 #sys.path.append("/home/hartmank/git/GAN_clean")
 #sys.path.append("/Users/eirikthorsrud/desktop/Master/GAN-master")
-sys.path.append("C:\\Users\\eiri-\\Documents\\github\\GAN")
+sys.path.append("C:\\Users\\eiri-\\Documents\\github\\Master\\GAN")
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
 from eeggan.util import weight_filler
@@ -99,11 +99,14 @@ train = np.concatenate((train,test))
 datafreq = 128 #hz
 
 #modelpath = '/data/schirrmr/hartmank/data/GAN/models/GAN_debug/%s/'%('PAPERFIN4_'+subj_names[subj_ind]+'_FFC4h_WGAN_adaptlambclamp_CONV_LIN_10l_run%d'%task_ind)
-modelpath = 'C:\\Users\\eiri-\\Documents\\github\\models'
+modelpath = 'C:\\Users\\eiri-\\Documents\\github\\Models\\GAN'
+outputpath = 'C:\\Users\\eiri-\\Documents\\github\\Output\\GAN'
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
     os.makedirs(modelpath)
 
+if not os.path.exists(outputpath):
+    os.makedirs(outputpath)
 
 generator = Generator(1,n_z)
 discriminator = Discriminator(1)
@@ -214,7 +217,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.title('Frequency Spektrum')
             plt.xlabel('Hz')
             plt.legend()
-            plt.savefig(os.path.join(modelpath,modelname%jobid+'_fft_%d_%d.png'%(i_block,i_epoch)))
+            plt.savefig(os.path.join(outputpath,modelname%jobid+'_fft_%d_%d.png'%(i_block,i_epoch)))
             plt.close()
 
             batch_fake = batch_fake.data.cpu().numpy()
@@ -225,7 +228,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.xticks((),())
                 plt.yticks((),())
             plt.subplots_adjust(hspace=0)
-            plt.savefig(os.path.join(modelpath,modelname%jobid+'_fakes_%d_%d.png'%(i_block,i_epoch)))
+            plt.savefig(os.path.join(outputpath,modelname%jobid+'_fakes_%d_%d.png'%(i_block,i_epoch)))
             plt.close()
             """
             try:
@@ -266,7 +269,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.title('Loss Generator')
             plt.legend()
             plt.tight_layout()
-            plt.savefig(os.path.join(modelpath,modelname%jobid+'_losses.png'))
+            plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses.png'))
             plt.close()
 
             generator.train()

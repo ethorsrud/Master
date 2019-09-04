@@ -13,9 +13,16 @@ import joblib
 
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
-MODELDIR = 'C:\\Users\\eiri-\\Documents\\github\\Models'
+MODELDIR = 'C:\\Users\\eiri-\\Documents\\github\\Models\\VAE'
 DATADIR = 'C:\\Users\\eiri-\\Documents\\github\\Dataset\\PetImages'
-OUTPUTDIR = 'C:\\Users\\eiri-\\Documents\\github\\Output'
+OUTPUTDIR = 'C:\\Users\\eiri-\\Documents\\github\\Output\\VAE'
+
+if not os.path.exists(MODELDIR):
+    os.makedirs(MODELDIR)
+
+if not os.path.exists(OUTPUTDIR):
+    os.makedirs(OUTPUTDIR)
+
 CATEGORIES = ["one_dog"]#["5000_dogs"]#["small_dog"]
 
 IMG_SIZE = 100
@@ -101,7 +108,7 @@ def calculate_loss(x, recon_x, mean, log_var):
     #KLD = KLD(recon_x,x)
     return MSE+KLD
 
-
+autoencoder.train()
 for epoch in range(tmp_epoch+1,100000):
     
     permutation = torch.randperm(train_images.shape[0])
@@ -136,9 +143,9 @@ for epoch in range(tmp_epoch+1,100000):
 
         #plt.imsave("epoch_%i.png"%epoch,img)
 
-        joblib.dump(epoch,os.path.join('current_epoch.file'),compress=True)
-        torch.save(autoencoder.state_dict(),"model.file")
-
+        joblib.dump(epoch,os.path.join(MODELDIR,'current_epoch.file'),compress=True)
+        torch.save(autoencoder.state_dict(),os.path.join(MODELDIR,"model.file"))
+        autoencoder.train()
             
         
 
