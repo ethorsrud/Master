@@ -13,8 +13,9 @@ import joblib
 
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
-
-DATADIR = "PetImages"
+MODELDIR = 'C:\\Users\\eiri-\\Documents\\github\\Models'
+DATADIR = 'C:\\Users\\eiri-\\Documents\\github\\Dataset\\PetImages'
+OUTPUTDIR = 'C:\\Users\\eiri-\\Documents\\github\\Output'
 CATEGORIES = ["one_dog"]#["5000_dogs"]#["small_dog"]
 
 IMG_SIZE = 100
@@ -67,9 +68,9 @@ optimizer = torch.optim.Adam(autoencoder.parameters(),lr = 1e-3)
 
 #LOAD
 try:
-    autoencoder.load_state_dict(torch.load("model.file"))
+    autoencoder.load_state_dict(torch.load(os.path.join(MODELDIR,"model.file")))
     autoencoder.eval()
-    tmp_epoch = joblib.load('current_epoch.file')
+    tmp_epoch = joblib.load(os.path.join(MODELDIR,'current_epoch.file'))
     print("Model lock'n'loaded")
 
 except:
@@ -128,7 +129,7 @@ for epoch in range(tmp_epoch+1,100000):
         #random_out = random_out.reshape(-1,3,IMG_SIZE,IMG_SIZE)
         autoencoder.is_training = True
         #B/W
-        plt.imsave("epoch_%i.png"%epoch,random_out[0,0, :, :].cpu().detach(), cmap='gray')
+        plt.imsave(os.path.join(OUTPUTDIR,"epoch_%i.png"%epoch) , random_out[0,0, :, :].cpu().detach(), cmap='gray')
         #img = (random_out[0,:, :, :]*127.5+127.5).cpu().detach().numpy().astype("uint8")
         #img = np.swapaxes(img,0,1)
         #img = np.swapaxes(img,1,2)

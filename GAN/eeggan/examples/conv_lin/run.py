@@ -6,7 +6,7 @@ import sys
 import mne
 #sys.path.append("/home/hartmank/git/GAN_clean")
 #sys.path.append("/Users/eirikthorsrud/desktop/Master/GAN-master")
-sys.path.append("C:\\Users\\eiri-\\Documents\\Master_Windows\\GAN-master")
+sys.path.append("C:\\Users\\eiri-\\Documents\\github\\GAN")
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
 from eeggan.util import weight_filler
@@ -64,7 +64,7 @@ rng = np.random.RandomState(task_ind)
 
 #data = os.path.join('/data/schirrmr/hartmank/data/GAN/cnt',subj_names[subj_ind]+'_FCC4h.cnt')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_2a_gdf\\A01T.gdf')
-data = os.path.join('C:\\Users\\eiri-\\Documents\\Master_Windows\\Dataset\\dataset_BCIcomp1.mat')
+data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIcomp1.mat')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\sp1s_aa_1000hz.mat')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_1_mat\\BCICIV_calib_ds1a.mat')
 #EEG_data = joblib.load(data)
@@ -99,7 +99,7 @@ train = np.concatenate((train,test))
 datafreq = 128 #hz
 
 #modelpath = '/data/schirrmr/hartmank/data/GAN/models/GAN_debug/%s/'%('PAPERFIN4_'+subj_names[subj_ind]+'_FFC4h_WGAN_adaptlambclamp_CONV_LIN_10l_run%d'%task_ind)
-modelpath = 'C:\\Users\\eiri-\\Documents\\Master_Windows\\models'
+modelpath = 'C:\\Users\\eiri-\\Documents\\github\\models'
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
     os.makedirs(modelpath)
