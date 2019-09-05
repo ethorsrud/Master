@@ -27,7 +27,7 @@ torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
 n_critic = 5
-#So that n_batch*n_critic >= number of samples
+#Actually batch_size
 n_batch = 56#64
 input_length = 768#768
 jobid = 0
@@ -38,23 +38,7 @@ n_blocks = 6
 rampup = 2000.
 block_epochs = [2000,4000,4000,4000,4000,4000]
 
-#subj_ind = int(os.getenv('SLURM_ARRAY_TASK_ID','0'))
 task_ind = 0#subj_ind
-#subj_ind = 9
-subj_names = ['BhNoMoSc1',
-             'FaMaMoSc1',
-             'FrThMoSc1',
-             'GuJoMoSc01',
-             'KaUsMoSc1',
-             'LaKaMoSc1',
-             'LuFiMoSc3',
-             'MaJaMoSc1',
-             'MaKiMoSC01',
-             'MaVoMoSc1',
-             'PiWiMoSc1',
-             'RoBeMoSc03',
-             'RoScMoSc1',
-             'StHeMoSc01']
 
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
@@ -62,7 +46,6 @@ torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
-#data = os.path.join('/data/schirrmr/hartmank/data/GAN/cnt',subj_names[subj_ind]+'_FCC4h.cnt')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_2a_gdf\\A01T.gdf')
 data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIcomp1.mat')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\sp1s_aa_1000hz.mat')
@@ -70,16 +53,15 @@ data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIco
 #EEG_data = joblib.load(data)
 #EEG_data = mne.io.read_raw_gdf(data,preload=True)
 EEG_data = scipy.io.loadmat(data)
-#train_set = EEG_data['train_set']
-#test_set = EEG_data['test_set']
-#train = np.concatenate((train_set.X,test_set.X))
+#To be used in FFT
+datafreq = 128 #hz
+
 train = EEG_data['x_train']
 test = EEG_data['x_test']
 target = EEG_data['y_train']
 test = test[:768,0,:,None][:,np.newaxis,:,:]
 test = np.swapaxes(test,0,2).astype(np.float32)
 #target = np.concatenate((train_set.y,test_set.y))
-#print("Test shape",test.shape)
 train = train[:,:,:,None]
 train = train-train.mean()
 train = train/train.std()
@@ -87,18 +69,12 @@ train = train/np.abs(train).max()
 #target_onehot = np.zeros((target.shape[0],2))
 #target_onehot = np.zeros((train.shape[0],2))
 #target_onehot[:,target] = 1
-#print(train.shape)
 train = np.swapaxes(train,0,2)
 train = np.swapaxes(train,1,2)
-#train = train[:,:,:,:]
 train = np.swapaxes(train,1,2)
 train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
-#train = np.ones((140,1,768,1)).astype(np.float32)
 train = np.concatenate((train,test))
-#print(train.shape)
-datafreq = 128 #hz
 
-#modelpath = '/data/schirrmr/hartmank/data/GAN/models/GAN_debug/%s/'%('PAPERFIN4_'+subj_names[subj_ind]+'_FFC4h_WGAN_adaptlambclamp_CONV_LIN_10l_run%d'%task_ind)
 modelpath = 'C:\\Users\\eiri-\\Documents\\github\\Models\\GAN'
 outputpath = 'C:\\Users\\eiri-\\Documents\\github\\Output\\GAN'
 modelname = 'Progressive%s'
@@ -141,13 +117,8 @@ except:
     print("No model found, creating new")
     pass
 
-
 generator.train()
 discriminator.train()
-
-
-
-
 
 losses_d = []
 losses_g = []
@@ -187,7 +158,6 @@ for i_block in range(i_block_tmp,n_blocks):
         losses_d.append(loss_d)
         losses_g.append(loss_g)
 
-
         if i_epoch%100 == 0:
             generator.eval()
             discriminator.eval()
@@ -205,7 +175,6 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
 
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
-
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
             train_amps = np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()
 

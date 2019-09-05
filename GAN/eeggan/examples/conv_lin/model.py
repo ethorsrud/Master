@@ -1,5 +1,5 @@
 # coding=utf-8
-import braindecode
+#import braindecode
 from torch import nn
 from eeggan.modules.layers.reshape import Reshape,PixelShuffle2d
 from eeggan.modules.layers.normalization import PixelNorm
