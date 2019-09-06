@@ -1,8 +1,7 @@
 import numpy as np
 import random
 
-class my_utils():
-    
+class functions():
     def get_balanced_batches(n_samples,batch_size):
         main_list = []
         samples = []
