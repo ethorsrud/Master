@@ -12,7 +12,6 @@ class functions():
         for i in range(n_batches):
             tmp_list = []
             for j in range(batch_size):
-                print(len(samples))
                 tmp_list.append(samples[0])
                 del samples[0]
                 
