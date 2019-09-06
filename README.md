@@ -11,7 +11,7 @@ with
 from my_utils import functions 
 ```
 and instead use 
-´´´python
+```python
 functions.get_balanced_batches(n_samples,batch_size)
 ```
 My version uses only `n_samples` and `batch_size` as input and should do the same trick as the one from braindecode. 
