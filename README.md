@@ -2,7 +2,9 @@
 
 ## my_utils.py
 Needed for running the code on ML-servers as the GAN-code includes the package braindecoder.
-Replace `from braindecode.datautil.iterators import get_balanced_batches` with `from my_utils import functions` and use `functions.get_balanced_batches` instead
+Replace `from braindecode.datautil.iterators import get_balanced_batches` with `from my_utils import functions` and use `functions.get_balanced_batches` instead.
+
+My version uses only `n_samples` and `batch_size` as input and should do the same trick as the one from braindecode. 
 
 ## /GAN
 
@@ -15,6 +17,6 @@ Retrieved from https://arxiv.org/abs/1806.01875
 
 Just testing varational autoencoder for image generation.
 Currently configured for images using dataset from https://kaggle.com/chetankv/dogs-cats-images
-Can be configured for LFP/EEG in the future.
+Can be configured for LFP/EEG in the future. Use `VAE_new` as your VAE
 
 
