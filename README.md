@@ -2,7 +2,7 @@
 
 ## my_utils.py
 Needed for running the code on ML-servers as the GAN-code includes the package braindecoder.
-Replace ´from braindecode.datautil.iterators import get_balanced_batches´ with ´from my_utils import functions´
+Replace `from braindecode.datautil.iterators import get_balanced_batches` with `from my_utils import functions`
 
 ## /GAN
 
