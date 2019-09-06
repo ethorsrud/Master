@@ -1,5 +1,10 @@
 # Master
 
+## todo
+- Make the save_model and load_model work correctly
+- Add batch normalization to the network aiming for faster improving results
+- Downscale network aiming for time-reduction along with maintaining reasonable results
+
 ## my_utils.py
 Needed for running the code on ML-servers as the GAN-code includes the package braindecoder which the ML-servers does not have.
 Replace 
