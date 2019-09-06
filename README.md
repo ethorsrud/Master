@@ -1,7 +1,7 @@
 # Master
 
 ## my_utils.py
-Needed for running the code on ML-servers as the GAN-code includes the package braindecoder.
+Needed for running the code on ML-servers as the GAN-code includes the package braindecoder which the ML-servers does not have.
 Replace 
 ```python
 from braindecode.datautil.iterators import get_balanced_batches
