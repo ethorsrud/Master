@@ -24,6 +24,8 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
+torch.cuda.set_device(1)
+
 n_critic = 5
 n_batch = 56#64
 input_length = 768#768
