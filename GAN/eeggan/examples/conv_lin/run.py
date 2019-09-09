@@ -18,8 +18,6 @@ import matplotlib.pyplot as plt
 import random
 import scipy.io
 from  datetime import datetime
-#Just for saving files
-now = datetime.now()
 
 plt.switch_backend('agg')
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
@@ -27,7 +25,6 @@ torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
 n_critic = 5
-#Actually batch_size
 n_batch = 56#64
 input_length = 768#768
 jobid = 0
@@ -46,11 +43,7 @@ torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
-#data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_2a_gdf\\A01T.gdf')
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"dataset_BCIcomp1.mat")
-#data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIcomp1.mat')
-#data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\sp1s_aa_1000hz.mat')
-#data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_1_mat\\BCICIV_calib_ds1a.mat')
 #EEG_data = joblib.load(data)
 #EEG_data = mne.io.read_raw_gdf(data,preload=True)
 EEG_data = scipy.io.loadmat(data)
@@ -59,7 +52,7 @@ datafreq = 128 #hz
 
 train = EEG_data['x_train']
 test = EEG_data['x_test']
-target = EEG_data['y_train']
+#target = EEG_data['y_train']
 test = test[:768,0,:,None][:,np.newaxis,:,:]
 test = np.swapaxes(test,0,2).astype(np.float32)
 #target = np.concatenate((train_set.y,test_set.y))
@@ -77,9 +70,7 @@ train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
 train = np.concatenate((train,test))
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
-#modelpath = 'C:\\Users\\eiri-\\Documents\\github\\Models\\GAN'
 outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
-#outputpath = 'C:\\Users\\eiri-\\Documents\\github\\Output\\GAN'
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
     os.makedirs(modelpath)
@@ -173,7 +164,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 print("Error Removing old data-file")
                 pass
             """
-            joblib.dump((i_block_tmp,i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_.data'),compress=True)
+            #joblib.dump((i_block_tmp,i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_.data'),compress=True)
             #joblib.dump((i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_%d.data'%i_epoch),compress=True)
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
 
@@ -216,8 +207,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 pass
             """
 
-            torch.save((generator.state_dict(),generator.optimizer.state_dict(),generator.did_init_train),os.path.join(modelpath,modelname%jobid+'.gen'))
-            torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
+            #torch.save((generator.state_dict(),generator.optimizer.state_dict(),generator.did_init_train),os.path.join(modelpath,modelname%jobid+'.gen'))
+            #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
 
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
             #generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))

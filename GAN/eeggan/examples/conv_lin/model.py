@@ -11,13 +11,14 @@ from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGenerator
 from eeggan.modules.wgan import WGAN_I_Generator,WGAN_I_Discriminator
 from torch.nn.init import calculate_gain
 
-
+#INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
+n_featuremaps = 25
 def create_disc_blocks(n_chans):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,9,padding=4),
+		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
+								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								weight_scale(nn.Conv1d(out_filters,out_filters,2,stride=2),
@@ -33,42 +34,42 @@ def create_disc_blocks(n_chans):
 		
 	blocks = []
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(50,50),
-							  create_in_sequence(n_chans,50),
+							  create_conv_sequence(n_featuremaps,n_featuremaps),
+							  create_in_sequence(n_chans,n_featuremaps),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(50,50),
-							  create_in_sequence(n_chans,50),
+							  create_conv_sequence(n_featuremaps,n_featuremaps),
+							  create_in_sequence(n_chans,n_featuremaps),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(50,50),
-							create_in_sequence(n_chans,50),
+							create_conv_sequence(n_featuremaps,n_featuremaps),
+							create_in_sequence(n_chans,n_featuremaps),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(50,50),
-							create_in_sequence(n_chans,50),
+							create_conv_sequence(n_featuremaps,n_featuremaps),
+							create_in_sequence(n_chans,n_featuremaps),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(50,50),
-							  create_in_sequence(n_chans,50),
+							  create_conv_sequence(n_featuremaps,n_featuremaps),
+							  create_in_sequence(n_chans,n_featuremaps),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
 							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(51,50),
+											create_conv_sequence(n_featuremaps+1,n_featuremaps),
 											Reshape([[0],-1]),
-											weight_scale(nn.Linear(50*12,1),
+											weight_scale(nn.Linear(n_featuremaps*12,1),
 															gain=calculate_gain('linear'))),
-							  create_in_sequence(n_chans,50),
+							  create_in_sequence(n_chans,n_featuremaps),
 							  None
 							  )
 	blocks.append(tmp_block)
@@ -78,11 +79,11 @@ def create_disc_blocks(n_chans):
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2),
-								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
+								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm(),
-								weight_scale(nn.Conv1d(out_filters,out_filters,9,padding=4),
+								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm())
@@ -95,42 +96,42 @@ def create_gen_blocks(n_chans,z_vars):
 		return nn.Upsample(mode='bilinear',scale_factor=(2,1))
 	blocks = []
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(weight_scale(nn.Linear(z_vars,50*12),
+								nn.Sequential(weight_scale(nn.Linear(z_vars,n_featuremaps*12),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
-												Reshape([[0],50,-1]),
-												create_conv_sequence(50,50)),
-								create_out_sequence(n_chans,50),
+												Reshape([[0],n_featuremaps,-1]),
+												create_conv_sequence(n_featuremaps,n_featuremaps)),
+								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(50,50),
-								create_out_sequence(n_chans,50),
+								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(50,50),
-								create_out_sequence(n_chans,50),
+								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(50,50),
-								create_out_sequence(n_chans,50),
+								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(50,50),
-								create_out_sequence(n_chans,50),
+								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(50,50),
-								create_out_sequence(n_chans,50),
+								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_out_sequence(n_chans,n_featuremaps),
 								None
 								)
 	blocks.append(tmp_block)
