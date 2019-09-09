@@ -4,9 +4,9 @@ import os
 import joblib
 import sys
 import mne
-#sys.path.append("/home/hartmank/git/GAN_clean")
-#sys.path.append("/Users/eirikthorsrud/desktop/Master/GAN-master")
-sys.path.append("C:\\Users\\eiri-\\Documents\\github\\Master\\GAN")
+code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
+other_path = os.path.normpath(code_path+os.sep+os.pardir)
+sys.path.append(os.path.join(code_path,"GAN"))
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
 from eeggan.util import weight_filler
@@ -47,7 +47,8 @@ random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_2a_gdf\\A01T.gdf')
-data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIcomp1.mat')
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"dataset_BCIcomp1.mat")
+#data = os.path.join('C:\\Users\\eiri-\\Documents\\github\\Dataset\\dataset_BCIcomp1.mat')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\sp1s_aa_1000hz.mat')
 #data = os.path.join('C:\\Users\\eiri-\\OneDrive\\Skrivebord\\Master_Windows\\Dataset\\BCICIV_1_mat\\BCICIV_calib_ds1a.mat')
 #EEG_data = joblib.load(data)
@@ -75,8 +76,10 @@ train = np.swapaxes(train,1,2)
 train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
 train = np.concatenate((train,test))
 
-modelpath = 'C:\\Users\\eiri-\\Documents\\github\\Models\\GAN'
-outputpath = 'C:\\Users\\eiri-\\Documents\\github\\Output\\GAN'
+modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
+#modelpath = 'C:\\Users\\eiri-\\Documents\\github\\Models\\GAN'
+outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
+#outputpath = 'C:\\Users\\eiri-\\Documents\\github\\Output\\GAN'
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
     os.makedirs(modelpath)
