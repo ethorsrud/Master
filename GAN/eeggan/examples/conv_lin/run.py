@@ -24,7 +24,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(1)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -190,15 +190,36 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.close()
 
             batch_fake = batch_fake.data.cpu().numpy()
-            plt.figure(figsize=(10,10))
-            for i in range(10):
-                plt.subplot(10,1,i+1)
+            batch_real = batch_real.data.cpu().numpy()
+            plt.figure(figsize=(20,10))
+            for i in range(1,21,2):
+                plt.subplot(20,2,i)
                 plt.plot(batch_fake[i].squeeze())
+                if i==1:
+                    plt.title("Fakes")
+                plt.xticks((),())
+                plt.yticks((),())
+                plt.subplot(20,2,i+1)
+                plt.plot(batch_real[i].squeeze())
+                if i==1:
+                    plt.title("Reals")
                 plt.xticks((),())
                 plt.yticks((),())
             plt.subplots_adjust(hspace=0)
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_fakes_%d_%d.png'%(i_block,i_epoch)))
             plt.close()
+            """
+            
+            plt.figure(figsize=(10,10))
+            for i in range(10):
+                plt.subplot(10,1,i+1)
+                plt.plot(batch_real[i].squeeze())
+                plt.xticks((),())
+                plt.yticks((),())
+            plt.subplots_adjust(hspace=0)
+            plt.savefig(os.path.join(outputpath,modelname%jobid+'_reals_%d_%d.png'%(i_block,i_epoch)))
+            plt.close()
+            """
             """
             try:
                 os.remove(modelpath+"\\"+modelname%jobid+'.disc')
