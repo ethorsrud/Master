@@ -1,10 +1,5 @@
 # Master
 
-## todo
-- Make the save_model and load_model work correctly
-- Add batch normalization to the network aiming for faster improving results
-- Downscale network aiming for time-reduction along with maintaining reasonable results
-
 ## /GAN
 
 Code for
