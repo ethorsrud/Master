@@ -18,8 +18,9 @@ import matplotlib.pyplot as plt
 import random
 import scipy.io
 from  datetime import datetime
+from torchviz import make_dot
 
-plt.switch_backend('agg')
+#plt.switch_backend('agg')
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
@@ -45,13 +46,40 @@ torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
+
+"""
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"dataset_BCIcomp1.mat")
 #EEG_data = joblib.load(data)
 #EEG_data = mne.io.read_raw_gdf(data,preload=True)
 EEG_data = scipy.io.loadmat(data)
 #To be used in FFT
-datafreq = 128 #hz
+"""
+datafreq = 250#128 #hz
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
+train = np.load(data).astype(np.float32)
 
+"""
+#TESTING WITH ANOTHER DATASET
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
+EEG_data = mne.io.read_raw_gdf(data,preload=True)
+# channel 0
+EEG_data = EEG_data[0][0][0]
+#splitting 2400 seconds into 5 second samples
+train = []
+N_slices = int(len(EEG_data)/(5*250))
+five_sec = 250*5
+for i in range(N_slices):
+    train.append(EEG_data[i*five_sec:i*five_sec+five_sec])
+train = np.array(train)
+train = np.swapaxes(train,0,1)
+train = train[:768,None,:,None]
+train = train-train.mean()
+train = train/train.std()
+train = train/np.abs(train).max()
+train = np.swapaxes(train,0,2).astype(np.float32)
+np.save("BACICIV_2b",train)
+"""
+"""
 train = EEG_data['x_train']
 test = EEG_data['x_test']
 #target = EEG_data['y_train']
@@ -70,6 +98,7 @@ train = np.swapaxes(train,1,2)
 train = np.swapaxes(train,1,2)
 train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
 train = np.concatenate((train,test))
+"""
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
 outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
@@ -144,7 +173,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 z_vars = Variable(torch.from_numpy(z_vars),volatile=True).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
@@ -189,8 +217,16 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_fft_%d_%d.png'%(i_block,i_epoch)))
             plt.close()
 
+            """
+            graph = make_dot(batch_fake[0].data.cpu().numpy(),params = dict(generator.named_parameters()))
+            graph.format = 'png'
+            graph.view(filename='digraph',directory='./')
+            """
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
+
+
+
             plt.figure(figsize=(20,10))
             for i in range(1,21,2):
                 plt.subplot(20,2,i)
