@@ -106,8 +106,10 @@ for i_file in range(len(lfps)):
         cur_file+=1
 
 np.save("All_channels_%iHz"%(int(new_sampfreq)),all_sessions)
+print("-"*50)
 print("New dataset created with %.1f Hz sampling rate"%new_sampfreq)
-print("Total time of new dataset: %.2f"%(all_sessions.shape[0]/new_sampfreq))
+print("Total time of new dataset: %.2f seconds (%.2f minutes)"%(all_sessions.shape[0]/new_sampfreq,all_sessions.shape[0]/(60*new_sampfreq)))
 print("Number of channels included: %i"%all_sessions.shape[1])
 dataset_info = os.stat("All_channels_%iHz.npy"%(int(new_sampfreq))) 
 print("Dataset size: %.2f mb"%(dataset_info.st_size/10**6))
+print("-"*50)
