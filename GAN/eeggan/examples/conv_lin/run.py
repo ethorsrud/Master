@@ -57,7 +57,8 @@ EEG_data = scipy.io.loadmat(data)
 datafreq = 250#128 #hz
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
 train = np.load(data).astype(np.float32)
-
+train = np.concatenate((train,train),axis=2)
+print(train.shape)
 """
 #TESTING WITH ANOTHER DATASET
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
@@ -170,9 +171,11 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
+                print(batch_real.shape)
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 z_vars = Variable(torch.from_numpy(z_vars),volatile=True).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
+                print(batch_fake.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)

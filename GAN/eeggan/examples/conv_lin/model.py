@@ -13,6 +13,8 @@ from torch.nn.init import calculate_gain
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
+#base = starting samples => base = input_size/(2**N_blocks)
+base = 768/(2**6)
 def create_disc_blocks(n_chans):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
@@ -67,7 +69,7 @@ def create_disc_blocks(n_chans):
 							  nn.Sequential(StdMap1d(),
 											create_conv_sequence(n_featuremaps+1,n_featuremaps),
 											Reshape([[0],-1]),
-											weight_scale(nn.Linear(n_featuremaps*12,1),
+											weight_scale(nn.Linear(n_featuremaps*base,1),
 															gain=calculate_gain('linear'))),
 							  create_in_sequence(n_chans,n_featuremaps),
 							  None
@@ -95,8 +97,9 @@ def create_gen_blocks(n_chans,z_vars):
 	def create_fade_sequence(factor):
 		return nn.Upsample(mode='bilinear',scale_factor=(2,1))
 	blocks = []
+	#originally n_featuremaps*12
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(weight_scale(nn.Linear(z_vars,n_featuremaps*12),
+								nn.Sequential(weight_scale(nn.Linear(z_vars,n_featuremaps*base),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps,-1]),

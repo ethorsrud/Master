@@ -226,6 +226,8 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_center : float
 			Center penalty
 		"""
+		print("HEY SHAPE :",batch_fake.shape,"AND ",batch_real.shape)
+
 		self.pre_train()
 
 		one = torch.FloatTensor([1])
