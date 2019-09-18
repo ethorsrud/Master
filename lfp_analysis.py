@@ -67,10 +67,10 @@ for i_file in range(len(lfps)):
         lfp_of_interest = lfp.T[equal_channels].T
         #The mean of the Fourier transform over all channels
         
-        """
+        
         freqs = np.fft.rfftfreq(lfp_of_interest.shape[0],d=1./sample_freq)
         fft = np.abs(np.fft.rfft(lfp_of_interest,axis=0).mean(axis=1))
-
+        """
         plt.plot(freqs,fft)
         plt.title("Mean frequency spectrum\n over all channels")
         plt.xlabel("hz")
@@ -99,6 +99,8 @@ for i_file in range(len(lfps)):
         plt.plot(time,lfp_of_interest[:,0])
         plt.plot(new_time,downsampled_lfp[:,0])
         plt.title("2500hz sample rate downsampled to 500hz")
+        plt.xlabel("seconds")
+        plt.ylabel("amp")
         plt.legend(["Original LFP","Downsampled LFP"])
         plt.show()
         """
