@@ -27,6 +27,8 @@ class functions():
     
     def get_batches_new(split,n_batches,channels,data):
         """
+        Randomly slices up a signal of a given length channelwise
+
         inputs: 
             split: Length of each sample
             n_batches: Number of wanted batches
