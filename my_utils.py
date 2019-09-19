@@ -48,4 +48,17 @@ class functions():
             random_ints = np.random.randint(0,max_int,size=(n_batches,1))
             batches.append(data[:,channels][:,i][random_ints+np.arange(split)])
         return np.swapaxes(np.array(batches),0,1)[:,:,:,np.newaxis]
+    
+    def check_batch(batches,data,split):
+        #Second batch, channel 1
+        sample = batches[1,1,:,0]
+        #original channel 1
+        ch = data[:,1]
+        for i in range(ch.shape[0]-split):
+            slice = ch[i:(i+split)]
+            MSE = np.mean((sample-slice)**2)
+            if MSE==0:
+                print("BATCH FOUND")
+                break
+        return 0
 
