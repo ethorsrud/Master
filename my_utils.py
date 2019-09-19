@@ -50,6 +50,10 @@ class functions():
         return np.swapaxes(np.array(batches),0,1)[:,:,:,np.newaxis]
     
     def check_batch(batches,data,split):
+        """
+        Just a validation check to see if
+        function get_batches_new works as intended
+        """
         #Second batch, channel 1
         sample = batches[1,1,:,0]
         #original channel 1
