@@ -30,7 +30,7 @@ class functions():
         inputs: 
             split: Length of each sample
             n_batches: Number of wanted batches
-            channels: The channels you want batches from
+            channels: List of channels you want random batches from
             data: Dataset with shape [n_samples,channels]
 
         returns:
@@ -39,7 +39,11 @@ class functions():
         """
         data_len = data.shape[0]
         max_int = data_len-split
-        for i in range(n_batches):
-            print('Yolo mcYolosen')
-        return 0
+        #Only the selected channels
+        #ch_data = 
+        batches = [] 
+        for i in range(len(channels)):
+            random_ints = np.random.randint(0,max_int,size=(n_batches,1))
+            batches.append(data[:,channels][:,i][random_ints+np.arange(split)])
+        return np.swapaxes(np.array(batches),0,1)[:,:,:,np.newaxis]
 
