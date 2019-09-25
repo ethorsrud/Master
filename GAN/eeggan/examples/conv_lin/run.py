@@ -7,6 +7,7 @@ import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
 sys.path.append(os.path.join(code_path,"GAN"))
+sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
@@ -61,6 +62,16 @@ datafreq = 500#250#128 #hz
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
 print(train.shape)
+train_new = []
+for i in range(int(train.shape[0]/input_length)):
+    train_new.append(train[i*input_length:i*input_length+input_length])
+train_new = np.array(train_new)
+train = train_new[:,:,:,np.newaxis]
+train = np.swapaxes(train,1,2)
+train = train[:,0,:,:]
+train = train[:,np.newaxis,:,:]
+print(train.shape)
+
 """
 #TESTING WITH ANOTHER DATASET
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
