@@ -7,6 +7,7 @@ import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
 sys.path.append(os.path.join(code_path,"GAN"))
+sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
 from eeggan.util import weight_filler
@@ -19,6 +20,7 @@ import random
 import scipy.io
 from  datetime import datetime
 from torchviz import make_dot
+from my_utils import functions
 
 #plt.switch_backend('agg')
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
@@ -54,8 +56,9 @@ data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"dataset_BCIcomp1.mat
 EEG_data = scipy.io.loadmat(data)
 #To be used in FFT
 """
-datafreq = 250#128 #hz
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
+datafreq = 500#250#128 #hz
+#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
 print(train.shape)
 """
@@ -99,7 +102,6 @@ train = np.swapaxes(train,1,2)
 train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
 train = np.concatenate((train,test))
 """
-
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
 outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
 modelname = 'Progressive%s'
@@ -164,7 +166,8 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
         
-        batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
+        #batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
+        batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
         for it in range(iters):
             for i_critic in range(n_critic):
