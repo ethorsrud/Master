@@ -71,6 +71,9 @@ train = np.swapaxes(train,1,2)
 train = train[:,0,:,:]
 train = train[:,np.newaxis,:,:]
 print(train.shape)
+train = train-train.mean()
+train = train/train.std()
+train = train/np.abs(train).max()
 
 """
 #TESTING WITH ANOTHER DATASET
