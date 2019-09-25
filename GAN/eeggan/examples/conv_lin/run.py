@@ -177,8 +177,8 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
         
-        #batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
-        batches = functions.get_batches_new(input_length,n_batch,[0],train)
+        batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
+        #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
         for it in range(iters):
             for i_critic in range(n_critic):
