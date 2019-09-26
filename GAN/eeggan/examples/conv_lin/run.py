@@ -1,9 +1,9 @@
 #%load_ext autoreload
 #%autoreload 2
 import os
-import joblib
+#import joblib
 import sys
-import mne
+#import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
 sys.path.append(os.path.join(code_path,"GAN"))
@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 import random
 import scipy.io
 from  datetime import datetime
-from torchviz import make_dot
+#from torchviz import make_dot
 from my_utils import functions
 
 #plt.switch_backend('agg')
@@ -28,11 +28,11 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
-input_length = 768#768
+input_length = 1536#768
 jobid = 0
 
 n_z = 200
@@ -74,7 +74,9 @@ print(train.shape)
 train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
-
+for i in range(50):
+    plt.plot(train[i,0,:,0])
+plt.show()
 """
 #TESTING WITH ANOTHER DATASET
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
