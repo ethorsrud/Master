@@ -9,6 +9,7 @@ other_path = os.path.normpath(code_path+os.sep+os.pardir)
 sys.path.append(os.path.join(code_path,"GAN"))
 sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
+#sys.path.append("/usr/local/lib/python3.5/dist-packages")
 from braindecode.datautil.iterators import get_balanced_batches
 from eeggan.examples.conv_lin.model import Generator,Discriminator
 from eeggan.util import weight_filler
@@ -28,7 +29,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -68,15 +69,19 @@ for i in range(int(train.shape[0]/input_length)):
 train_new = np.array(train_new)
 train = train_new[:,:,:,np.newaxis]
 train = np.swapaxes(train,1,2)
-train = train[:,0,:,:]
-train = train[:,np.newaxis,:,:]
+train = np.swapaxes(train,1,3)
+
+n_chans = train.shape[3]
+print("Number of channels:",n_chans)
 print(train.shape)
 train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
+"""
 for i in range(50):
     plt.plot(train[i,0,:,0])
 plt.show()
+"""
 """
 #TESTING WITH ANOTHER DATASET
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
@@ -127,8 +132,8 @@ if not os.path.exists(modelpath):
 if not os.path.exists(outputpath):
     os.makedirs(outputpath)
 
-generator = Generator(1,n_z)
-discriminator = Discriminator(1)
+generator = Generator(n_chans,n_z)
+discriminator = Discriminator(n_chans)
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,

@@ -1,4 +1,3 @@
-# coding=utf-885
 #import braindecode
 from torch import nn
 from eeggan.modules.layers.reshape import Reshape,PixelShuffle2d
