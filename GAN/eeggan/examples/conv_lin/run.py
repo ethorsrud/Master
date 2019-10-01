@@ -70,7 +70,7 @@ train_new = np.array(train_new)
 train = train_new[:,:,:,np.newaxis]
 train = np.swapaxes(train,1,2)
 train = np.swapaxes(train,1,3)
-
+train = train[:,:,:,0][:,:,:,np.newaxis]
 n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)

@@ -367,7 +367,6 @@ class WGAN_I_Generator(GAN_Generator):
 
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
-
 		# Generate and discriminate
 		gen = self(batch_noise)
 		disc = discriminator(gen)
