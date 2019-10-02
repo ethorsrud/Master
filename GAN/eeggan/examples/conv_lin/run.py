@@ -236,15 +236,14 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
-            train_amps = np.abs(train_fft).mean(dim=3).mean(dim=0).squeeze()
+            train_amps = np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),volatile=True).cuda()
             batch_fake = generator(z_vars)
             #torch fft
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
             torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
-            fake_amps = torch_fake_fft.mean(dim=3).mean(dim=0).squeeze()
-
+            fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=3).mean(axis=0).squeeze()
             #numpy fft
             #fake_fft = np.fft.rfft(batch_fake.data.cpu().numpy(),axis=2)
             #fake_amps = np.abs(fake_fft).mean(axis=3).mean(axis=0).squeeze()
