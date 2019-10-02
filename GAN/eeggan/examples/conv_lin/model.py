@@ -13,8 +13,8 @@ from torch.nn.init import calculate_gain
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
 #base = starting samples => base = input_size/(2**N_blocks)
-base = int(768/(2**6))
-def create_disc_blocks(n_chans):
+base = int(1536/(2**6))
+def create_disc_blocks(n_chans,base):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
@@ -151,7 +151,15 @@ class Generator(WGAN_I_Generator):
 class Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans))
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base))
+
+	def forward(self,input):
+		return self.model(input)
+
+class Fourier_Discriminator(WGAN_I_Discriminator):
+	def __init__(self,n_chans):
+		super(Fourier_Discriminator,self).__init__()
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)))
 
 	def forward(self,input):
 		return self.model(input)
