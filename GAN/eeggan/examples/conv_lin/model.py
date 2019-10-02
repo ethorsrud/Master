@@ -13,7 +13,7 @@ from torch.nn.init import calculate_gain
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
 #base = starting samples => base = input_size/(2**N_blocks)
-base = int(1536/(2**6))
+base = int(768/(2**6))
 def create_disc_blocks(n_chans):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
