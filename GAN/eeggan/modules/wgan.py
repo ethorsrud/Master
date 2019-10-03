@@ -346,7 +346,7 @@ class WGAN_I_Generator(GAN_Generator):
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 
-	def train_batch(self, batch_noise, discriminator):
+	def train_batch(self, batch_noise, discriminator1,discriminator2):
 		"""
 		Train generator for one batch of latent noise
 
@@ -363,14 +363,21 @@ class WGAN_I_Generator(GAN_Generator):
 			WGAN loss against evaluation of discriminator of generated samples
 			to be real
 		"""
-		self.pre_train(discriminator)
+		self.pre_train(discriminator1)
+		self.pre_train(discriminator2)
 
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
-		disc = discriminator(gen)
+		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
+		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
+		disc = discriminator1(gen)
+		disc2 = discriminator2(fft)
+
 		loss = disc.mean()
+		loss2 = disc2.mean()
+		loss = loss+loss2
 		# Backprop gradient
 		loss.backward(mone)
 
