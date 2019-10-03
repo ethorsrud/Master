@@ -269,7 +269,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_penalty.backward()
 
 		# Update parameters
-		#self.update_parameters()
+		self.update_parameters()
 
 		loss_real = -loss_real.data.item()
 		loss_fake = loss_fake.data.item()
