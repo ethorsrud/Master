@@ -91,8 +91,8 @@ class GAN_Discriminator(GAN_Module):
 		if not self.did_init_train:
 			self.train_init()
 
-		self.zero_grad()
-		self.optimizer.zero_grad()
+		#self.zero_grad()
+		#self.optimizer.zero_grad()
 		for p in self.parameters():
 			p.requires_grad = True
 
