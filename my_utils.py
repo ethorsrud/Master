@@ -1,5 +1,8 @@
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter
+import torch
 
 class functions():
     def get_balanced_batches(n_samples,batch_size):
@@ -66,3 +69,31 @@ class functions():
                 break
         return 0
 
+    def samp_from_freq(n_samples):
+        #Generating frequency spectrum
+        x = np.linspace(0,100,251)
+        x2 = np.linspace(0,5,251)
+        spectrum = 50*np.exp(-(x-30)**2/2)
+        spectrum += 60*np.sin(np.random.randn(251)*2*np.pi)*np.exp(-x2)
+        #spectrum += np.random.randn(251)
+        plt.plot(spectrum)
+        plt.show()
+        signal = np.fft.irfft(spectrum)
+        plt.plot(signal)
+        plt.show()
+
+        return signal
+    
+    def autocorrelation(signals):
+        """
+        input: signals in shape [n_signals,time_samples]
+
+        Output: autocorrelated signals with themself in shape [n_signals,k]
+        """
+        n = signals.shape[0]
+        k = signals.shape[1]-1
+        means = torch.mean(signals,dim=1)
+        stds = torch.std(signals,dim=1)
+        centered_signals = torch.transpose(torch.transpose(signals,0,1)-means,0,1)
+        autocor=None
+        return autocor 
