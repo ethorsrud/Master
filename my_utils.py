@@ -4,6 +4,11 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 import torch
 
+"""
+Just a file including self-written functions needed for the project
+"""
+
+
 class functions():
     def get_balanced_batches(n_samples,batch_size):
         """
@@ -12,6 +17,10 @@ class functions():
         example:
         3 batches, batch_size = 3
         [array([1,2,3]),array([1,3,4]),array([5,2,1])]
+
+
+        NEW VERSION below is faster and more compatible
+
         """
         main_list = []
         samples = []
@@ -41,6 +50,7 @@ class functions():
         returns:
             batches of small random samples from one long sample
             with shape: [n_batches,channels,data,1]
+
         """
         data_len = data.shape[0]
         max_int = data_len-split
@@ -56,6 +66,8 @@ class functions():
         """
         Just a validation check to see if
         function get_batches_new works as intended
+
+        Function: Searches for the splitted sample in the original data
         """
         #Second batch, channel 1
         sample = batches[1,1,:,0]
@@ -70,6 +82,9 @@ class functions():
         return 0
 
     def samp_from_freq(n_samples):
+        """
+        An attempt of sampling a signal from a self made frequency spectrum
+        """
         #Generating frequency spectrum
         x = np.linspace(0,100,251)
         x2 = np.linspace(0,5,251)
@@ -86,27 +101,45 @@ class functions():
     
     def autocorrelation(signals):
         """
-        input: signals in shape [n_signals,time_samples]
+        input: signals - Signals in shape [n_signals,1,time_samples,channels]
 
-        Output: autocorrelated signals with themself in shape [n_signals,time_samples/2]
+        Output: autocorrelated signals with themself in shape [n_signals,1,time_samples/2,channels]
         """
-        
-        n = signals.shape[1]
+
+        n = signals.shape[2]
         M = int(n/2)
-        means = torch.mean(signals,dim=1)
-        stds = torch.std(signals,dim=1)
-        centered_signals = torch.transpose(torch.transpose(signals,0,1)-means,0,1)
-        
+
+        means = torch.mean(signals,dim=2)
+        stds = torch.std(signals,dim=2)
+
+        #Centering
+        signals = (signals.permute(2,0,1,3)-means).permute(1,2,0,3)
+
         if signals.is_cuda:
-            C = torch.zeros(size=(signals.shape[0],M),dtype=torch.float64).cuda()
+            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3]),dtype=torch.float64).cuda()
         else:
-            C = torch.zeros(size=(signals.shape[0],M),dtype=torch.float64)
+            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3]),dtype=torch.float64)
 
         for i in range(M):
-            C[:,i] = torch.sum(signals[:,:M]*signals[:,i:(M+i)],dim=1)/torch.sum(signals[:,:M]*signals[:,:M],dim=1)
-            C[:,i] *= (1./(M*stds**2))
-        
+            C[:,:,i,:] = torch.sum(signals[:,:,:M,:]*signals[:,:,i:(M+i),:],dim=2)/torch.sum(signals[:,:,:M,:]*signals[:,:,:M,:],dim=2)
+            C[:,:,i,:] *= (1./(M*stds**2))
+
         return C
+
+
+"""
+#Testing autocorrelation
+x = torch.from_numpy(np.linspace(0,6*np.pi,500))
+signal1 = torch.stack([torch.sin(x)+1.0,torch.sin(x)+2.0])
+signal2 = torch.stack([torch.cos(x)+3.0,torch.cos(x)+4.0])
+signals = torch.stack([signal1,signal2])
+signals = signals[:,np.newaxis,:,:]
+signals = torch.transpose(signals,2,3)
+autocor = functions.autocorrelation(signals)
+plt.plot(x[:250],autocor[0,0,:,0])
+plt.show()
+"""
+
 
 
 """
