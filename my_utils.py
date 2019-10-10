@@ -88,26 +88,33 @@ class functions():
         """
         input: signals in shape [n_signals,time_samples]
 
-        Output: autocorrelated signals with themself in shape [n_signals,k]
+        Output: autocorrelated signals with themself in shape [n_signals,time_samples/2]
         """
+        
         n = signals.shape[1]
         M = int(n/2)
         means = torch.mean(signals,dim=1)
         stds = torch.std(signals,dim=1)
         centered_signals = torch.transpose(torch.transpose(signals,0,1)-means,0,1)
-        C = torch.zeros(size=(signals.shape[0],M),dtype=torch.float64)
+        
+        if signals.is_cuda:
+            C = torch.zeros(size=(signals.shape[0],M),dtype=torch.float64).cuda()
+        else:
+            C = torch.zeros(size=(signals.shape[0],M),dtype=torch.float64)
+
         for i in range(M):
             C[:,i] = torch.sum(signals[:,:M]*signals[:,i:(M+i)],dim=1)/torch.sum(signals[:,:M]*signals[:,:M],dim=1)
             C[:,i] *= (1./(M*stds**2))
+        
         return C
 
 
-
+"""
 #Just some testing
-lr = 0.1
+lr = 100
 n=1000
 colors = plt.cm.rainbow(np.linspace(0,1,n))
-x = np.linspace(0,10,50)
+x = np.linspace(0,10,500)
 signal1 = np.sin(x)
 signal2 = np.cos(x)
 signals = np.array([signal1])
@@ -120,12 +127,15 @@ signals = (signals+signals.grad*lr).detach()
 for i in range(n):
     signals.requires_grad=True
     autocor = functions.autocorrelation(signals)
-    plt.plot(x[:25],autocor[0].detach(),color=colors[i])
+    plt.plot(x[:250],autocor[0].detach(),color=colors[i])
     mean = torch.mean(autocor)
     print(i)
     print(mean)
     mean.backward()
+    print(signals.grad)
     signals = (signals+signals.grad*lr).detach()
+    
 plt.show()
 plt.plot(x,signals[0])
 plt.show()
+"""
