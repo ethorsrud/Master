@@ -111,14 +111,13 @@ class functions():
 
         means = torch.mean(signals,dim=2)
         stds = torch.std(signals,dim=2)
-
         #Centering
         signals = (signals.permute(2,0,1,3)-means).permute(1,2,0,3)
 
         if signals.is_cuda:
-            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3]),dtype=torch.float64).cuda()
+            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3])).cuda()
         else:
-            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3]),dtype=torch.float64)
+            C = torch.zeros(size=(signals.shape[0],signals.shape[1],M,signals.shape[3]))
 
         for i in range(M):
             C[:,:,i,:] = torch.sum(signals[:,:,:M,:]*signals[:,:,i:(M+i),:],dim=2)/torch.sum(signals[:,:,:M,:]*signals[:,:,:M,:],dim=2)

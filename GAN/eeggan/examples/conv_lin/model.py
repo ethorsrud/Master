@@ -14,6 +14,15 @@ from torch.nn.init import calculate_gain
 n_featuremaps = 25
 #base = starting samples => base = input_size/(2**N_blocks)
 base = int(1536/(2**6))
+"""
+Align corners-error
+UserWarning: Default upsampling behavior when mode=linear is changed to align_corners=False since 0.4.0.
+Please specify align_corners=True if the old behavior is desired.
+See the documentation of nn.Upsample for details.
+"""
+Align = False
+
+
 def create_disc_blocks(n_chans,base):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
@@ -79,7 +88,7 @@ def create_disc_blocks(n_chans,base):
 
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2),
+		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
 								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
@@ -159,6 +168,14 @@ class Discriminator(WGAN_I_Discriminator):
 class Fourier_Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Fourier_Discriminator,self).__init__()
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)))
+
+	def forward(self,input):
+		return self.model(input)
+
+class AC_Discriminator(WGAN_I_Discriminator):
+	def __init__(self,n_chans):
+		super(AC_Discriminator,self).__init__()
 		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)))
 
 	def forward(self,input):
