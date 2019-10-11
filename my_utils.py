@@ -122,9 +122,9 @@ class functions():
         for i in range(M):
             C[:,:,i,:] = torch.sum(signals[:,:,:M,:]*signals[:,:,i:(M+i),:],dim=2)/torch.sum(signals[:,:,:M,:]*signals[:,:,:M,:],dim=2)
             C[:,:,i,:] *= (1./(M*stds**2))
-        print(C.shape)
+
         C = ((C.permute(2,0,1,3)-torch.mean(C,dim=2))/torch.std(C,dim=2)).permute(1,2,0,3)
-        print(C.shape)
+
         return C
 
 
