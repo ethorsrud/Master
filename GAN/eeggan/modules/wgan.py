@@ -234,7 +234,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		mone = one * -1
 
 		batch_real,one,mone = utils.cuda_check([batch_real,one,mone])
-
 		fx_real = self(batch_real)
 		loss_real = fx_real.mean()
 		loss_real.backward(mone,

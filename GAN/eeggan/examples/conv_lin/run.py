@@ -29,7 +29,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -164,7 +164,7 @@ AC_discriminator.model.alpha = fade_alpha
 generator = generator.cuda()
 discriminator = discriminator.cuda()
 fourier_discriminator = fourier_discriminator.cuda()
-AC_discriminator = fourier_discriminator.cuda()
+AC_discriminator = AC_discriminator.cuda()
 
 #LOAD
 try:
@@ -218,9 +218,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=True),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
-
+                
                 batch_real_autocor = functions.autocorrelation(batch_real)
                 batch_fake_autocor = functions.autocorrelation(batch_fake)
+
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
