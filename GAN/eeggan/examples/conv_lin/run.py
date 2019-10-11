@@ -11,7 +11,7 @@ sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
 #sys.path.append("/usr/local/lib/python3.5/dist-packages")
 from braindecode.datautil.iterators import get_balanced_batches
-from eeggan.examples.conv_lin.model import Generator,Discriminator,Fourier_Discriminator
+from eeggan.examples.conv_lin.model import Generator,Discriminator,Fourier_Discriminator,AC_Discriminator
 from eeggan.util import weight_filler
 import torch
 import torch.nn as nn
@@ -135,29 +135,36 @@ if not os.path.exists(outputpath):
 generator = Generator(n_chans,n_z)
 discriminator = Discriminator(n_chans)
 fourier_discriminator = Fourier_Discriminator(n_chans)
+AC_discriminator = AC_Discriminator(n_chans)
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
+AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
+                        one_sided_penalty=True,distance_weighting=True)
 generator = generator.apply(weight_filler)
 discriminator = discriminator.apply(weight_filler)
 fourier_discriminator = fourier_discriminator.apply(weight_filler)
+AC_discriminator = AC_discriminator.apply(weight_filler)
 
 i_block_tmp = 0
 i_epoch_tmp = 0
 generator.model.cur_block = i_block_tmp
 discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fourier_discriminator.model.cur_block = n_blocks-1-i_block_tmp
+AC_discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fade_alpha = 1.
 generator.model.alpha = fade_alpha
 discriminator.model.alpha = fade_alpha
 fourier_discriminator.model.alpha = fade_alpha
+AC_discriminator.model.alpha = fade_alpha
 
 generator = generator.cuda()
 discriminator = discriminator.cuda()
 fourier_discriminator = fourier_discriminator.cuda()
+AC_discriminator = fourier_discriminator.cuda()
 
 #LOAD
 try:
@@ -175,6 +182,7 @@ except:
 generator.train()
 discriminator.train()
 fourier_discriminator.train()
+AC_discriminator.train()
 
 losses_d = []
 losses_g = []
@@ -211,16 +219,17 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=True),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
 
-                #batch_real_autocor = functions.autocorrelation(batch_real)
-                #batch_fake_autocor = functions.autocorrelation(batch_fake)
+                batch_real_autocor = functions.autocorrelation(batch_real)
+                batch_fake_autocor = functions.autocorrelation(batch_fake)
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
             z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator)
+            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
@@ -357,3 +366,4 @@ for i_block in range(i_block_tmp,n_blocks):
     generator.model.cur_block += 1
     discriminator.model.cur_block -= 1
     fourier_discriminator.model.cur_block -=1
+    AC_discriminator.model.cur_block -=1

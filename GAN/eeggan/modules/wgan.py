@@ -9,6 +9,7 @@ import numpy as np
 import eeggan.util as utils
 from eeggan.modules.gan import GAN_Discriminator
 from eeggan.modules.gan import GAN_Generator
+from my_utils import functions
 
 class WGAN_Discriminator(GAN_Discriminator):
 	"""
@@ -346,7 +347,7 @@ class WGAN_I_Generator(GAN_Generator):
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 
-	def train_batch(self, batch_noise, discriminator1,discriminator2):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
 		"""
 		Train generator for one batch of latent noise
 
@@ -372,12 +373,17 @@ class WGAN_I_Generator(GAN_Generator):
 		gen = self(batch_noise)
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
 		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
+		autocor = functions.autocorrelation(gen)
+		
 		disc = discriminator1(gen)
 		disc2 = discriminator2(fft)
+		disc3 = discriminator3(autocor)
 
 		loss = disc.mean()
 		loss2 = disc2.mean()
-		loss = loss+loss2
+		loss3 = disc3.mean()
+
+		loss = loss+loss2+loss3
 		# Backprop gradient
 		loss.backward(mone)
 
