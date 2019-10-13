@@ -29,7 +29,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
@@ -37,9 +37,9 @@ input_length = 1536#768
 jobid = 0
 
 n_z = 200
-lr = 0.001
+lr = 0.0001#0.001
 n_blocks = 6
-rampup = 2000.
+rampup = 400#2000.
 block_epochs = [2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
