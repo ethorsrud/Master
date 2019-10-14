@@ -39,8 +39,8 @@ jobid = 0
 n_z = 200
 lr = 0.001
 n_blocks = 6
-rampup = 2000.
-block_epochs = [2000,4000,4000,4000,4000,4000]
+rampup = 400.#2000.
+block_epochs = [400,800,800,800,800,800]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
