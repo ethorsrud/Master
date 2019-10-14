@@ -29,7 +29,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -210,7 +210,7 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
             fourier_discriminator.model.alpha = fade_alpha
-            AC_discriminator.model.alpha = fade_alpha
+            #AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
@@ -234,7 +234,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
-                AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
+                #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
