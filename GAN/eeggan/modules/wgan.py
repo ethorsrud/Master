@@ -365,6 +365,7 @@ class WGAN_I_Generator(GAN_Generator):
 		"""
 		self.pre_train(discriminator1)
 		self.pre_train(discriminator2)
+		self.pre_train(discriminator3)
 
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
