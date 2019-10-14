@@ -29,7 +29,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -37,9 +37,9 @@ input_length = 1536#768
 jobid = 0
 
 n_z = 200
-lr = 0.0001#0.001
+lr = 0.001
 n_blocks = 6
-rampup = 400#2000.
+rampup = 2000.
 block_epochs = [2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
@@ -77,6 +77,13 @@ print(train.shape)
 train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
+
+#100 samples for testing
+#total_samples = int(train.shape[0]/input_length)
+#train = train[:(total_samples-100),:,:,:]
+#test = train[(total_samples-100):,:,:,:]
+
+
 """
 for i in range(50):
     plt.plot(train[i,0,:,0])
@@ -202,6 +209,8 @@ for i_block in range(i_block_tmp,n_blocks):
             fade_alpha += 1./rampup
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
+            fourier_discriminator.model.alpha = fade_alpha
+            AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
@@ -256,6 +265,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
+
             #torch fft
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
             torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
