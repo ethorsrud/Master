@@ -3,6 +3,7 @@ import random
 import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 import torch
+from scipy.linalg import sqrtm
 
 """
 Just a file including self-written functions needed for the project
@@ -126,7 +127,14 @@ class functions():
         C = ((C.permute(2,0,1,3)-torch.mean(C,dim=2))/torch.std(C,dim=2)).permute(1,2,0,3)
 
         return C
-
+    
+    def FID(dist1,dist2):
+        m1,sig1 = dist1.mean(axis=0),np.cov(dist1,rowvar=False)
+        m2,sig2 = dist2.mean(axis=0),np.cov(dist2,rowvar=False)
+        dif = np.sum((m1-m2)**2)
+        covmean = sqrtm(sig1@sig2)
+        covmean=covmean.real
+        return dif+np.trace(sig1+sig2-2*covmean)
 
 """
 #Testing autocorrelation
