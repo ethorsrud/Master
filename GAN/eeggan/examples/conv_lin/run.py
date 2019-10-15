@@ -37,7 +37,7 @@ input_length = 1536#768
 jobid = 0
 
 n_z = 200
-lr = 0.0001#0.001
+lr = 0.001#0.001
 n_blocks = 6
 rampup = 400.#2000.
 block_epochs = [400,800,800,800,800,800]#[2000,4000,4000,4000,4000,4000]
@@ -193,6 +193,9 @@ AC_discriminator.train()
 
 losses_d = []
 losses_g = []
+
+losses_fourier = []
+
 i_epoch = 0
 z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
 
@@ -233,9 +236,10 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                loss_fourier = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
+                print("Loss_d: ",loss_d,"Loss fourier: ",loss_fourier)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
             z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
