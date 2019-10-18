@@ -363,16 +363,16 @@ class WGAN_I_Generator(GAN_Generator):
 			WGAN loss against evaluation of discriminator of generated samples
 			to be real
 		"""
-		self.pre_train(discriminator1)
-		#self.pre_train(discriminator2)
+		#self.pre_train(discriminator1)
+		self.pre_train(discriminator2)
 		#self.pre_train(discriminator3)
 
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
-		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
-		#fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
+		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
+		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
 		#autocor = functions.autocorrelation(gen)
 		
 		#disc = discriminator1(gen)
