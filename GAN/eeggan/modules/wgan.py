@@ -364,26 +364,26 @@ class WGAN_I_Generator(GAN_Generator):
 			to be real
 		"""
 		self.pre_train(discriminator1)
-		self.pre_train(discriminator2)
-		self.pre_train(discriminator3)
+		#self.pre_train(discriminator2)
+		#self.pre_train(discriminator3)
 
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
-		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
-		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
-		autocor = functions.autocorrelation(gen)
+		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=True),2,3)
+		#fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2)
+		#autocor = functions.autocorrelation(gen)
 		
 		disc = discriminator1(gen)
-		disc2 = discriminator2(fft)
-		disc3 = discriminator3(autocor)
+		#disc2 = discriminator2(fft)
+		#disc3 = discriminator3(autocor)
 
 		loss = disc.mean()
-		loss2 = disc2.mean()
-		loss3 = disc3.mean()
+		#loss2 = disc2.mean()
+		#loss3 = disc3.mean()
 
-		loss = loss+loss2+loss3
+		loss = loss#+loss2+loss3
 		# Backprop gradient
 		loss.backward(mone)
 

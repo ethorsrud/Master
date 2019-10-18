@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy.signal import savgol_filter
 import torch
 from scipy.linalg import sqrtm
-
+import os
 """
 Just a file including self-written functions needed for the project
 """
@@ -86,7 +86,19 @@ class functions():
         """
         An attempt of sampling a signal from a self made frequency spectrum
         """
+        datapath = os.path.normpath(os.getcwd()+os.sep+os.pardir+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
+        data = np.load(datapath)
+        fourier = np.fft.rfft(data,axis=0)
+        fourier_mean = np.mean(fourier,axis=1)
+        print(fourier.shape)
+        print(fourier_mean.shape)
+        signal = np.fft.irfft(fourier_mean)[1:]
+        plt.plot(fourier_mean[1:])
+        plt.show()
+        plt.plot(signal)
+        plt.show()
         #Generating frequency spectrum
+        """
         x = np.linspace(0,100,251)
         x2 = np.linspace(0,5,251)
         spectrum = 50*np.exp(-(x-30)**2/2)
@@ -97,7 +109,8 @@ class functions():
         signal = np.fft.irfft(spectrum)
         plt.plot(signal)
         plt.show()
-
+        """
+        signal = None
         return signal
     
     def autocorrelation(signals):
@@ -135,6 +148,7 @@ class functions():
         covmean = sqrtm(sig1@sig2)
         covmean=covmean.real
         return dif+np.trace(sig1+sig2-2*covmean)
+
 
 """
 #Testing autocorrelation

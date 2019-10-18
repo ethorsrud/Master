@@ -21,16 +21,20 @@ Please specify align_corners=True if the old behavior is desired.
 See the documentation of nn.Upsample for details.
 """
 Align = False
+"""
+REMOVED (after first leakyrelu)
+								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
+														gain=calculate_gain('leaky_relu')),
+								nn.LeakyReLU(0.2),
 
+"""
 
 def create_disc_blocks(n_chans,base):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
+
 								weight_scale(nn.Conv1d(out_filters,out_filters,2,stride=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2))
@@ -73,9 +77,13 @@ def create_disc_blocks(n_chans,base):
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
+
+
+	#Removed StdMap1d() before create_conv_sequence and reduced (n_featuremaps+1,n_featuremaps) to (n_featuremaps,n_featuremaps)
+
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(n_featuremaps+1,n_featuremaps),
+							  nn.Sequential(
+											create_conv_sequence(n_featuremaps,n_featuremaps),
 											Reshape([[0],-1]),
 											weight_scale(nn.Linear(n_featuremaps*base,1),
 															gain=calculate_gain('linear'))),
@@ -85,18 +93,21 @@ def create_disc_blocks(n_chans,base):
 	blocks.append(tmp_block)
 	return blocks
 
-
+"""
+REMOVED (after Pixelnorm)
+								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
+														gain=calculate_gain('leaky_relu')),
+								nn.LeakyReLU(0.2),
+								PixelNorm()
+"""
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
 								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
-								PixelNorm(),
-								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
 								PixelNorm())
+
 	def create_out_sequence(n_chans,in_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,n_chans,1),
 														gain=calculate_gain('linear')),
