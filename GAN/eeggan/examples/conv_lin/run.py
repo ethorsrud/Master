@@ -232,13 +232,13 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=True),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
                 
-                #batch_real_autocor = functions.autocorrelation(batch_real)
-                #batch_fake_autocor = functions.autocorrelation(batch_fake)
+                batch_real_autocor = functions.autocorrelation(batch_real)
+                batch_fake_autocor = functions.autocorrelation(batch_fake)
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 loss_d = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
-                #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
+                AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 #loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
