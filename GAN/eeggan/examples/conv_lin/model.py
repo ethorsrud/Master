@@ -31,7 +31,7 @@ REMOVED (after first leakyrelu)
 
 def create_disc_blocks(n_chans,base):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,5,padding=2),
+		return nn.Sequential(weight_scale(nn.Conv1d(in_filters+1,in_filters,5,padding=2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 
@@ -82,7 +82,7 @@ def create_disc_blocks(n_chans,base):
 	#Removed StdMap1d() before create_conv_sequence and reduced (n_featuremaps+1,n_featuremaps) to (n_featuremaps,n_featuremaps)
 
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  nn.Sequential(
+							  nn.Sequential(StdMap1d(),
 											create_conv_sequence(n_featuremaps,n_featuremaps),
 											Reshape([[0],-1]),
 											weight_scale(nn.Linear(n_featuremaps*base,1),
