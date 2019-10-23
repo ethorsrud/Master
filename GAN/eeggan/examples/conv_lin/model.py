@@ -5,6 +5,7 @@ from eeggan.modules.layers.normalization import PixelNorm
 from eeggan.modules.layers.weight_scaling import weight_scale
 from eeggan.modules.layers.upsampling import CubicUpsampling1d,CubicUpsampling2d
 from eeggan.modules.layers.stdmap import StdMap1d
+from eeggan.modules.layers.fouriermap import FFTMap1d
 from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGeneratorBlock,\
 							ProgressiveDiscriminator,ProgressiveDiscriminatorBlock
 from eeggan.modules.wgan import WGAN_I_Generator,WGAN_I_Discriminator
@@ -85,8 +86,8 @@ def create_disc_blocks(n_chans,base):
 	#Removed StdMap1d() before create_conv_sequence and reduced (n_featuremaps+1,n_featuremaps) to (n_featuremaps,n_featuremaps)
 
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(n_featuremaps+1,n_featuremaps),
+							  nn.Sequential(StdMap1d(),FFTMap1d(),
+											create_conv_sequence(n_featuremaps+2,n_featuremaps),
 											Reshape([[0],-1]),
 											weight_scale(nn.Linear(n_featuremaps*base,1),
 															gain=calculate_gain('linear'))),

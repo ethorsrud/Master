@@ -8,8 +8,10 @@ class FFTMap1d(nn.Module):
         super(FFTMap1d,self).__init__()
 
     def forward(self,input):
+        print("THIS IS THE INPUT SHAPE\n",input.shape)
         fft = torch.rfft(input,1,normalized=True)
         fft = torch.sqrt(fft[:,:,1:,0]**2+fft[:,:,1:,1]**2)
         upsampler = torch.nn.Upsamples(scale_factor=2,mode='linear')
-        input = upsampler(fft)
+        input = torch.cat((input,upsampler(fft)),dim=1)
+        print("THIS IS THE OUTPUT SHAPE\n",input.shape)
         return input
