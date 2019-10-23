@@ -12,6 +12,7 @@ class FFTMap1d(nn.Module):
         fft = torch.rfft(input,1,normalized=True)
         fft = torch.sqrt(fft[:,:,1:,0]**2+fft[:,:,1:,1]**2)
         upsampler = torch.nn.Upsample(scale_factor=2,mode='linear')
-        input = torch.cat((input,upsampler(fft)),dim=1)
+        print(upsampler(fft).shape)
+        #input = torch.cat((input,upsampler(fft)),dim=1)
         print("THIS IS THE OUTPUT SHAPE\n",input.shape)
         return input
