@@ -12,5 +12,4 @@ class FFTMap1d(nn.Module):
         fft = torch.sqrt(fft[:,:,1:,0]**2+fft[:,:,1:,1]**2)
         upsampler = torch.nn.Upsamples(scale_factor=2,mode='linear')
         input = upsampler(fft)
-        "test"
         return input
