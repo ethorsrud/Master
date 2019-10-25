@@ -13,9 +13,8 @@ class FFTMap1d(nn.Module):
         upsampler = torch.nn.Upsample(scale_factor=2,mode='linear')
         fft = torch.transpose(upsampler(torch.transpose(fft[:,0,:,:],1,2)),1,2)
         fft = torch.unsqueeze(fft,1)
-        centered = fft.permute(2,0,1,3)-torch.mean(fft,dim=2)
-        centered = centered/torch.std(fft,dim=2)
-        fft = centered.permute(1,2,0,3)
+        centered = fft-torch.mean(fft,dim=0)
+        fft = centered/torch.std(fft,dim=0)
         fft = fft/torch.max(fft)
         fft = torch.cat((input,fft),dim=3)
         return fft
