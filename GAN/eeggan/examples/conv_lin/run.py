@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
@@ -285,7 +285,9 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.show()
             """
             plt.figure()
-            plt.ylim(np.min(train_amps)-np.min(train_amps)*0.1,np.max(train_amps)+np.max(train_amps)*0.1)
+            logmin = np.min(np.log(train_amps))
+            logmax = np.max(np.log(train_amps))
+            plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
             plt.plot(freqs_tmp,np.log(fake_amps),label='Fake')
             plt.plot(freqs_tmp,np.log(train_amps),label='Real')
             plt.title('Frequency Spektrum')
