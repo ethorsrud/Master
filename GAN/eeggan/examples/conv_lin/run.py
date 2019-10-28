@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -63,7 +63,7 @@ datafreq = 500#250#128 #hz
 #data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
-print(train.shape)
+
 train_new = []
 for i in range(int(train.shape[0]/input_length)):
     train_new.append(train[i*input_length:i*input_length+input_length])
@@ -79,10 +79,10 @@ train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
 
-#100 samples for testing
-#total_samples = int(train.shape[0]/input_length)
-#train = train[:(total_samples-100),:,:,:]
-#test = train[(total_samples-100):,:,:,:]
+fft_train = np.abs(np.fft.rfft(train,axis=2))
+fft_mean = fft_train.mean()
+fft_std = fft_train.std()
+fft_max = np.max(fft_train).max()
 
 
 """
@@ -232,8 +232,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
 
-                batch_fake_fft = torch.log(batch_fake_fft)
-                batch_real_fft = torch.log(batch_real_fft)
+                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
+                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
 
 
                 #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
@@ -249,7 +249,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
             z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
+            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[fft_mean,fft_std,fft_max])
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
