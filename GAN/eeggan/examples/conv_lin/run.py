@@ -227,12 +227,26 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=True),2,3)
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=True),2,3)
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
+
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
+
+                fftstdmean = torch.mean(torch.std(batch_fake_fft,dim=2),dim=0).squeeze()
+                fftmean = torch.mean(torch.mean(batch_fake_fft,dim=2),dim=0).squeeze()
+                batch_fake_fft = (batch_fake_fft-fftmean)/fftstdmean
+                batch_fake_fft = batch_fake_fft/torch.max(batch_fake_fft)
+
+                fftstdmean2 = torch.mean(torch.std(batch_real_fft,dim=2),dim=0).squeeze()
+                fftmean2 = torch.mean(torch.mean(batch_real_fft,dim=2),dim=0).squeeze()
+                batch_real_fft = (batch_real_fft-fftmean2)/fftstdmean2
+                batch_real_fft = batch_real_fft/torch.max(batch_real_fft)
+
+                #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
+                #print("MAX(Fake): ",torch.max(batch_fake_fft),"MAX(Real)",torch.max(batch_real_fft))
                 #batch_real_autocor = functions.autocorrelation(batch_real)
                 #batch_fake_autocor = functions.autocorrelation(batch_fake)
 
