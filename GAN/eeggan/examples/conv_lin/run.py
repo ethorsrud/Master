@@ -153,16 +153,11 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    print("MAX",torch.max(train_tmp_fft),"MIN",torch.min(train_tmp_fft))
     train_tmp_fft = torch.log(train_tmp_fft)
-    print("MAX",torch.max(train_tmp_fft),"MIN",torch.min(train_tmp_fft))
-    print(train_tmp_fft)
-    fft_mean = train_tmp_fft.mean()
-    print("Mean",fft_mean)
+    fft_mean = train_tmp_fft.mean()-1
     fft_std = train_tmp_fft.std()
-    print("Std",fft_std)
     fft_max = torch.abs(train_tmp_fft).max()
-    print("Max",fft_max)
+
 
 
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
