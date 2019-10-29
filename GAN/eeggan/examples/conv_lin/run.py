@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -72,10 +72,10 @@ train = train/train.std()
 train = train/np.abs(train).max()
 
 fft_train = np.abs(np.fft.rfft(train,axis=2))
-fft_train = np.log(fft_train)
-fft_mean = fft_train.mean()
-fft_std = fft_train.std()
-fft_max = np.max(fft_train).max()
+#fft_train = np.log(fft_train)
+#fft_mean = fft_train.mean()
+#fft_std = fft_train.std()
+#fft_max = np.max(fft_train).max()
 
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
@@ -152,6 +152,11 @@ for i_block in range(i_block_tmp,n_blocks):
     print("Block:",i_block)
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
+    train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
+    train_tmp_fft = torch.log(train_tmp_fft)
+    fft_mean = train_tmp_fft.mean()
+    fft_std = train_tmp_fft.std()
+    fft_max = np.max(train_tmp_fft).max()
 
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
         i_epoch_tmp = 0
