@@ -72,7 +72,7 @@ train = train/train.std()
 train = train/np.abs(train).max()
 
 fft_train = np.abs(np.fft.rfft(train,axis=2))
-fft_train = np.log(fft.train)
+fft_train = np.log(fft_train)
 fft_mean = fft_train.mean()
 fft_std = fft_train.std()
 fft_max = np.max(fft_train).max()
