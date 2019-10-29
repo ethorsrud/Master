@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -51,14 +51,6 @@ torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
-
-"""
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"dataset_BCIcomp1.mat")
-#EEG_data = joblib.load(data)
-#EEG_data = mne.io.read_raw_gdf(data,preload=True)
-EEG_data = scipy.io.loadmat(data)
-#To be used in FFT
-"""
 datafreq = 500#250#128 #hz
 #data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
@@ -80,57 +72,12 @@ train = train/train.std()
 train = train/np.abs(train).max()
 
 fft_train = np.abs(np.fft.rfft(train,axis=2))
+fft_train = np.log(fft.train)
 fft_mean = fft_train.mean()
 fft_std = fft_train.std()
 fft_max = np.max(fft_train).max()
 
 
-"""
-for i in range(50):
-    plt.plot(train[i,0,:,0])
-plt.show()
-"""
-"""
-#TESTING WITH ANOTHER DATASET
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BCICIV_2b_gdf"+os.sep+"B0101T.gdf")
-EEG_data = mne.io.read_raw_gdf(data,preload=True)
-# channel 0
-EEG_data = EEG_data[0][0][0]
-#splitting 2400 seconds into 5 second samples
-train = []
-N_slices = int(len(EEG_data)/(5*250))
-five_sec = 250*5
-for i in range(N_slices):
-    train.append(EEG_data[i*five_sec:i*five_sec+five_sec])
-train = np.array(train)
-train = np.swapaxes(train,0,1)
-train = train[:768,None,:,None]
-train = train-train.mean()
-train = train/train.std()
-train = train/np.abs(train).max()
-train = np.swapaxes(train,0,2).astype(np.float32)
-np.save("BACICIV_2b",train)
-"""
-"""
-train = EEG_data['x_train']
-test = EEG_data['x_test']
-#target = EEG_data['y_train']
-test = test[:768,0,:,None][:,np.newaxis,:,:]
-test = np.swapaxes(test,0,2).astype(np.float32)
-#target = np.concatenate((train_set.y,test_set.y))
-train = train[:,:,:,None]
-train = train-train.mean()
-train = train/train.std()
-train = train/np.abs(train).max()
-#target_onehot = np.zeros((target.shape[0],2))
-#target_onehot = np.zeros((train.shape[0],2))
-#target_onehot[:,target] = 1
-train = np.swapaxes(train,0,2)
-train = np.swapaxes(train,1,2)
-train = np.swapaxes(train,1,2)
-train = train[:,0,:768,:][:,np.newaxis,:,:].astype(np.float32)
-train = np.concatenate((train,test))
-"""
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
 outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
 modelname = 'Progressive%s'
@@ -231,6 +178,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
+                
+                batch_fake_fft = torch.log(batch_fake_fft)
+                batch_real_fft = torch.log(batch_real_fft)
 
                 batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
                 batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
