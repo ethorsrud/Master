@@ -196,8 +196,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
 
                 plt.figure()
-                plt.plot(batch_fake_fft)
-                plt.plot(batch_real_fft)
+                plt.plot(batch_fake_fft[0,0,:,0])
+                plt.plot(batch_real_fft[0,0,:,0])
                 plt.legend(["Fake","Real"])
                 plt.savefig(outputpath,"test_epoch_%i_it_%i_icrit_%i"%(i_epoch,it,i_critic))
                 #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
