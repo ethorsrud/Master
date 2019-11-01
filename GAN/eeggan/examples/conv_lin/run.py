@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
@@ -70,6 +70,10 @@ print(train.shape)
 train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
+
+train_mean = train.mean()
+train_std = train.std()
+train_max = np.abs(train).max()
 
 fft_train = np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -182,24 +186,29 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)
                 
+  
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
 
-                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
-                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
+                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
+                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
 
                 batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
 
+                """
                 plt.figure()
-                plt.plot(batch_fake_fft[0,0,:,0].data.cpu())
-                plt.plot(batch_real_fft[0,0,:,0].data.cpu())
+                plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy())
+                plt.plot(batch_real_fft[0,0,:,0].cpu().detach().numpy())
                 plt.legend(["Fake","Real"])
-                plt.savefig(outputpath,"test_epoch_%i_it_%i_icrit_%i"%(i_epoch,it,i_critic))
+                plt.savefig(os.path.join(outputpath+"test_epoch_%i_it_%i_icrit_%i.png"%(i_epoch,it,i_critic)))
+                plt.close()
+                """
+                
                 #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
                 #print("MAX(Fake): ",torch.max(batch_fake_fft),"MAX(Real)",torch.max(batch_real_fft))
                 #batch_real_autocor = functions.autocorrelation(batch_real)
