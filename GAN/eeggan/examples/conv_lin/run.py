@@ -157,7 +157,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    train_tmp_fft = np.real(np.fft.rfft(train_tmp,axis=2))**2
+    train_tmp_fft = torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = train_tmp_fft.mean()
     fft_std = train_tmp_fft.std()
