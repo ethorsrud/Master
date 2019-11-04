@@ -160,6 +160,7 @@ for i_block in range(i_block_tmp,n_blocks):
     train_tmp_fft = torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = train_tmp_fft.mean()
+    print(fft_mean.shape)
     fft_std = train_tmp_fft.std()
     fft_max = torch.abs(train_tmp_fft).max()
 
@@ -195,8 +196,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
 
-                #batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
-                #batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
+                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
+                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
