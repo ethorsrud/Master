@@ -157,7 +157,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    train_tmp_fft = torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
+    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2)))#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = train_tmp_fft.mean()
     fft_std = train_tmp_fft.std()
@@ -187,9 +187,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = batch_real_fft[:,:,:,:,0]**2#torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = batch_fake_fft[:,:,:,:,0]**2#torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
   
                 batch_fake_fft = torch.log(batch_fake_fft)
@@ -245,7 +245,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
-            train_amps = (np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()#np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()
+            train_amps = np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
@@ -253,7 +253,7 @@ for i_block in range(i_block_tmp,n_blocks):
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
-            torch_fake_fft = torch_fake_fft[:,:,:,:,0]**2#torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
+            torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)#torch_fake_fft[:,:,:,:,0]**2
             fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=3).mean(axis=0).squeeze()
             #fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
             #numpy fft
