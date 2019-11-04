@@ -186,16 +186,16 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2#+batch_real_fft[:,:,1:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2#+batch_fake_fft[:,:,1:,:,1]**2)
                 
   
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
 
-                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)/fft_max
-                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)/fft_max
+                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
+                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
