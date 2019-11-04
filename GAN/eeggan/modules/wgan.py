@@ -374,7 +374,7 @@ class WGAN_I_Generator(GAN_Generator):
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2)#fft[:,:,:,:,0]**2
 		#fft = torch.log(fft)
-		fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
+		fft = ((fft-MSM[0])/MSM[1])/MSM[2]
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
 		
