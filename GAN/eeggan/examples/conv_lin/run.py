@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
@@ -182,9 +182,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2#+batch_real_fft[:,:,:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2#+batch_fake_fft[:,:,:,:,1]**2)
                 
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
@@ -192,8 +192,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
                 batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
 
-                batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
-                batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
+                #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
+                #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
 
                 plt.figure()
                 plt.plot(batch_fake_fft[0,0,:,0].data.cpu())
@@ -207,9 +207,9 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                loss_d = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                loss_d = discriminator.train_batch(batch_real,batch_fake)
+                #loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
             z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
