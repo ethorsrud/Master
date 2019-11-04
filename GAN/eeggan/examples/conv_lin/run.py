@@ -201,14 +201,14 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
 
-                """
+                
                 plt.figure()
                 plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy())
                 plt.plot(batch_real_fft[0,0,:,0].cpu().detach().numpy())
                 plt.legend(["Fake","Real"])
                 plt.savefig(os.path.join(outputpath+"test_epoch_%i_it_%i_icrit_%i.png"%(i_epoch,it,i_critic)))
                 plt.close()
-                """
+                
                 
                 #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
                 #print("MAX(Fake): ",torch.max(batch_fake_fft),"MAX(Real)",torch.max(batch_real_fft))
@@ -246,7 +246,7 @@ for i_block in range(i_block_tmp,n_blocks):
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
             train_amps = (np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()#np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()
-            train_amps = ((train_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
+            #train_amps = ((train_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
@@ -256,7 +256,7 @@ for i_block in range(i_block_tmp,n_blocks):
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
             torch_fake_fft = torch_fake_fft[:,:,:,:,0]**2#torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
             fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=3).mean(axis=0).squeeze()
-            fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
+            #fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
             #numpy fft
             #fake_fft = np.fft.rfft(batch_fake.data.cpu().numpy(),axis=2)
             #fake_amps = np.abs(fake_fft).mean(axis=3).mean(axis=0).squeeze()
