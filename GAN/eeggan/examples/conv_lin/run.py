@@ -158,7 +158,7 @@ for i_block in range(i_block_tmp,n_blocks):
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2)))#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
-    train_tmp_fft = torch.log(train_tmp_fft+1)
+    train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = train_tmp_fft.mean()
     fft_std = train_tmp_fft.std()
     fft_max = torch.abs(train_tmp_fft).max()
@@ -193,8 +193,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
   
-                batch_fake_fft = torch.log(batch_fake_fft+1)
-                batch_real_fft = torch.log(batch_real_fft+1)
+                batch_fake_fft = torch.log(batch_fake_fft)
+                batch_real_fft = torch.log(batch_real_fft)
 
                 batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
                 batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
@@ -270,8 +270,8 @@ for i_block in range(i_block_tmp,n_blocks):
             logmin = np.min(np.log(train_amps))
             logmax = np.max(np.log(train_amps))
             #plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
-            plt.plot(freqs_tmp,np.log(fake_amps+1),label='Fake')
-            plt.plot(freqs_tmp,np.log(train_amps+1),label='Real')
+            plt.plot(freqs_tmp,np.log(fake_amps),label='Fake')
+            plt.plot(freqs_tmp,np.log(train_amps),label='Real')
             plt.title('Frequency Spektrum')
             plt.xlabel('Hz')
             plt.legend()
