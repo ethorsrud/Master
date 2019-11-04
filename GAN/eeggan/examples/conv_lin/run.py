@@ -75,7 +75,7 @@ train_mean = train.mean()
 train_std = train.std()
 train_max = np.abs(train).max()
 
-fft_train = np.abs(np.fft.rfft(train,axis=2))
+fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
 fft_mean = fft_train.mean()
 fft_std = fft_train.std()
@@ -186,9 +186,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2#+batch_real_fft[:,:,1:,:,1]**2)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2#+batch_real_fft[:,:,:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2#+batch_fake_fft[:,:,1:,:,1]**2)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2#+batch_fake_fft[:,:,:,:,1]**2)
                 
   
                 batch_fake_fft = torch.log(batch_fake_fft)
