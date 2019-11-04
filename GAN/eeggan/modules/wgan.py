@@ -363,7 +363,7 @@ class WGAN_I_Generator(GAN_Generator):
 			WGAN loss against evaluation of discriminator of generated samples
 			to be real
 		"""
-		self.pre_train(discriminator1)
+		#self.pre_train(discriminator1)
 		self.pre_train(discriminator2)
 		#self.pre_train(discriminator3)
 
@@ -378,11 +378,11 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
 		
-		disc = discriminator1(gen)
+		#disc = discriminator1(gen)
 		disc2 = discriminator2(fft)
 		#disc3 = discriminator3(autocor)
 
-		loss = disc.mean()
+		#loss = disc.mean()
 		loss2 = disc2.mean()
 		#loss3 = disc3.mean()
 
