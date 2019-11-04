@@ -255,7 +255,7 @@ for i_block in range(i_block_tmp,n_blocks):
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
             torch_fake_fft = torch_fake_fft[:,:,:,:,0]**2#torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
             fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=3).mean(axis=0).squeeze()
-            fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
+            #fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
             #numpy fft
             #fake_fft = np.fft.rfft(batch_fake.data.cpu().numpy(),axis=2)
             #fake_amps = np.abs(fake_fft).mean(axis=3).mean(axis=0).squeeze()
@@ -269,7 +269,7 @@ for i_block in range(i_block_tmp,n_blocks):
             logmin = np.min(np.log(train_amps))
             logmax = np.max(np.log(train_amps))
             #plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
-            plt.plot(freqs_tmp,np.log(fake_amps),label='Fake')
+            plt.plot(freqs_tmp,np.log(((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()),label='Fake')
             plt.plot(freqs_tmp,np.log(train_amps),label='Real')
             plt.title('Frequency Spektrum')
             plt.xlabel('Hz')
