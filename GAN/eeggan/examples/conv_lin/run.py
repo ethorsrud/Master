@@ -160,7 +160,7 @@ for i_block in range(i_block_tmp,n_blocks):
     train_tmp_fft = torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = train_tmp_fft.mean()
-    print(fft_mean.shape)
+    print(fft_mean)
     fft_std = train_tmp_fft.std()
     fft_max = torch.abs(train_tmp_fft).max()
 
