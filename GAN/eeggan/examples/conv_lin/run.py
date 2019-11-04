@@ -162,6 +162,7 @@ for i_block in range(i_block_tmp,n_blocks):
     fft_mean = train_tmp_fft.mean()
     fft_std = train_tmp_fft.std()
     fft_max = torch.abs(train_tmp_fft).max()
+    print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
 
 
 
