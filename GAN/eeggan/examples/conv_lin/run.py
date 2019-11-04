@@ -269,7 +269,7 @@ for i_block in range(i_block_tmp,n_blocks):
             logmin = np.min(np.log(train_amps))
             logmax = np.max(np.log(train_amps))
             #plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
-            plt.plot(freqs_tmp,((np.log(fake_amps)-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy,label='Fake')
+            plt.plot(freqs_tmp,((np.log(fake_amps)-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy(),label='Fake')
             plt.plot(freqs_tmp,np.log(train_amps),label='Real')
             plt.title('Frequency Spektrum')
             plt.xlabel('Hz')
