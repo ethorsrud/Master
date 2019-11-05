@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -52,10 +52,9 @@ random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
 datafreq = 500#250#128 #hz
-#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"BACICIV_2b.npy")
+#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
-
 train_new = []
 for i in range(int(train.shape[0]/input_length)):
     train_new.append(train[i*input_length:i*input_length+input_length])
@@ -63,10 +62,12 @@ train_new = np.array(train_new)
 train = train_new[:,:,:,np.newaxis]
 train = np.swapaxes(train,1,2)
 train = np.swapaxes(train,1,3)
-train = train[:,:,:,0][:,:,:,np.newaxis]
+#Only first channel
+#train = train[:,:,:,0][:,:,:,np.newaxis]
 n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
+
 train = train-train.mean()
 train = train/train.std()
 train = train/np.abs(train).max()
@@ -77,9 +78,9 @@ train_max = np.abs(train).max()
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
-fft_mean = fft_train.mean()
-fft_std = fft_train.std()
-fft_max = np.abs(fft_train).max()
+#fft_mean = fft_train.mean()
+#fft_std = fft_train.std()
+#fft_max = np.abs(fft_train).max()
 
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
@@ -246,7 +247,9 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
-            train_amps = np.abs(train_fft).mean(axis=3).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
+
+            #Originally mean over channels, but removed
+            train_amps = np.abs(train_fft).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
@@ -255,8 +258,9 @@ for i_block in range(i_block_tmp,n_blocks):
             #torch fft
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
             torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)#torch_fake_fft[:,:,:,:,0]**2
-            fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=3).mean(axis=0).squeeze()
-            #fake_amps = ((fake_amps-fft_mean.numpy())/fft_std.numpy())/fft_max.numpy()
+            
+            #Originally mean over channels, but removed
+            fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=0).squeeze()
             #numpy fft
             #fake_fft = np.fft.rfft(batch_fake.data.cpu().numpy(),axis=2)
             #fake_amps = np.abs(fake_fft).mean(axis=3).mean(axis=0).squeeze()
@@ -266,17 +270,18 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.plot(freqs_tmp,np.log(torch_fake_amps),label='torch')
             plt.show()
             """
-            plt.figure()
-            logmin = np.min(np.log(train_amps))
-            logmax = np.max(np.log(train_amps))
-            #plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
-            plt.plot(freqs_tmp,np.log(fake_amps),label='Fake')
-            plt.plot(freqs_tmp,np.log(train_amps),label='Real')
-            plt.title('Frequency Spektrum')
-            plt.xlabel('Hz')
-            plt.legend()
-            plt.savefig(os.path.join(outputpath,modelname%jobid+'_fft_%d_%d.png'%(i_block,i_epoch)))
-            plt.close()
+            for channel_i in range(fake_amps.shape[1]):
+                plt.figure()
+                logmin = np.min(np.log(train_amps[:,channel_i]))
+                logmax = np.max(np.log(train_amps[:,channel_i]))
+                plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
+                plt.plot(freqs_tmp,np.log(fake_amps[:,channel_i]),label='Fake')
+                plt.plot(freqs_tmp,np.log(train_amps[:,channel_i]),label='Real')
+                plt.title('Frequency Spektrum - Channel %i'%channel_i)
+                plt.xlabel('Hz')
+                plt.legend()
+                plt.savefig(os.path.join(outputpath,"Channel_%d"%channel_i+'_fft_%d_%d.png'%(i_block,i_epoch)))
+                plt.close()
 
             """
             graph = make_dot(batch_fake[0].data.cpu().numpy(),params = dict(generator.named_parameters()))
@@ -286,25 +291,24 @@ for i_block in range(i_block_tmp,n_blocks):
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
-
-
-            plt.figure(figsize=(20,10))
-            for i in range(1,21,2):
-                plt.subplot(20,2,i)
-                plt.plot(batch_fake[i].squeeze())
-                if i==1:
-                    plt.title("Fakes")
-                plt.xticks((),())
-                plt.yticks((),())
-                plt.subplot(20,2,i+1)
-                plt.plot(batch_real[i].squeeze())
-                if i==1:
-                    plt.title("Reals")
-                plt.xticks((),())
-                plt.yticks((),())
-            plt.subplots_adjust(hspace=0)
-            plt.savefig(os.path.join(outputpath,modelname%jobid+'_fakes_%d_%d.png'%(i_block,i_epoch)))
-            plt.close()
+            for channel_i in range(batch_fake.shape[3]):
+                plt.figure(figsize=(20,10))
+                for i in range(1,21,2):
+                    plt.subplot(20,2,i)
+                    plt.plot(batch_fake[i,:,:,channel_i].squeeze())
+                    if i==1:
+                        plt.title("Fakes")
+                    plt.xticks((),())
+                    plt.yticks((),())
+                    plt.subplot(20,2,i+1)
+                    plt.plot(batch_real[i,:,:,channel_i].squeeze())
+                    if i==1:
+                        plt.title("Reals")
+                    plt.xticks((),())
+                    plt.yticks((),())
+                plt.subplots_adjust(hspace=0)
+                plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_fakes_%d_%d.png'%(i_block,i_epoch)))
+                plt.close()
             """
             
             plt.figure(figsize=(10,10))
