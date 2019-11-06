@@ -157,8 +157,8 @@ for i_block in range(i_block_tmp,n_blocks):
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2)))#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = torch.log(train_tmp_fft)
     fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
-    fft_std = torch.std(train_tmp_fft,(0,2)).squeeze().cuda()
-    fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),axis=0)[0],axis=1)[0].squeeze().cuda()
+    fft_std = torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
+    fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
     print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
 
 
