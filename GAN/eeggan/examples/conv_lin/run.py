@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(2)
+torch.cuda.set_device(3)
 
 n_critic = 5
 n_batch = 56#64
@@ -156,9 +156,9 @@ for i_block in range(i_block_tmp,n_blocks):
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2)))#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = torch.log(train_tmp_fft)
-    fft_mean = train_tmp_fft.mean()
-    fft_std = train_tmp_fft.std()
-    fft_max = torch.abs(train_tmp_fft).max()
+    fft_mean = torch.mean(train_tmp_fft,axis=(0,2)).squeeze().cuda()
+    fft_std = torch.std(train_tmp_fft,axis=(0,2)).squeeze().cuda()
+    fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),axis=0)[0],axis=1)[0].squeeze().cuda()
     print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
 
 
@@ -267,6 +267,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.plot(freqs_tmp,np.log(torch_fake_amps),label='torch')
             plt.show()
             """
+
             for channel_i in range(fake_amps.shape[1]):
                 plt.figure()
                 logmin = np.min(np.log(train_amps[:,channel_i]))
@@ -274,6 +275,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
                 plt.plot(freqs_tmp,np.log(fake_amps[:,channel_i]),label='Fake')
                 plt.plot(freqs_tmp,np.log(train_amps[:,channel_i]),label='Real')
+                plt.fill_between(freqs_tmp,np.log(train_amps[:,channel_i])-fft_std[channel_i].cpu().numpy(),np.log(train_amps[:,channel_i])+fft_std[channel_i].cpu().numpy(),alpha=0.3,label="±std")
                 plt.title('Frequency Spektrum - Channel %i'%channel_i)
                 plt.xlabel('Hz')
                 plt.legend()
