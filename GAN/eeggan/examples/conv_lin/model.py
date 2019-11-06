@@ -35,7 +35,7 @@ Also changed in_filters,infilters to ----> in_filters,out_filters
 
 def create_disc_blocks(n_chans,base):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
+		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 
@@ -107,7 +107,7 @@ REMOVED (after Pixelnorm)
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
-								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
+								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm())
