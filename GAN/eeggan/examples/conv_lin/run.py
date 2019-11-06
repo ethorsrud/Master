@@ -30,7 +30,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -68,13 +68,9 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 
-train = train-train.mean()
-train = train/train.std()
-train = train/np.abs(train).max()
-
-train_mean = train.mean()
-train_std = train.std()
-train_max = np.abs(train).max()
+train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
+train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
+train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
