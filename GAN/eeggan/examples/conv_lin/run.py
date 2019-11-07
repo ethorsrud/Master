@@ -321,7 +321,7 @@ for i_block in range(i_block_tmp,n_blocks):
             freqs = fftpack.fftfreq(input_length)*sf
             mask = freqs>=0
             print(yf.shape)
-            print((yf.tranpose(3,0,1,2)).shape)
+            print((yf.transpose(3,0,1,2)).shape)
             yf = (yf.transpose(3,0,1,2)[mask]).transpose(1,2,3,0)
             freqs = freqs[mask]
             f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
