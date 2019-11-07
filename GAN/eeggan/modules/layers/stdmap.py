@@ -26,12 +26,10 @@ class StdMap1d(nn.Module):
 		super(StdMap1d,self).__init__()
 
 	def forward(self,input):
-		print(input.shape)
 		std = input-input.mean(dim=0,keepdim=True)
 		std = torch.sqrt((std**2).mean(dim=0)+1e-8).mean()
 		std_map = std.expand(input.size(0),1,input.size(2))
 		input = torch.cat((input,std_map),dim=1)
-		print(input.shape)
 		return input
 
 
