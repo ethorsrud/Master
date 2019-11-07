@@ -323,7 +323,7 @@ for i_block in range(i_block_tmp,n_blocks):
             yf = (yf.tranpose(3,0,1,2)[mask]).transpose(1,2,3,0)
             freqs = freqs[mask]
             f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
-            Pxx_den = Pxx_den.tranpose(0,1,3,2)
+            Pxx_den = Pxx_den.transpose(0,1,3,2)
             yf = yf.mean(axis=0).squeeze()
             Pxx_den = Pxx_den.mean(axis=0).squeeze()
             for channel_i in range(batch_fake.shape[3]):
