@@ -99,7 +99,7 @@ AC_discriminator = AC_Discriminator(n_chans)
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
-fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
+fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.0001,
                         one_sided_penalty=True,distance_weighting=True)
 AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
@@ -218,12 +218,12 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                
+                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             
-            fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+            
             z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
             z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
             loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[fft_mean,fft_std,fft_max])
