@@ -317,9 +317,9 @@ for i_block in range(i_block_tmp,n_blocks):
 
             #WELCH GRAPH
             sf = 500
-            mask = freqs>=0
             yf = np.abs(fft(batch_fake.transpose(0,1,3,2)).transpose(0,1,3,2))
             freqs = fftpack.fftfreq(input_length)*sf
+            mask = freqs>=0
             yf = yf[mask]
             freqs = freqs[mask]
             f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
