@@ -271,15 +271,17 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.plot(freqs_tmp,np.log(torch_fake_amps),label='torch')
             plt.show()
             """
-
+            
             for channel_i in range(fake_amps.shape[1]):
                 plt.figure()
+                log_std_fake = np.std(np.log(torch_fake_fft.data.cpu().numpy()),axis=0).squeeze()
+                log_std_real = np.std(np.log(train_fft),axis=0).squeeze()
                 logmin = np.min(np.log(train_amps[:,channel_i]))
                 logmax = np.max(np.log(train_amps[:,channel_i]))
                 plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
                 plt.plot(freqs_tmp,np.log(fake_amps[:,channel_i]),label='Fake')
                 plt.plot(freqs_tmp,np.log(train_amps[:,channel_i]),label='Real')
-                plt.fill_between(freqs_tmp,np.log(train_amps[:,channel_i])-fft_std[channel_i].cpu().numpy(),np.log(train_amps[:,channel_i])+fft_std[channel_i].cpu().numpy(),alpha=0.3,label="±std")
+                plt.fill_between(freqs_tmp,np.log(train_amps[:,channel_i])-log_std_real[:,channel_i],np.log(train_amps[:,channel_i])+log_std_real[:,channel_i],alpha=0.3,label="±std")
                 plt.title('Frequency Spektrum - Channel %i'%channel_i)
                 plt.xlabel('Hz')
                 plt.legend()
@@ -318,10 +320,8 @@ for i_block in range(i_block_tmp,n_blocks):
             #WELCH GRAPH
             sf = 500
             yf = np.abs(fft(batch_fake.transpose(0,1,3,2)).transpose(0,1,3,2))
-            freqs = fftpack.fftfreq(input_length)*sf
+            freqs = fftpack.fftfreq(batch_fake.shape[2])*sf
             mask = freqs>=0
-            print(yf.shape)
-            print((yf.transpose(3,0,1,2)).shape)
             yf = (yf.transpose(2,0,1,3)[mask]).transpose(1,2,0,3)
             freqs = freqs[mask]
             f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
@@ -330,8 +330,9 @@ for i_block in range(i_block_tmp,n_blocks):
             Pxx_den = Pxx_den.mean(axis=0).squeeze()
             for channel_i in range(batch_fake.shape[3]):
                 plt.figure()
-                plt.plot(freqs,yf/yf.sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
-                plt.plot(f,Pxx_den/Pxx_den.sum(),label("Welch"))
+                plt.title("Welch vs. Fourier channel %d"%channel_i)
+                plt.plot(freqs,yf[:,channel_i]/yf[:,channel_i].sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
+                plt.plot(f,Pxx_den[:,channel_i]/Pxx_den[:,channel_i].sum(),label=("Welch"))
                 plt.xlabel("Frequency [Hz]")
                 plt.ylabel("PSD [V**2/Hz]")
                 plt.semilogy()
