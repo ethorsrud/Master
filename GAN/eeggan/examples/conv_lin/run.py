@@ -23,6 +23,9 @@ import scipy.io
 from  datetime import datetime
 #from torchviz import make_dot
 from my_utils import functions
+from scipy import signal
+from scipy.fftpack import fft
+from scipy import fftpack
 
 #plt.switch_backend('agg')
 #Error tracebacking
@@ -193,8 +196,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.log(batch_fake_fft)
                 batch_real_fft = torch.log(batch_real_fft)
 
-                #batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
-                #batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
+                batch_fake_fft = ((batch_fake_fft-fft_mean)/fft_std)#/fft_max
+                batch_real_fft = ((batch_real_fft-fft_mean)/fft_std)#/fft_max
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
@@ -230,6 +233,7 @@ for i_block in range(i_block_tmp,n_blocks):
         if i_epoch%100 == 0:
             generator.eval()
             discriminator.eval()
+            fourier_discriminator.eval()
 
             print('Epoch: %d   Loss_F: %.3f   Loss_R: %.3f   Penalty: %.4f   Loss_G: %.3f'%(i_epoch,loss_d[0],loss_d[1],loss_d[2],loss_g))
             """
@@ -308,6 +312,31 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.subplots_adjust(hspace=0)
                 plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_fakes_%d_%d.png'%(i_block,i_epoch)))
                 plt.close()
+
+
+
+            #WELCH GRAPH
+            sf = 500
+            mask = freqs>=0
+            yf = np.abs(fft(batch_fake.transpose(0,1,3,2)).transpose(0,1,3,2))
+            freqs = fftpack.fftfreq(input_length)*sf
+            yf = yf[mask]
+            freqs = freqs[mask]
+            f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
+            Pxx_den = Pxx_den.tranpose(0,1,3,2)
+            yf = yf.mean(axis=0).squeeze()
+            Pxx_den = Pxx_den.mean(axis=0).squeeze()
+            for channel_i in range(batch_fake.shape[3]):
+                plt.figure()
+                plt.plot(freqs,yf/yf.sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
+                plt.plot(f,Pxx_den/Pxx_den.sum(),label("Welch"))
+                plt.xlabel("Frequency [Hz]")
+                plt.ylabel("PSD [V**2/Hz]")
+                plt.semilogy()
+                plt.legend()
+                plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_Fourier_Welch_%d_%d.png'%(i_block,i_epoch)))          
+                plt.close()
+
             """
             
             plt.figure(figsize=(10,10))
@@ -364,6 +393,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
             generator.train()
             discriminator.train()
+            fourier_discriminator.train()
 
 
     fade_alpha = 0.
