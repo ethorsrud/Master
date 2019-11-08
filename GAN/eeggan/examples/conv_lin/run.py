@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 torch.cuda.set_device(3)
 
 n_critic = 5
-n_batch = 56#64
+n_batch = 64#56#64
 input_length = 1536#768
 jobid = 0
 
@@ -198,15 +198,15 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
 
-                #fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
-                #fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
-                #real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
-                #real_std = torch.std(torch.std(batch_real_fft,0),1).squeeze()
+                fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
+                fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
+                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
+                real_std = torch.std(torch.std(batch_real_fft,0),1).squeeze()
                 #NORMALIZING OVER BATCH ONLY
-                fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
-                fake_std = torch.std(batch_fake_fft,0).squeeze()
-                real_mean = torch.mean(batch_real_fft,(0)).squeeze()
-                real_std = torch.std(batch_real_fft,0).squeeze()
+                #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
+                #fake_std = torch.std(batch_fake_fft,0).squeeze()
+                #real_mean = torch.mean(batch_real_fft,(0)).squeeze()
+                #real_std = torch.std(batch_real_fft,0).squeeze()
 
                 batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fft_max
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/fft_max
