@@ -346,7 +346,7 @@ class WGAN_I_Generator(GAN_Generator):
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,MSM):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
 		"""
 		Train generator for one batch of latent noise
 
@@ -373,8 +373,11 @@ class WGAN_I_Generator(GAN_Generator):
 		gen = self(batch_noise)
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2)#fft[:,:,:,:,0]**2
-		fft = torch.log(fft)
-		fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
+		#fft = torch.log(fft)
+		fft_mean = torch.mean(fft,(0,2)).squeeze()
+		fft_std = torch.std(torch.std(fft,0),1).squeeze()
+		fft = (fft-fft_mean)/fft_std
+		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
 		
@@ -385,7 +388,7 @@ class WGAN_I_Generator(GAN_Generator):
 		loss = disc.mean()
 		loss2 = disc2.mean()
 		#loss3 = disc3.mean()
-		#print("loss:",loss,"Loss2:",loss2)
+		print("loss:",loss,"Loss2:",loss2)
 		loss = (loss+loss2)/2.0
 		# Backprop gradient
 		loss.backward(mone)
