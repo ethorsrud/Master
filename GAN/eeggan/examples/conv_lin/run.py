@@ -33,7 +33,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 56#64
@@ -191,17 +191,22 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
-                batch_fake_fft = torch.log(batch_fake_fft)
-                batch_real_fft = torch.log(batch_real_fft)
+                #batch_fake_fft = torch.log(batch_fake_fft)
+                #batch_real_fft = torch.log(batch_real_fft)
 
-                fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
-                fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
-                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
-                real_std = torch.std(torch.std(batch_real_fft,0),1).squeeze()
+                #fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
+                #fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
+                #real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
+                #real_std = torch.std(torch.std(batch_real_fft,0),1).squeeze()
+                #NORMALIZING OVER BATCH ONLY
+                fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
+                fake_std = torch.std(batch_fake_fft,0).squeeze()
+                real_mean = torch.mean(batch_real_fft,(0)).squeeze()
+                real_std = torch.std(batch_real_fft,0).squeeze()
 
                 batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fft_max
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/fft_max
