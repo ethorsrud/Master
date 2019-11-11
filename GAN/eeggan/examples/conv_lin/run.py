@@ -33,9 +33,9 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
-n_critic = 5
+n_critic = 1#5
 n_batch = 64#56#64
 input_length = 1536#768
 jobid = 0
@@ -195,8 +195,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
-                batch_fake_fft = torch.log(batch_fake_fft)
-                batch_real_fft = torch.log(batch_real_fft)
+                #batch_fake_fft = torch.log(batch_fake_fft)
+                #batch_real_fft = torch.log(batch_real_fft)
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
