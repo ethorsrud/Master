@@ -33,7 +33,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 5
 n_batch = 64#56#64
@@ -157,13 +157,13 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2)))#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
+    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
     #train_tmp_fft = torch.log(train_tmp_fft)
     #train_mean = torch.mean(train_tmp,(0,2)).squeeze().cuda()
     #train_std = torch.std(torch.std(train_tmp,0),1).squeeze().cuda()
     fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
-    fft_std = torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
+    fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
     #print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
 
@@ -199,7 +199,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_real_fft = torch.log(batch_real_fft)
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
-                fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
+                #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
+                fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
                 real_mean = fft_mean#torch.mean(batch_real_fft,(0,2)).squeeze()
                 real_std = fft_std#torch.std(torch.std(batch_real_fft,0),1).squeeze()
                 #NORMALIZING OVER BATCH ONLY
@@ -213,12 +214,12 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-                """
+
                 plt.plot(batch_real[0,0,:,0].cpu().detach().numpy(),label="real")
                 plt.plot(batch_fake[0,0,:,0].cpu().detach().numpy(),label="fake")
                 plt.legend()
                 plt.show()
-                """
+
                 """
                 plt.figure()
                 plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy())
