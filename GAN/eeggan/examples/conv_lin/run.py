@@ -162,8 +162,8 @@ for i_block in range(i_block_tmp,n_blocks):
     #train_tmp_fft = torch.log(train_tmp_fft)
     #train_mean = torch.mean(train_tmp,(0,2)).squeeze().cuda()
     #train_std = torch.std(torch.std(train_tmp,0),1).squeeze().cuda()
-    #fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
-    #fft_std = torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
+    fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
+    fft_std = torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
     #print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
 
@@ -200,8 +200,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
                 fake_std = torch.std(torch.std(batch_fake_fft,0),1).squeeze()
-                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
-                real_std = torch.std(torch.std(batch_real_fft,0),1).squeeze()
+                real_mean = fft_mean#torch.mean(batch_real_fft,(0,2)).squeeze()
+                real_std = fft_std#torch.std(torch.std(batch_real_fft,0),1).squeeze()
                 #NORMALIZING OVER BATCH ONLY
                 #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
                 #fake_std = torch.std(batch_fake_fft,0).squeeze()
