@@ -386,15 +386,15 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
 		
-		disc = discriminator1(gen)
+		#disc = discriminator1(gen)
 		disc2 = discriminator2(fft)
 		#disc3 = discriminator3(autocor)
 
-		loss = disc.mean()
+		#loss = disc.mean()
 		loss2 = disc2.mean()
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
-		loss = (loss+loss2)/2.0
+		loss = loss2#(loss+loss2)/2.0
 		# Backprop gradient
 		loss.backward(mone)
 
