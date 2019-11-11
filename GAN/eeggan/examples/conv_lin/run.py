@@ -214,12 +214,12 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-
+                """
                 plt.plot(batch_real[0,0,:,0].cpu().detach().numpy(),label="real")
                 plt.plot(batch_fake[0,0,:,0].cpu().detach().numpy(),label="fake")
                 plt.legend()
                 plt.show()
-
+                """
                 """
                 plt.figure()
                 plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy())
