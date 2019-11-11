@@ -377,7 +377,6 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft = torch.log(fft)
 
 		fft_mean = torch.mean(fft,(0,2)).squeeze()
-		#    fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
 		fft_std = torch.sqrt(torch.mean((fft-fft_mean)**2,dim=(0,1,2)))
 		#NORMALIZING OVER BATCH ONLY
 		#fft_mean = torch.mean(fft,(0)).squeeze()

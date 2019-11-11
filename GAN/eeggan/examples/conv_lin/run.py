@@ -201,8 +201,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
-                real_mean = fft_mean#torch.mean(batch_real_fft,(0,2)).squeeze()
-                real_std = fft_std#torch.std(torch.std(batch_real_fft,0),1).squeeze()
+                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
+                real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
                 #NORMALIZING OVER BATCH ONLY
                 #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
                 #fake_std = torch.std(batch_fake_fft,0).squeeze()
