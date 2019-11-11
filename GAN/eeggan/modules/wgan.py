@@ -390,7 +390,7 @@ class WGAN_I_Generator(GAN_Generator):
 		disc2 = discriminator2(fft)
 		#disc3 = discriminator3(autocor)
 
-		#loss = disc.mean()
+		loss = disc.mean()
 		loss2 = disc2.mean()
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
