@@ -293,8 +293,8 @@ for i_block in range(i_block_tmp,n_blocks):
             
             for channel_i in range(fake_amps.shape[1]):
                 plt.figure()
-                log_std_fake = np.std(np.log(torch_fake_fft.data.cpu().numpy()),axis=0).squeeze()
-                log_std_real = np.std(np.log(train_fft),axis=0).squeeze()
+                log_std_fake = np.log(np.std(torch_fake_fft.data.cpu().numpy(),axis=0)).squeeze()
+                log_std_real = np.log(np.std(train_fft,axis=0)).squeeze()
                 logmin = np.min(np.log(train_amps[:,channel_i]))
                 logmax = np.max(np.log(train_amps[:,channel_i]))
                 plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
@@ -344,8 +344,8 @@ for i_block in range(i_block_tmp,n_blocks):
             mask = freqs>=0
             yf = (yf.transpose(2,0,1,3)[mask]).transpose(1,2,0,3)
             freqs = freqs[mask]
-            f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
-            f2,Pxx_den2 = signal.welch(batch_real.transpose(0,1,3,2),sf,nperseg=1024)
+            f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=input_length)
+            f2,Pxx_den2 = signal.welch(batch_real.transpose(0,1,3,2),sf,nperseg=input_length)
             Pxx_den = Pxx_den.transpose(0,1,3,2)
             Pxx_den2 = Pxx_den2.transpose(0,1,3,2)
             yf = yf.mean(axis=0).squeeze()
