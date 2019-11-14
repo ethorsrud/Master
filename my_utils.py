@@ -157,7 +157,7 @@ class functions():
         corr_matrix = np.zeros(shape=(n_channels,n_channels))
         for i in range(n_channels):
             channel_i = data[:,:,:,i].squeeze()
-            print("i=",i)
+            #print("i=",i)
             for j in range(n_channels):
                 channel_j = data[:,:,:,j].squeeze()
                 nominator = np.sum(channel_i*channel_j,axis=1)
