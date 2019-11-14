@@ -26,6 +26,7 @@ from my_utils import functions
 from scipy import signal
 from scipy.fftpack import fft
 from scipy import fftpack
+import seaborn as sns
 
 #plt.switch_backend('agg')
 #Error tracebacking
@@ -55,8 +56,8 @@ random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
 datafreq = 500#250#128 #hz
-#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
+#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
 train_new = []
 for i in range(int(train.shape[0]/input_length)):
@@ -291,7 +292,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.show()
             """
             
-            for channel_i in range(fake_amps.shape[1]):
+            for channel_i in range(2):
                 plt.figure()
                 log_std_fake = np.log(np.std(torch_fake_fft.data.cpu().numpy(),axis=0)).squeeze()
                 log_std_real = np.log(np.std(train_fft,axis=0)).squeeze()
@@ -316,7 +317,7 @@ for i_block in range(i_block_tmp,n_blocks):
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
-            for channel_i in range(batch_fake.shape[3]):
+            for channel_i in range(2):
                 plt.figure(figsize=(20,10))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
@@ -351,7 +352,7 @@ for i_block in range(i_block_tmp,n_blocks):
             yf = yf.mean(axis=0).squeeze()
             Pxx_den = Pxx_den.mean(axis=0).squeeze()
             Pxx_den2 = Pxx_den2.mean(axis=0).squeeze()
-            for channel_i in range(batch_fake.shape[3]):
+            for channel_i in range(2):
                 plt.figure()
                 plt.title("Welch graph fake vs real channel %d"%channel_i)
                 #plt.plot(freqs,yf[:,channel_i]/yf[:,channel_i].sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
@@ -364,6 +365,29 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_Fourier_Welch_%d_%d.png'%(i_block,i_epoch)))          
                 plt.close()
 
+            #CHANNEL CORRELATION
+            fig,ax = plt.subplots(1,2,figsize=(8,3))
+            corr_fake = functions.channel_correlation(batch_fake)
+            corr_real = functions.channel_correlation(batch_real)
+            sns.heatmap(
+                corr_fake, 
+                ax=ax[0],
+                vmin=0, vmax=1, center=0.5,
+                cmap=sns.diverging_palette(20, 220, n=200),
+                square=True,
+                cbar=False
+            )
+            sns.heatmap(
+                corr_real, 
+                ax=ax[1],
+                vmin=0, vmax=1, center=0.5,
+                cmap=sns.diverging_palette(20, 220, n=200),
+                square=True
+            )
+            ax[0].title.set_text('Fake')
+            ax[1].title.set_text('Real')
+            plt.savefig(os.path.join(outputpath,'Correlation_matrix'+'_Block_%d_epoch_%d.png'%(i_block,i_epoch)))          
+            plt.close()
             """
             
             plt.figure(figsize=(10,10))

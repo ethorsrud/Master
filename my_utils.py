@@ -5,6 +5,8 @@ from scipy.signal import savgol_filter
 import torch
 from scipy.linalg import sqrtm
 import os
+import seaborn as sns
+import sys
 """
 Just a file including self-written functions needed for the project
 """
@@ -149,7 +151,75 @@ class functions():
         covmean=covmean.real
         return dif+np.trace(sig1+sig2-2*covmean)
 
+    def channel_correlation(data):
+        n_channels = data.shape[3]
+        n_signals = data.shape[0]
+        corr_matrix = np.zeros(shape=(n_channels,n_channels))
+        for i in range(n_channels):
+            channel_i = data[:,:,:,i].squeeze()
+            print("i=",i)
+            for j in range(n_channels):
+                channel_j = data[:,:,:,j].squeeze()
+                nominator = np.sum(channel_i*channel_j,axis=1)
+                denominator = np.sum(channel_i**2,axis=1)*np.sum(channel_j**2,axis=1)
+                #nominator = np.diag((channel_i@channel_j.T))
+                #denominator = np.diag(np.sum(channel_i**2,axis=1)[:,np.newaxis]@np.sum(channel_j**2,axis=1)[:,np.newaxis].T)
+                corr_matrix[i,j] = np.mean(nominator/np.sqrt(denominator))
+        return corr_matrix
+"""
+data = os.path.normpath(os.getcwd()+os.sep+os.pardir+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
+data = np.load(data)
 
+train_new = []
+for i in range(int(data.shape[0]/1536)):
+    train_new.append(data[i*1536:i*1536+1536])
+train_new = np.array(train_new)
+train = train_new[:,np.newaxis,:,:]
+train = train[:64,:,:,:]
+corr = functions.channel_correlation(train)
+
+t = np.linspace(0,10,1536)
+signals_channel1 = np.sin(t)
+signals_channel2 = np.cos(t)
+signals_channel3 = np.sin(t+np.pi/4)
+signals_channel4 = signals_channel1.copy()
+channels = [signals_channel1,signals_channel2,signals_channel3,signals_channel4]
+data = np.zeros(shape=(100,1536,4))
+for i in range(4):
+    for j in range(100):
+        data[j,:,i] = channels[i].copy()
+
+data = data[:,np.newaxis,:,:]
+corr = functions.channel_correlation(data)
+
+print(corr)
+plt.plot(data[0,0,:,0],label="Channel1")
+plt.plot(data[0,0,:,1],label="Channel2")
+plt.plot(data[0,0,:,2],label="Channel3")
+plt.plot(data[0,0,:,3],label="Channel4")
+plt.legend()
+plt.show()
+
+fig,ax = plt.subplots(1,2,figsize=(8,3))
+
+sns.heatmap(
+    corr, 
+    ax=ax[0],
+    vmin=0, vmax=1, center=0.5,
+    cmap=sns.diverging_palette(20, 220, n=200),
+    square=True,
+    cbar=False
+)
+sns.heatmap(
+    corr, 
+    ax=ax[1],
+    vmin=0, vmax=1, center=0.5,
+    cmap=sns.diverging_palette(20, 220, n=200),
+    square=True,
+)
+
+plt.show()
+"""
 """
 #Testing autocorrelation
 x = torch.from_numpy(np.linspace(0,6*np.pi,500))
