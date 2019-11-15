@@ -22,7 +22,10 @@ class WeightScale(object):
 
 	def compute_weight(self, module):
 		w = getattr(module, self.name + '_unscaled')
-		w_to_investigate = w.detach().numpy()
+		try:
+			w_to_investigate = w.detach().numpy()
+		except:
+			w_to_investigate = w.data.cpu().numpy()
 		print("w finite?",np.all(np.isfinite(w_to_investigate)))
 		c = getattr(module, self.name + '_c')
 		print("c=",c)
