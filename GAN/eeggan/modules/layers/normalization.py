@@ -16,6 +16,7 @@ class PixelNorm(nn.Module):
 	Retrieved from http://arxiv.org/abs/1710.10196
 	"""
 	def forward(self,input,eps=1e-8):
+		print("Input from normalization finite?",np.all(np.isfinite(input)))
 		tmp = torch.sqrt(torch.pow(input,2).mean(dim=1,keepdim=True)+eps)
 		input = input/tmp
 		return input
