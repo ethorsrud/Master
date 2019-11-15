@@ -25,7 +25,7 @@ class WeightScale(object):
 		w_to_investigate = w.detach().numpy()
 		print("w finite?",np.all(np.isfinite(w_to_investigate)))
 		c = getattr(module, self.name + '_c')
-		c_to_investigate = c.detach().numpy()
+		c_to_investigate = c.data.cpu().numpy()
 		print("c finite?",np.all(np.isfinite(c_to_investigate)))
 		tmp = c*w
 		return tmp
