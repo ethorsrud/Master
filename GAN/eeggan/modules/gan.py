@@ -168,7 +168,7 @@ class GAN_Generator(GAN_Module):
 		betas : (float,float), optional
 			Betas for Adam
 		"""
-		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas,eps=1)
+		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.loss = torch.nn.BCELoss()
 		self.did_init_train = True
 

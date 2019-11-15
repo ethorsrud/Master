@@ -401,6 +401,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
 		loss = (loss+loss2)/2.0
+		print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
