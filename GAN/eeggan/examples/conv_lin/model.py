@@ -107,10 +107,9 @@ REMOVED (after Pixelnorm)
 """
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
+		return nn.Sequential(xrayscanner(),nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
-								xrayscanner(),
 								nn.LeakyReLU(0.2),
 								PixelNorm())
 
