@@ -34,7 +34,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 1#5
 n_batch = 64#56#64
@@ -97,7 +97,7 @@ discriminator = Discriminator(n_chans)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
 
-generator.train_init(alpha=lr,betas=(0.,0.99))
+generator.train_init(alpha=lr*0.1,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,

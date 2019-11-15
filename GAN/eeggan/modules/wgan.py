@@ -250,7 +250,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		"""
 		loss_fake.backward(one,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
-		print(loss_fake.grad)
 		loss_drift = 0
 		loss_center = 0
 		if self.eps_drift>0:
@@ -404,7 +403,6 @@ class WGAN_I_Generator(GAN_Generator):
 		loss = (loss+loss2)/2.0
 		# Backprop gradient
 		loss.backward(mone)
-
 		# Update parameters
 		self.update_parameters()
 
