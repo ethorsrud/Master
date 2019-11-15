@@ -30,6 +30,11 @@ class WeightScale(object):
 		c = getattr(module, self.name + '_c')
 		print("c=",c)
 		tmp = c*w
+		try:
+			tmp_to_investigate = tmp.detach().numpy()
+		except:
+			tmp_to_investigate = tmp.data.cpu().numpy()
+		print("tmp finite?",np.all(np.isfinite(tmp_to_investigate)))
 		return tmp
 
 	@staticmethod
