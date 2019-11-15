@@ -114,7 +114,7 @@ def create_gen_blocks(n_chans,z_vars):
 								PixelNorm())
 
 	def create_out_sequence(n_chans,in_filters):
-		return nn.Sequential(xrayscanner(),weight_scale(nn.Conv1d(in_filters,n_chans,1),
+		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,n_chans,1),
 														gain=calculate_gain('linear')),
 								Reshape([[0],[1],[2],1]),
 								PixelShuffle2d([1,n_chans]))
@@ -123,7 +123,7 @@ def create_gen_blocks(n_chans,z_vars):
 	blocks = []
 	#originally n_featuremaps*12
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(weight_scale(nn.Linear(z_vars,n_featuremaps*base),
+								nn.Sequential(xrayscanner(),weight_scale(nn.Linear(z_vars,n_featuremaps*base),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps,-1]),
