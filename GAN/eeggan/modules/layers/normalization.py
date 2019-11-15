@@ -15,12 +15,12 @@ class PixelNorm(nn.Module):
 	Progressive Growing of GANs for Improved Quality, Stability, and Variation.
 	Retrieved from http://arxiv.org/abs/1710.10196
 	"""
-	def forward(self,inputt,eps=1e-8):
-		input_to_investigate = inputt.data.cpu.numpy()
+	def forward(self,input,eps=1e-8):
+		input_to_investigate = input.data.cpu().numpy()
 		print("Input from normalization finite?",np.all(np.isfinite(input_to_investigate)))
 		tmp = torch.sqrt(torch.pow(input,2).mean(dim=1,keepdim=True)+eps)
-		inputt = inputt/tmp
-		return inputt
+		input = input/tmp
+		return input
 
 class LayerNorm(Module):
 	"""
