@@ -26,7 +26,7 @@ class WeightScale(object):
 			w_to_investigate = w.detach().numpy()
 		except:
 			w_to_investigate = w.data.cpu().numpy()
-		print("w finite?",np.all(np.isfinite(w_to_investigate)))
+		print("w finite?",np.where((np.isfinite(w_to_investigate)-1)*-1))
 		print("w minimum",np.min(w_to_investigate),"w maximum",np.max(w_to_investigate))
 		c = getattr(module, self.name + '_c')
 		print("c=",c)
