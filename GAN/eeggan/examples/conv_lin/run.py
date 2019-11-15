@@ -97,7 +97,7 @@ discriminator = Discriminator(n_chans)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
 
-generator.train_init(alpha=lr*10,betas=(0.,0.99))
+generator.train_init(alpha=lr*0.5,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
