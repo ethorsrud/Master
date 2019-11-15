@@ -8,8 +8,10 @@ import numpy as np
 import torch.nn.functional as F
 
 class xrayscanner(nn.Module):
-
-	def forward(self,input):
+    """
+    Just for debugging
+    """
+    def forward(self,input):
         input_for_investigation = input.data.cpu().numpy()
         print("IS IT FINITE?",np.all(np.isfinite(input_for_investigation)))
-		return input
+        return input
