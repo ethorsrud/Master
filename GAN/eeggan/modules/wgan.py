@@ -241,6 +241,12 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
+		#loss_fake_for_print = loss_fake.data.item()
+		#batch_fake_for_check = batch_fake.data.cpu().numpy()
+		"""
+		if not np.isfinite(loss_fake_for_print):
+			print(batch_fake_for_check)
+		"""
 		loss_fake.backward(one,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
 
