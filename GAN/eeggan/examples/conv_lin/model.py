@@ -10,7 +10,7 @@ from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGenerator
 							ProgressiveDiscriminator,ProgressiveDiscriminatorBlock
 from eeggan.modules.wgan import WGAN_I_Generator,WGAN_I_Discriminator
 from torch.nn.init import calculate_gain
-from eeggan.modules.layer.xray import xrayscanner
+from eeggan.modules.layers.xray import xrayscanner
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
