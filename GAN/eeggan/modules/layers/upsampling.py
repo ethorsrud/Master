@@ -8,12 +8,13 @@ import numpy as np
 import torch.nn.functional as F
 
 class upsample_layer(Module):
-	def __init__(self,mode):
-		self.mode = mode
+	def __init__(self,mode,scale_factor):
 		super(upsample_layer,self).__init__()
+		self.mode = mode
+		self.scale_factor = scale_factor
 
 	def forward(self,input):
-		return F.interpolate(input,mode=self.mode,scale_factor=2,align_corners=False)
+		return F.interpolate(input,mode=self.mode,scale_factor=self.scale_factor,align_corners=False)
 
 class Upscale1d(Module):
 	"""

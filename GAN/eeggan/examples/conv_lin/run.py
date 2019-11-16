@@ -37,6 +37,7 @@ torch.backends.cudnn.benchmark=True
 torch.cuda.set_device(3)
 
 n_critic = 1#5
+n_gen = 5
 n_batch = 64#56#64
 input_length = 1536#768
 jobid = 0
@@ -248,10 +249,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             
-            
-            z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
-            z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
+            for i_gen in range(n_gen):
+                z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
+                z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)

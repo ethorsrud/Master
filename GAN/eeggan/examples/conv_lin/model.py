@@ -107,7 +107,7 @@ REMOVED (after Pixelnorm)
 """
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(upsample_layer(mode='linear'),
+		return nn.Sequential(upsample_layer(mode='linear',scale_factor=2),
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
@@ -119,7 +119,8 @@ def create_gen_blocks(n_chans,z_vars):
 								Reshape([[0],[1],[2],1]),
 								PixelShuffle2d([1,n_chans]))
 	def create_fade_sequence(factor):
-		return nn.Upsample(mode='bilinear',scale_factor=(2,1))
+		#return nn.Upsample(mode='bilinear',scale_factor=(2,1))
+		return upsample_layer(mode='bilinear',scale_factor=(2,1))
 	blocks = []
 	#originally n_featuremaps*12
 	tmp_block = ProgressiveGeneratorBlock(
