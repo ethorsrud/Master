@@ -57,8 +57,8 @@ random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
 datafreq = 500#250#128 #hz
-#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500Hz.npy")
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500Hz.npy")
+#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
 train_new = []
 for i in range(int(train.shape[0]/input_length)):
