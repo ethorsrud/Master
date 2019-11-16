@@ -182,8 +182,25 @@ class GAN_Generator(GAN_Module):
 			p.requires_grad = False  # to avoid computation
 
 	def update_parameters(self):
+		"""
+		for yolo in self.parameters():
+			print(yolo.shape)
+			yolo_investigation = yolo.detach().cpu().numpy()
+			try:
+				yolo_grad_investigation = yolo.grad.data.cpu().numpy()
+			except:
+				yolo_grad_investigation = np.array([0])
+			if len(yolo_grad_investigation)!=1:
+				print("Min param =",np.min(yolo_investigation),"Max param =",np.max(yolo_investigation))
+			print("Parameter finite?",np.all(np.isfinite(yolo_investigation)))
+		"""
 		self.optimizer.step()
-
+		"""
+		for yolo in self.parameters():
+			print(yolo.shape)
+			yolo_investigation = yolo.detach().cpu().numpy()
+			print("Parameter still finite?",np.all(np.isfinite(yolo_investigation)))
+		"""
 	def train_batch(self, batch_noise, discriminator):
 		"""
 		Train generator for one batch of latent noise

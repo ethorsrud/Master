@@ -34,7 +34,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 1#5
 n_batch = 64#56#64
@@ -191,11 +191,12 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                batch_fake_for_investigation = batch_fake.data.cpu().numpy()
+                #batch_fake_for_investigation = batch_fake.data.cpu().numpy()
+                """
                 z_vars_for_investigation = z_vars.cpu().numpy()
                 if not np.all(np.isfinite(batch_fake_for_investigation)):
                     print("All z_vars finite?",np.all(np.isfinite(z_vars_for_investigation)))
-
+                """
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)

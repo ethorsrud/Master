@@ -47,7 +47,6 @@ class WeightScale(object):
 		weight = getattr(module, name)
 		# remove w from parameter list
 		del module._parameters[name]
-
 		#Constant from He et al. 2015
 		c = gain/np.sqrt(np.prod(list(weight.size())[1:]))
 		setattr(module, name + '_c', float(c))

@@ -348,9 +348,20 @@ class WGAN_I_Generator(GAN_Generator):
 		betas : (float,float), optional
 			Betas for Adam
 		"""
+		#NEW
+		self.c = 0.1
+		for p in self.parameters():
+			p.data.clamp_(-self.c,self.c)
+
+
 		self.loss = None
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
+	#NEW
+	def update_parameters(self):
+		super(WGAN_I_Generator,self).update_parameters()
+		for p in self.parameters():
+			p.data.clamp_(-self.c,self.c)
 
 	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
 		"""
@@ -401,7 +412,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
 		loss = (loss+loss2)/2.0
-		print("GENLOSS",loss)
+		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
