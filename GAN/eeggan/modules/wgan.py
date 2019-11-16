@@ -348,21 +348,23 @@ class WGAN_I_Generator(GAN_Generator):
 		betas : (float,float), optional
 			Betas for Adam
 		"""
+		"""
 		#NEW
 		self.c = 100
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
-
+		"""
 
 		self.loss = None
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 	#NEW
+	"""
 	def update_parameters(self):
 		super(WGAN_I_Generator,self).update_parameters()
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
-
+	"""
 	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
 		"""
 		Train generator for one batch of latent noise
