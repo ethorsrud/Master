@@ -356,7 +356,7 @@ class WGAN_I_Generator(GAN_Generator):
 		"""
 
 		self.loss = None
-		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
+		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas,weight_decay=0.01)
 		self.did_init_train = True
 	#NEW
 	"""
