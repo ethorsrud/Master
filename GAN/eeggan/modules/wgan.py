@@ -349,7 +349,7 @@ class WGAN_I_Generator(GAN_Generator):
 			Betas for Adam
 		"""
 		#NEW
-		self.c = 0.1
+		self.c = 100
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
 
