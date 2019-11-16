@@ -198,27 +198,27 @@ for i_block in range(i_block_tmp,n_blocks):
                 if not np.all(np.isfinite(batch_fake_for_investigation)):
                     print("All z_vars finite?",np.all(np.isfinite(z_vars_for_investigation)))
                 """
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=True),2,3)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=True),2,3)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
 
-                fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
+                #fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
-                fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
-                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
-                real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
+                #fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
+                #real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
+                #real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
                 #NORMALIZING OVER BATCH ONLY
                 #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
                 #fake_std = torch.std(batch_fake_fft,0).squeeze()
                 #real_mean = torch.mean(batch_real_fft,(0)).squeeze()
                 #real_std = torch.std(batch_real_fft,0).squeeze()
 
-                batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fft_max
-                batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/fft_max
+               # batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fft_max
+                #batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/fft_max
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
