@@ -3,7 +3,7 @@ from torch import nn
 from eeggan.modules.layers.reshape import Reshape,PixelShuffle2d
 from eeggan.modules.layers.normalization import PixelNorm
 from eeggan.modules.layers.weight_scaling import weight_scale
-from eeggan.modules.layers.upsampling import CubicUpsampling1d,CubicUpsampling2d
+from eeggan.modules.layers.upsampling import CubicUpsampling1d,CubicUpsampling2d,upsample_layer
 from eeggan.modules.layers.stdmap import StdMap1d
 from eeggan.modules.layers.fouriermap import FFTMap1d
 from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGeneratorBlock,\
@@ -107,7 +107,7 @@ REMOVED (after Pixelnorm)
 """
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
+		return nn.Sequential(upsample_layer(mode='linear'),
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),

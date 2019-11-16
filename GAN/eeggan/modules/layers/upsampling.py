@@ -7,6 +7,14 @@ from torch.nn.parameter import Parameter
 import numpy as np
 import torch.nn.functional as F
 
+class upsample_layer(Module):
+	def __init__(self,mode):
+		self.mode = mode
+		super(upsample_layer,self).__init__()
+
+	def forward(self,input):
+		return F.interpolate(input,mode=self.mode,scale_factor=2,align_corners=False)
+
 class Upscale1d(Module):
 	"""
 	1d Nearest-neighbor upsampling
