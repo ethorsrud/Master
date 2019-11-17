@@ -401,7 +401,7 @@ class WGAN_I_Generator(GAN_Generator):
 		gen = self(batch_noise)
 		
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
-		fft = fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2#fft[:,:,:,:,0]**2
+		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-8)#fft[:,:,:,:,0]**2
 
 		#fft = torch.log(fft)
 
