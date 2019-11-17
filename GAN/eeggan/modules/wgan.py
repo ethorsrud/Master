@@ -401,12 +401,8 @@ class WGAN_I_Generator(GAN_Generator):
 		gen = self(batch_noise)
 		
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
+		fft = fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2#fft[:,:,:,:,0]**2
 
-		fft_for_invest = fft.data.cpu().numpy()
-		print("finite 1?",np.all(np.isfinite(fft_for_invest)))
-		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2)#fft[:,:,:,:,0]**2
-		fft_for_invest = fft.data.cpu().numpy()
-		print("finite 2?",np.all(np.isfinite(fft_for_invest)))
 		#fft = torch.log(fft)
 
 		fft_mean = torch.mean(fft,(0,2)).squeeze()
