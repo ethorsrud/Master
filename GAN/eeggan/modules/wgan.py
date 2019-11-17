@@ -427,14 +427,14 @@ class WGAN_I_Generator(GAN_Generator):
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
-		"""
+		
 		for p in self.parameters():
 			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
 			try:
 				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
 			except:
 				continue
-		"""			
+				
 
 		self.update_parameters()
 
