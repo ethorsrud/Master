@@ -242,12 +242,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
 		
-		for p in self.parameters():
-			print("MAX param:",torch.max(torch.abs(p)),"MIN param:",torch.min(torch.abs(p)))
-			try:
-				print("MAX param_grad",torch.max(torch.abs(p.grad)),"MIN param_grad",torch.min(torch.abs(p.grad)))
-			except:
-				continue
 		#loss_fake_for_print = loss_fake.data.item()
 		#batch_fake_for_check = batch_fake.data.cpu().numpy()
 		"""
@@ -424,6 +418,15 @@ class WGAN_I_Generator(GAN_Generator):
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
+		"""
+		for p in self.parameters():
+			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
+			try:
+				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
+			except:
+				continue
+		"""			
+
 		self.update_parameters()
 
 		loss = loss.data.item()
