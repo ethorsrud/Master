@@ -274,6 +274,13 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_penalty = self.lambd*dist*loss_penalty
 		loss_penalty.backward()
 
+
+		for p in self.parameters():
+			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
+			try:
+				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
+			except:
+				continue	
 		# Update parameters
 		self.update_parameters()
 
