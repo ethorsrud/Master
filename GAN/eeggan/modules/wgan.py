@@ -242,6 +242,12 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
 		
+		for p in self.parameters():
+			print("MAX param:",torch.max(torch.abs(p)),"MIN param:",torch.min(torch.abs(p)))
+			try:
+				print("MAX param_grad",torch.max(torch.abs(p.grad)),"MIN param_grad",torch.min(torch.abs(p.grad)))
+			except:
+				continue
 		#loss_fake_for_print = loss_fake.data.item()
 		#batch_fake_for_check = batch_fake.data.cpu().numpy()
 		"""
@@ -356,7 +362,7 @@ class WGAN_I_Generator(GAN_Generator):
 		"""
 
 		self.loss = None
-		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas,weight_decay=0.01)
+		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 	#NEW
 	"""
