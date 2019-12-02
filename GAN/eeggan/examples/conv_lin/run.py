@@ -315,6 +315,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.title('Frequency Spektrum - Channel %i'%channel_i)
                 plt.xlabel('Hz')
                 plt.legend()
+                plt.semilogy()
                 plt.savefig(os.path.join(outputpath,"Channel_%d"%channel_i+'_fft_%d_%d.png'%(i_block,i_epoch)))
                 plt.close()
 
