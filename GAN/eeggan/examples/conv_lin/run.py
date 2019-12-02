@@ -26,6 +26,7 @@ from my_utils import functions
 from scipy import signal
 from scipy.fftpack import fft
 from scipy import fftpack
+import seaborn as sns
 
 #plt.switch_backend('agg')
 #Error tracebacking
@@ -36,6 +37,7 @@ torch.backends.cudnn.benchmark=True
 torch.cuda.set_device(3)
 
 n_critic = 1#5
+n_gen = 1
 n_batch = 64#56#64
 input_length = 1536#768
 jobid = 0
@@ -55,8 +57,8 @@ random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
 datafreq = 500#250#128 #hz
-#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500hz.npy")
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
+data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500Hz.npy")
+#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
 train_new = []
 for i in range(int(train.shape[0]/input_length)):
@@ -74,6 +76,7 @@ print(train.shape)
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -160,8 +163,8 @@ for i_block in range(i_block_tmp,n_blocks):
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
     #train_tmp_fft = torch.log(train_tmp_fft)
-    #train_mean = torch.mean(train_tmp,(0,2)).squeeze().cuda()
-    #train_std = torch.std(torch.std(train_tmp,0),1).squeeze().cuda()
+    train_mean = torch.mean(train_tmp,(0,2)).squeeze()
+    train_std = torch.sqrt(torch.mean((train_tmp-train_mean)**2,dim=(0,1,2)))
     fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
     fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
@@ -190,6 +193,13 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
+                #batch_fake_for_investigation = batch_fake.data.cpu().numpy()
+                """
+                z_vars_for_investigation = z_vars.cpu().numpy()
+                if not np.all(np.isfinite(batch_fake_for_investigation)):
+                    print("All z_vars finite?",np.all(np.isfinite(z_vars_for_investigation)))
+                """
+
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
@@ -209,8 +219,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #real_mean = torch.mean(batch_real_fft,(0)).squeeze()
                 #real_std = torch.std(batch_real_fft,0).squeeze()
 
-                batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fft_max
-                batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/fft_max
+                batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
+                batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
@@ -241,10 +251,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             
-            
-            z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
-            z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-            loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
+            for i_gen in range(n_gen):
+                z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
+                z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
@@ -291,7 +301,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.show()
             """
             
-            for channel_i in range(fake_amps.shape[1]):
+            for channel_i in range(2):
                 plt.figure()
                 log_std_fake = np.std(np.log(torch_fake_fft.data.cpu().numpy(),axis=0)).squeeze()
                 log_std_real = np.std(np.log(train_fft),axis=0).squeeze()
@@ -300,7 +310,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
                 plt.plot(freqs_tmp,np.log(fake_amps[:,channel_i]),label='Fake')
                 plt.plot(freqs_tmp,np.log(train_amps[:,channel_i]),label='Real')
-                plt.fill_between(freqs_tmp,np.log(train_amps[:,channel_i])-log_std_real[:,channel_i],np.log(train_amps[:,channel_i])+log_std_real[:,channel_i],alpha=0.3,label="±std")
+                plt.fill_between(freqs_tmp,np.log(fake_amps[:,channel_i])-log_std_fake[:,channel_i],np.log(fake_amps[:,channel_i])+log_std_fake[:,channel_i],alpha=0.3,label="±std fake")
+                plt.fill_between(freqs_tmp,np.log(train_amps[:,channel_i])-log_std_real[:,channel_i],np.log(train_amps[:,channel_i])+log_std_real[:,channel_i],alpha=0.3,label="±std real")
                 plt.title('Frequency Spektrum - Channel %i'%channel_i)
                 plt.xlabel('Hz')
                 plt.legend()
@@ -315,7 +326,7 @@ for i_block in range(i_block_tmp,n_blocks):
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
-            for channel_i in range(batch_fake.shape[3]):
+            for channel_i in range(2):
                 plt.figure(figsize=(20,10))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
@@ -343,15 +354,19 @@ for i_block in range(i_block_tmp,n_blocks):
             mask = freqs>=0
             yf = (yf.transpose(2,0,1,3)[mask]).transpose(1,2,0,3)
             freqs = freqs[mask]
-            f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=1024)
+            f,Pxx_den = signal.welch(batch_fake.transpose(0,1,3,2),sf,nperseg=input_length)
+            f2,Pxx_den2 = signal.welch(batch_real.transpose(0,1,3,2),sf,nperseg=input_length)
             Pxx_den = Pxx_den.transpose(0,1,3,2)
+            Pxx_den2 = Pxx_den2.transpose(0,1,3,2)
             yf = yf.mean(axis=0).squeeze()
             Pxx_den = Pxx_den.mean(axis=0).squeeze()
-            for channel_i in range(batch_fake.shape[3]):
+            Pxx_den2 = Pxx_den2.mean(axis=0).squeeze()
+            for channel_i in range(2):
                 plt.figure()
-                plt.title("Welch vs. Fourier channel %d"%channel_i)
-                plt.plot(freqs,yf[:,channel_i]/yf[:,channel_i].sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
-                plt.plot(f,Pxx_den[:,channel_i]/Pxx_den[:,channel_i].sum(),label=("Welch"))
+                plt.title("Welch graph fake vs real channel %d"%channel_i)
+                #plt.plot(freqs,yf[:,channel_i]/yf[:,channel_i].sum()*np.diff(f)[0]/np.diff(freqs)[0],alpha=0.5,label="Fourier")
+                plt.plot(freqs_tmp,Pxx_den2[:,channel_i]/Pxx_den[:,channel_i].sum(),label=("Real"))
+                plt.plot(freqs_tmp,Pxx_den[:,channel_i]/Pxx_den[:,channel_i].sum(),label=("Fake"))
                 plt.xlabel("Frequency [Hz]")
                 plt.ylabel("PSD [V**2/Hz]")
                 plt.semilogy()
@@ -359,6 +374,29 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_Fourier_Welch_%d_%d.png'%(i_block,i_epoch)))          
                 plt.close()
 
+            #CHANNEL CORRELATION
+            fig,ax = plt.subplots(1,2,figsize=(8,3))
+            corr_fake = functions.channel_correlation(batch_fake)
+            corr_real = functions.channel_correlation(batch_real)
+            sns.heatmap(
+                corr_fake, 
+                ax=ax[0],
+                vmin=0, vmax=1, center=0.5,
+                cmap=sns.diverging_palette(20, 220, n=200),
+                square=True,
+                cbar=False
+            )
+            sns.heatmap(
+                corr_real, 
+                ax=ax[1],
+                vmin=0, vmax=1, center=0.5,
+                cmap=sns.diverging_palette(20, 220, n=200),
+                square=True
+            )
+            ax[0].title.set_text('Fake')
+            ax[1].title.set_text('Real')
+            plt.savefig(os.path.join(outputpath,'Correlation_matrix'+'_Block_%d_epoch_%d.png'%(i_block,i_epoch)))          
+            plt.close()
             """
             
             plt.figure(figsize=(10,10))

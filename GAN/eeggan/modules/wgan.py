@@ -238,12 +238,18 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_real = fx_real.mean()
 		loss_real.backward(mone,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
-
+		#print("Loss_real:",loss_real)
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
+		#print("Loss_fake:",loss_fake)
+		#loss_fake_for_print = loss_fake.data.item()
+		#batch_fake_for_check = batch_fake.data.cpu().numpy()
+		"""
+		if not np.isfinite(loss_fake_for_print):
+			print(batch_fake_for_check)
+		"""
 		loss_fake.backward(one,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
-
 		loss_drift = 0
 		loss_center = 0
 		if self.eps_drift>0:
@@ -255,7 +261,8 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			tmp_center = self.eps_center*tmp_center**2
 			tmp_center.backward()
 			loss_center = tmp_center.data.item()
-
+		#print("Loss_center:",loss_center)
+		#print("Loss_drift:",loss_drift)
 		#loss_consistency_term
 		#if self.lambd_consistency_term>0:
 		#	batch_real_1
@@ -267,7 +274,15 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_penalty = self.calc_gradient_penalty(batch_real, batch_fake)
 		loss_penalty = self.lambd*dist*loss_penalty
 		loss_penalty.backward()
-
+		#print("Loss_penalty:",loss_penalty)
+		"""
+		for p in self.parameters():
+			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
+			try:
+				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
+			except:
+				continue	
+		"""
 		# Update parameters
 		self.update_parameters()
 
@@ -342,10 +357,23 @@ class WGAN_I_Generator(GAN_Generator):
 		betas : (float,float), optional
 			Betas for Adam
 		"""
+		"""
+		#NEW
+		self.c = 100
+		for p in self.parameters():
+			p.data.clamp_(-self.c,self.c)
+		"""
+
 		self.loss = None
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
-
+	#NEW
+	"""
+	def update_parameters(self):
+		super(WGAN_I_Generator,self).update_parameters()
+		for p in self.parameters():
+			p.data.clamp_(-self.c,self.c)
+	"""
 	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
 		"""
 		Train generator for one batch of latent noise
@@ -366,14 +394,15 @@ class WGAN_I_Generator(GAN_Generator):
 		self.pre_train(discriminator1)
 		self.pre_train(discriminator2)
 		#self.pre_train(discriminator3)
-
+		#with autograd.detect_anomaly():
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
-		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
-		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2)#fft[:,:,:,:,0]**2
 		
+		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
+		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
+
 		#fft = torch.log(fft)
 
 		fft_mean = torch.mean(fft,(0,2)).squeeze()
@@ -395,10 +424,19 @@ class WGAN_I_Generator(GAN_Generator):
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
 		loss = (loss+loss2)/2.0
+		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
-
 		# Update parameters
+		"""
+		for p in self.parameters():
+			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
+			try:
+				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
+			except:
+				continue
+		"""		
+
 		self.update_parameters()
 
 		loss = loss.data.item()

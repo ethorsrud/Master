@@ -3,13 +3,14 @@ from torch import nn
 from eeggan.modules.layers.reshape import Reshape,PixelShuffle2d
 from eeggan.modules.layers.normalization import PixelNorm
 from eeggan.modules.layers.weight_scaling import weight_scale
-from eeggan.modules.layers.upsampling import CubicUpsampling1d,CubicUpsampling2d
+from eeggan.modules.layers.upsampling import CubicUpsampling1d,CubicUpsampling2d,upsample_layer
 from eeggan.modules.layers.stdmap import StdMap1d
 from eeggan.modules.layers.fouriermap import FFTMap1d
 from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGeneratorBlock,\
 							ProgressiveDiscriminator,ProgressiveDiscriminatorBlock
 from eeggan.modules.wgan import WGAN_I_Generator,WGAN_I_Discriminator
 from torch.nn.init import calculate_gain
+from eeggan.modules.layers.xray import xrayscanner
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
@@ -106,7 +107,7 @@ REMOVED (after Pixelnorm)
 """
 def create_gen_blocks(n_chans,z_vars):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(nn.Upsample(mode='linear',scale_factor=2,align_corners=Align),
+		return nn.Sequential(upsample_layer(mode='linear',scale_factor=2),
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
@@ -118,7 +119,8 @@ def create_gen_blocks(n_chans,z_vars):
 								Reshape([[0],[1],[2],1]),
 								PixelShuffle2d([1,n_chans]))
 	def create_fade_sequence(factor):
-		return nn.Upsample(mode='bilinear',scale_factor=(2,1))
+		#return nn.Upsample(mode='bilinear',scale_factor=(2,1))
+		return upsample_layer(mode='bilinear',scale_factor=(2,1))
 	blocks = []
 	#originally n_featuremaps*12
 	tmp_block = ProgressiveGeneratorBlock(

@@ -22,8 +22,23 @@ class WeightScale(object):
 
 	def compute_weight(self, module):
 		w = getattr(module, self.name + '_unscaled')
+		"""
+		try:
+			w_to_investigate = w.detach().numpy()
+		except:
+			w_to_investigate = w.data.cpu().numpy()
+		print("w finite?",np.where((np.isfinite(w_to_investigate)-1)*-1))
+		print("w minimum",np.min(w_to_investigate),"w maximum",np.max(w_to_investigate))
+		"""
 		c = getattr(module, self.name + '_c')
 		tmp = c*w
+		"""
+		try:
+			tmp_to_investigate = tmp.detach().numpy()
+		except:
+			tmp_to_investigate = tmp.data.cpu().numpy()
+		print("tmp finite?",np.all(np.isfinite(tmp_to_investigate)))
+		"""
 		return tmp
 
 	@staticmethod
@@ -32,7 +47,6 @@ class WeightScale(object):
 		weight = getattr(module, name)
 		# remove w from parameter list
 		del module._parameters[name]
-
 		#Constant from He et al. 2015
 		c = gain/np.sqrt(np.prod(list(weight.size())[1:]))
 		setattr(module, name + '_c', float(c))
