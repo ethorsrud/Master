@@ -392,7 +392,7 @@ class WGAN_I_Generator(GAN_Generator):
 			to be real
 		"""
 		self.pre_train(discriminator1)
-		self.pre_train(discriminator2)
+		#self.pre_train(discriminator2)
 		#self.pre_train(discriminator3)
 		#with autograd.detect_anomaly():
 		mone = torch.FloatTensor([1]) * -1
@@ -416,14 +416,14 @@ class WGAN_I_Generator(GAN_Generator):
 		#autocor = functions.autocorrelation(gen)
 		
 		disc = discriminator1(gen)
-		disc2 = discriminator2(fft)
+		#disc2 = discriminator2(fft)
 		#disc3 = discriminator3(autocor)
 
 		loss = disc.mean()
-		loss2 = disc2.mean()
+		#loss2 = disc2.mean()
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
-		loss = (loss+loss2)/2.0
+		#loss = (loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
