@@ -34,7 +34,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(0)
 
 n_critic = 1#5
 n_gen = 1
@@ -305,17 +305,19 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.figure()
                 log_std_fake = np.std(torch_fake_fft.data.cpu().numpy(),axis=0).squeeze()
                 log_std_real = np.std(train_fft,axis=0).squeeze()
-                #logmin = np.min(np.log(train_amps[:,channel_i]))
-                #logmax = np.max(train_amps[:,channel_i])
-                #plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
+                logmin = np.min(train_amps[:,channel_i])
+                logmax = np.max(train_amps[:,channel_i])
+                plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
                 plt.plot(freqs_tmp,fake_amps[:,channel_i],label='Fake')
                 plt.plot(freqs_tmp,train_amps[:,channel_i],label='Real')
+                low_band = fake_amps[:,channel_i]-log_std_fake[:,channel_i]
+                print("Minimum low_band",np.min(low_band),"Maximum low_band",np.max(low_band))
                 plt.fill_between(freqs_tmp,fake_amps[:,channel_i]-log_std_fake[:,channel_i],fake_amps[:,channel_i]+log_std_fake[:,channel_i],alpha=0.3,label="±std fake")
                 plt.fill_between(freqs_tmp,train_amps[:,channel_i]-log_std_real[:,channel_i],train_amps[:,channel_i]+log_std_real[:,channel_i],alpha=0.3,label="±std real")
                 plt.title('Frequency Spektrum - Channel %i'%channel_i)
                 plt.xlabel('Hz')
                 plt.legend()
-                plt.semilogy()
+                #plt.semilogy()
                 plt.savefig(os.path.join(outputpath,"Channel_%d"%channel_i+'_fft_%d_%d.png'%(i_block,i_epoch)))
                 plt.close()
 
