@@ -22,4 +22,6 @@ spikes = np.where(spike_templates==np.array([0]))[0]
 template = templates[0]
 #Select the first channel where the template is not zero
 selected_channel = np.where(template!=0)[1][0]
-print(selected_channel)
+
+for spike in spikes:
+    print(spike)
