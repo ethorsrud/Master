@@ -14,5 +14,7 @@ hp_filtered = False
 data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
 spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64)
 spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32)
-print(spike_times.shape)
-print(spike_templates.shape)
+
+#Testing to extract every spike with template 0 
+np.where(spike_templates=np.array([0]))
+    
