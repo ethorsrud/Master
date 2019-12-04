@@ -24,9 +24,9 @@ template = templates[0]
 #Select the first channel where the template is not zero
 selected_channel = np.where(template!=0)[1][0]
 
-for spike in spikes:
-    for i in range(247):
-        plt.plot(data[i,int(spike_times[int(spike)]):(int(spike_times[int(spike)])+82)]/amplitudes[int(spike)])
-    break
+#for spike in spikes:
+for i in range(247):
+    plt.plot(data[i,int(spike_times[int(spike[0])]):(int(spike_times[int(spike[0])])+82)]/amplitudes[int(spike[0])])
+
 plt.savefig("/home/eirith/Spike_output/test.png",dpi=400)
 plt.close()
