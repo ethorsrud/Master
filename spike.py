@@ -25,7 +25,8 @@ template = templates[0]
 selected_channel = np.where(template!=0)[1][0]
 
 for spike in spikes:
-    plt.plot(data[0,int(spike_times[int(spike)]):(int(spike_times[int(spike)])+82)]/amplitudes[int(spike)])
-
+    for i in range(247):
+        plt.plot(data[i,int(spike_times[int(spike)]):(int(spike_times[int(spike)])+82)]/amplitudes[int(spike)])
+    break
 plt.savefig("/home/eirith/Spike_output/test.png",dpi=400)
 plt.close()
