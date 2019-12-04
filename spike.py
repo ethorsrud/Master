@@ -16,5 +16,6 @@ spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).
 spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32)
 
 #Testing to extract every spike with template 0 
-print(np.where(spike_templates==np.array([0])))
+spikes = np.where(spike_templates==np.array([0]))[0]
+print("Number of spikes with template 0:",spikes.shape)
     
