@@ -17,8 +17,8 @@ spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates
 templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
 templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy")).astype(np.float64) #[nTemplates,nTempChannels]
 
-#Testing to extract every spike with template 0 
-spikes = np.where(spike_templates==np.array([0]))[0]
+#Testing to extract first 100 spikes with template 0 
+spikes = np.where(spike_templates==np.array([0]))[0][:100]
 template = templates[0]
 #Select the first channel where the template is not zero
 selected_channel = np.where(template!=0)[1][0]
