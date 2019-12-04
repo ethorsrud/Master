@@ -20,6 +20,6 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 #Testing to extract every spike with template 0 
 spikes = np.where(spike_templates==np.array([0]))[0]
 template = templates[0]
-#Select a channel where the template is not zero
-selected_channel = np.where(template!=0)
+#Select the first channel where the template is not zero
+selected_channel = np.where(template!=0)[1][0]
 print(selected_channel)
