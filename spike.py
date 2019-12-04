@@ -16,6 +16,7 @@ spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).
 spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
 templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy")).astype(np.float64) #[nTemplates,nTempChannels]
+amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.float64)
 
 #Testing to extract first 100 spikes with template 0 
 spikes = np.where(spike_templates==np.array([0]))[0][:100]
@@ -24,7 +25,7 @@ template = templates[0]
 selected_channel = np.where(template!=0)[1][0]
 
 for spike in spikes:
-    plt.plot(data[0,spike:(spike+82)],alpha=0.2)
+    plt.plot(data[0,spike_times[spike]:(spike_times[spike]+82)],alpha=0.2)
 
 plt.savefig("/home/eirith/Spike_output/test.png")
 plt.close()
