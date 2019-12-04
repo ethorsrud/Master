@@ -13,6 +13,6 @@ hp_filtered = False
 
 data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
 spike_times = np.load(os.path.normpath(kilosort_path+"spike_times.npy")).astype(np.uint64)
-spike_templates = np.load(os.path.normpath(kilosort_path+"spike_templates.npy").astype(np.uint32)
+spike_templates = np.load(os.path.normpath(kilosort_path+"spike_templates.npy")).astype(np.uint32)
 print(spike.times.shape)
 print(spike_templates.shape)
