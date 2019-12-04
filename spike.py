@@ -27,5 +27,5 @@ selected_channel = np.where(template!=0)[1][0]
 for spike in spikes:
     plt.plot(data[0,int(spike_times[int(spike)]):(int(spike_times[int(spike)])+82)],alpha=0.2)
 
-plt.savefig("/home/eirith/Spike_output/test.png")
+plt.savefig("/home/eirith/Spike_output/test.png",dpi=400)
 plt.close()
