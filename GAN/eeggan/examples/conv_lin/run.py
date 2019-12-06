@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 5
+n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
 input_length = 1536#768
@@ -77,6 +77,7 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
+quit()
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -246,7 +247,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                #fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
