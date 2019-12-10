@@ -77,7 +77,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
-train = train.astype(np.float32)
+train = train.astype(np.float16)
 
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
