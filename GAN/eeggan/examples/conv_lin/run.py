@@ -50,13 +50,43 @@ block_epochs = [400,800,800,800,800,800]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
+#Spike data start
+kilosort_path = os.path.normpath(os.getcwd()+7*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
+dat_path = os.path.normpath(kilosort_path+os.sep+os.pardir+os.sep+"continuous.dat")
+n_channels_dat = 384
+data_len = 112933688832
+dtype = 'int16'
+offset = 0
+sample_rate = 30000
+hp_filtered = False
+
+spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
+spike_data_small = spike_data[:2,:1536*760].T
+print(spike_data_small.shape)
+
+train_new = []
+for i in range(int(spike_data_small.shape[0]/input_length)):
+    train_new.append(spike_data_small[i*input_length:i*input_length+input_length])
+train_new = np.array(train_new)
+train = train_new[:,:,:,np.newaxis]
+train = np.swapaxes(train,1,2)
+train = np.swapaxes(train,1,3)
+#Only first channel
+#train = train[:,:,:,0][:,:,:,np.newaxis]
+n_chans = train.shape[3]
+print("Number of channels:",n_chans)
+print(train.shape)
+#Spike data end
+train = train.astype(np.float32)
+
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
 torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
-datafreq = 500#250#128 #hz
+datafreq = 30000#500#250#128 #hz
+"""
 data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500Hz.npy")
 #data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
 train = np.load(data).astype(np.float32)
@@ -72,12 +102,10 @@ train = np.swapaxes(train,1,3)
 n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
-
+"""
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
-
-quit()
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
