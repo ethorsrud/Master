@@ -39,7 +39,7 @@ torch.cuda.set_device(3)
 n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
-input_length = 1536#768
+input_length = 30720#1536#768
 jobid = 0
 
 n_z = 200
@@ -61,7 +61,7 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:2,:1536*760].T
+spike_data_small = spike_data[:2,:input_length*760].T
 print(spike_data_small.shape)
 
 train_new = []
