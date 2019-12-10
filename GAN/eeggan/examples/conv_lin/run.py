@@ -39,7 +39,7 @@ torch.cuda.set_device(3)
 n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
-input_length = 30720#1536#768
+input_length = 15360#30720#1536#768
 jobid = 0
 
 n_z = 200
@@ -107,7 +107,6 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
-train = train.astype(np.float16)
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
