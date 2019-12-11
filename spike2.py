@@ -28,7 +28,8 @@ small_n_channels = 4
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
-small_data = data[:small_n_channels,:seconds_of_data*sample_rate]
+offset=200
+small_data = data[offset:(offset+small_n_channels),:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
 print("Data shape:",small_data.shape)
