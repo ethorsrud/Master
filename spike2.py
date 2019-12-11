@@ -37,7 +37,7 @@ geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
 small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 print("Yeah that worked ")
-
+print(small_data.shape)
 fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[1]),fft)
 plt.savefig("FFT_small_data_BP.png")
