@@ -21,13 +21,13 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
-seconds_of_data = 10
+seconds_of_data = 5
 small_n_channels = 4
 small_data = data[:small_n_channels,:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
 print("Data shape:",small_data.shape)
-fft = np.abs(np.fft.rfft(small_data))
+fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[0]),fft)
 plt.savefig("FFT_small_data.png")
 plt.close()
@@ -38,7 +38,7 @@ recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_
 small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 print("Yeah that worked ")
 
-fft = np.abs(np.fft.rfft(small_data))
+fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[1]),fft)
 plt.savefig("FFT_small_data_BP.png")
 plt.close()
