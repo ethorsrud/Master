@@ -65,11 +65,11 @@ wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_af
                                           save_as_features=True, verbose=True)
 
 print(sorting.get_shared_unit_spike_feature_names())
-print(wf[2].shape)
+print(wf[0].shape)
 
 fig, ax = plt.subplots()
-ax.plot(wf[2][:, 2, :].T, color='k', lw=0.3)
-ax.plot(wf[3][:, 2, :].T, color='r', lw=0.3)
-ax.plot(wf[4][:, 2, :].T, color='b', lw=0.3)
+ax.plot(wf[0][:, 0, :].T, color='k', lw=0.3)
+ax.plot(wf[1][:, 0, :].T, color='r', lw=0.3)
+ax.plot(wf[20][:, 0, :].T, color='b', lw=0.3)
 fig.savefig('spikes.png',dpi=400)
 plt.close(fig)
