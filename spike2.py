@@ -32,8 +32,6 @@ small_data = data[:small_n_channels,:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
 print("Data shape:",small_data.shape)
-small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
-small_data = small_data.get_traces()
 """
 fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[1]),fft.T)
@@ -45,6 +43,7 @@ geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
 small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 small_data = small_data.get_traces()
+recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
 """
 fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[1]),fft.T)
