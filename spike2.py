@@ -23,12 +23,12 @@ channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).
 
 
 
-seconds_of_data = 10
+seconds_of_data = 15
 small_n_channels = 4
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
-offset=200
+offset=240
 small_data = data[offset:(offset+small_n_channels),:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
@@ -42,7 +42,7 @@ plt.close()
 geom = np.zeros((small_n_channels,2))
 geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
-small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=16000)
+small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 small_data = small_data.get_traces()
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
 """
