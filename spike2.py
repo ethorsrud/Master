@@ -27,8 +27,7 @@ seconds_of_data = 5
 small_n_channels = 4
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
-print(labels.shape)
-print(times.shape)
+
 small_data = data[:small_n_channels,:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
@@ -42,14 +41,14 @@ plt.close()
 geom = np.zeros((small_n_channels,2))
 geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
-small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
-print("Yeah that worked ")
-small_data = small_data.get_traces()
-print(small_data.shape)
+#small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
+#small_data = small_data.get_traces()
 """
 fft = np.abs(np.fft.rfft(small_data,axis=1))
 plt.plot(np.linspace(0,15001,fft.shape[1]),fft.T)
 plt.savefig("FFT_small_data_BP.png")
 plt.close()
 """
-
+sorting = se.NumpySortingExtractor()
+sorting.set_times_labels(times=times,labels=labels)
+sorting.set_sampling_freqency(sampling_frequency=sample_rate)
