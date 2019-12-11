@@ -51,4 +51,4 @@ plt.close()
 """
 sorting = se.NumpySortingExtractor()
 sorting.set_times_labels(times=times,labels=labels)
-sorting.set_sampling_freqency(sampling_frequency=sample_rate)
+sorting.set_sampling_frequency(sampling_frequency=sample_rate)
