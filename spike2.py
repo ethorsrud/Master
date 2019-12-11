@@ -25,8 +25,9 @@ channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).
 
 seconds_of_data = 5
 small_n_channels = 4
-spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
-print("New_spike_time",spike_times_small.shape)
+times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
+print(spike_times)
+print(times)
 small_data = data[:small_n_channels,:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
