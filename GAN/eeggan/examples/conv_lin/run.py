@@ -39,10 +39,10 @@ torch.cuda.set_device(3)
 n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
-input_length = 12288#30720#1536#768
+input_length = 10240#12288#30720#1536#768
 jobid = 0
 
-n_z = 200
+n_z = 160#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 400.#2000.

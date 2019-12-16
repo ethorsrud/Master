@@ -15,7 +15,7 @@ from eeggan.modules.layers.xray import xrayscanner
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25
 #base = starting samples => base = input_size/(2**N_blocks)
-base = int(12288/(2**6))#int(1536/(2**6))
+base = int(10240/(2**6))#int(1536/(2**6))
 """
 Align corners-error
 UserWarning: Default upsampling behavior when mode=linear is changed to align_corners=False since 0.4.0.
@@ -123,12 +123,19 @@ def create_gen_blocks(n_chans,z_vars):
 		return upsample_layer(mode='bilinear',scale_factor=(2,1))
 	blocks = []
 	#originally n_featuremaps*12
+	"""
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(weight_scale(nn.Linear(z_vars,n_featuremaps*base),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps,-1]),
 												create_conv_sequence(n_featuremaps,n_featuremaps)),
+								create_out_sequence(n_chans,n_featuremaps),
+								create_fade_sequence(2)
+								)
+	"""
+	tmp_block = ProgressiveGeneratorBlock(
+								create_conv_sequence(1,n_featuremaps)),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
