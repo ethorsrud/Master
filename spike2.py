@@ -40,6 +40,8 @@ plt.close()
 """
 geom = np.zeros((small_n_channels,2))
 geom[:,0] = range(small_n_channels)
+geom = np.zeros((n_channels_dat,2))
+geom[:,0] = range(n_channels_dat)
 recording = se.NumpyRecordingExtractor(timeseries=data,geom=geom,sampling_frequency=sample_rate)
 #recording = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
