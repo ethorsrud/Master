@@ -23,12 +23,12 @@ channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).
 
 
 
-seconds_of_data = 15
+seconds_of_data = 10
 small_n_channels = 4
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
-offset=100
+offset=240
 small_data = data[offset:(offset+small_n_channels),:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
@@ -42,7 +42,7 @@ plt.close()
 geom = np.zeros((small_n_channels,2))
 geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
-small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
+small_data = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=30000)
 small_data = small_data.get_traces()
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
 """
@@ -68,8 +68,20 @@ print(sorting.get_shared_unit_spike_feature_names())
 print(wf[0].shape)
 
 fig, ax = plt.subplots()
-ax.plot(wf[0][:, 0, :].T, color='k', lw=0.3)
-ax.plot(wf[1][:, 0, :].T, color='r', lw=0.3)
-ax.plot(wf[15][:, 0, :].T, color='b', lw=0.3)
+#ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
+ax.plot(wf[5][:, 3, :].T, color='r', lw=0.3)
+#ax.plot(wf[2][:, 3, :].T, color='b', lw=0.3)
 fig.savefig('spikes.png',dpi=400)
+plt.close(fig)
+
+templates_plot = st.postprocessing.get_unit_templates(recording, sorting, max_spikes_per_unit=200,
+                                                 save_as_property=True, verbose=True)
+print(templates_plot[6].shape)
+fig, ax = plt.subplots()
+#ax.plot(templates_plot[0].T, color='k')
+ax.plot(wf[15][:, 0, :].T, color='b', lw=0.3)
+ax.plot(templates_plot[15][0].T, color='r',alpha=0.3)
+#ax.plot(templates_plot[2].T, color='b')
+
+fig.savefig('templates.png',dpi=400)
 plt.close(fig)
