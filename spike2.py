@@ -23,7 +23,7 @@ channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).
 
 
 seconds_of_data = 10
-small_n_channels = 10
+small_n_channels = 20
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
@@ -64,10 +64,11 @@ wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_af
                                           save_as_features=True, verbose=True)
 
 print(sorting.get_shared_unit_spike_feature_names())
-print(wf[400].shape)
+
 max_chan = st.postprocessing.get_unit_max_channels(recording, sorting, save_as_property=True, verbose=True)
 print("Max_chan: ",max_chan)
 print("MAx_chan_len: ",len(max_chan))
+
 
 fig, ax = plt.subplots()
 #ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
@@ -78,11 +79,12 @@ plt.close(fig)
 
 templates_plot = st.postprocessing.get_unit_templates(recording, sorting, max_spikes_per_unit=200,
                                                  save_as_property=True, verbose=True)
-fig, ax = plt.subplots()
-#ax.plot(templates_plot[0].T, color='k')
-ax.plot(wf[0][:, 7, :].T, color='b', lw=0.3)
-ax.plot(templates_plot[0][7].T, color='r',alpha=0.3)
-#ax.plot(templates_plot[2].T, color='b')
+for i in range(10):
+    fig, ax = plt.subplots()
+    #ax.plot(templates_plot[0].T, color='k')
+    ax.plot(wf[i][:,max_chan[i], :].T, color='b', lw=0.3)
+    ax.plot(templates_plot[i][max_chan[i]].T, color='r',alpha=0.3)
+    #ax.plot(templates_plot[2].T, color='b')
 
-fig.savefig('templates.png',dpi=400)
-plt.close(fig)
+    fig.savefig('templates_%i.png'%i,dpi=400)
+    plt.close(fig)
