@@ -64,8 +64,8 @@ wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_af
                                           save_as_features=True, verbose=True)
 
 print(sorting.get_shared_unit_spike_feature_names())
-print(wf[500].shape)
-print("wf-shape: ",wf.get_traces().shape)
+print(wf[400].shape)
+print("wf-shape: ",wf.shape)
 
 fig, ax = plt.subplots()
 #ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
