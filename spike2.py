@@ -22,7 +22,6 @@ amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).as
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
 
-
 seconds_of_data = 10
 small_n_channels = 4
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
@@ -66,6 +65,7 @@ wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_af
 
 print(sorting.get_shared_unit_spike_feature_names())
 print(wf[0].shape)
+print("wf-shape: ",wf.get_traces().shape)
 
 fig, ax = plt.subplots()
 #ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
