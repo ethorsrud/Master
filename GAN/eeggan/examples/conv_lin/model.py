@@ -134,7 +134,7 @@ def create_gen_blocks(n_chans,z_vars):
 								create_fade_sequence(2)
 								)
 	"""
-
+#
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],1,-1]),
 								create_conv_sequence(1,n_featuremaps)),
