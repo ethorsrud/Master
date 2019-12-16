@@ -62,7 +62,7 @@ st2_print = sorting.get_unit_spike_train(unit_id=2, start_frame=0, end_frame=4*3
 print('Num. events for first four seconds of unit 2 = {}'.format(len(st2_print)))
 
 wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_after=1,
-                                          save_as_features=True, verbose=True)
+                                          save_as_features=True, verbose=False)
 
 print(sorting.get_shared_unit_spike_feature_names())
 
