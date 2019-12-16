@@ -22,12 +22,12 @@ amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).as
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
 
-seconds_of_data = 10
-small_n_channels = 20
+seconds_of_data = 15
+small_n_channels = 25
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
-offset=240
+offset=200
 small_data = data[offset:(offset+small_n_channels),:seconds_of_data*sample_rate]
 print("Small data loaded")
 small_data = small_data.astype(np.float32)
