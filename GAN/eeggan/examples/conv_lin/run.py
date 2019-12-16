@@ -221,6 +221,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
+                print(z_vars.shape)
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 #batch_fake_for_investigation = batch_fake.data.cpu().numpy()
