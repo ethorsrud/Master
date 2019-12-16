@@ -65,7 +65,8 @@ wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_af
 
 print(sorting.get_shared_unit_spike_feature_names())
 print(wf[400].shape)
-print("wf-shape: ",wf.shape)
+max_chan = st.postprocessing.get_unit_max_channels(recording, sorting, save_as_property=True, verbose=True)
+print("Max_chan: ",max_chan)
 
 fig, ax = plt.subplots()
 #ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
