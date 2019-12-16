@@ -14,4 +14,5 @@ class xrayscanner(nn.Module):
     def forward(self,input):
         input_for_investigation = input.data.cpu().numpy()
         print("IS IT FINITE?",np.all(np.isfinite(input_for_investigation)))
+        print(input_for_investigation.shape)
         return input
