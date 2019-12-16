@@ -76,7 +76,7 @@ plt.close(fig)
 
 templates_plot = st.postprocessing.get_unit_templates(recording, sorting, max_spikes_per_unit=200,
                                                  save_as_property=True, verbose=True)
-print(templates_plot[6].shape)
+print(templates_plot.get_traces().shape)
 fig, ax = plt.subplots()
 #ax.plot(templates_plot[0].T, color='k')
 ax.plot(wf[15][:, 0, :].T, color='b', lw=0.3)
