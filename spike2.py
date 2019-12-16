@@ -41,8 +41,9 @@ plt.close()
 geom = np.zeros((small_n_channels,2))
 geom[:,0] = range(small_n_channels)
 recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
-recording = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
 recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
+recording = st.preprocessing.bandpass_filter(recording,freq_min=300,freq_max=6000)
+
 #recording = st.preprocessing.resample(recording, 1000)
 #small_data = small_data.get_traces()
 #recording = se.NumpyRecordingExtractor(timeseries=small_data,geom=geom,sampling_frequency=sample_rate)
@@ -63,7 +64,7 @@ st2_print = sorting.get_unit_spike_train(unit_id=2, start_frame=0, end_frame=4*3
 print('Num. events for first four seconds of unit 2 = {}'.format(len(st2_print)))
 
 wf = st.postprocessing.get_unit_waveforms(recording, sorting, ms_before=1, ms_after=2,
-                                          save_as_features=True, verbose=True,max_spikes_per_unit=100)
+                                          save_as_features=True, verbose=True)
 
 print(sorting.get_shared_unit_spike_feature_names())
 
