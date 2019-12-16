@@ -23,7 +23,7 @@ channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).
 
 
 seconds_of_data = 10
-small_n_channels = 4
+small_n_channels = 10
 times = spike_times_small = spike_times[spike_times<(seconds_of_data*sample_rate)]
 labels = spike_templates[:len(times)]
 
