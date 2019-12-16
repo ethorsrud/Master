@@ -111,6 +111,10 @@ def create_gen_blocks(n_chans,z_vars):
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
+								PixelNorm(),
+								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
+														gain=calculate_gain('leaky_relu')),
+								nn.LeakyReLU(0.2),
 								PixelNorm())
 
 	def create_out_sequence(n_chans,in_filters):
