@@ -67,6 +67,7 @@ print(sorting.get_shared_unit_spike_feature_names())
 print(wf[400].shape)
 max_chan = st.postprocessing.get_unit_max_channels(recording, sorting, save_as_property=True, verbose=True)
 print("Max_chan: ",max_chan)
+print("MAx_chan_len: ",len(max_chan))
 
 fig, ax = plt.subplots()
 #ax.plot(wf[0][:, 3, :].T, color='k', lw=0.3)
@@ -77,7 +78,6 @@ plt.close(fig)
 
 templates_plot = st.postprocessing.get_unit_templates(recording, sorting, max_spikes_per_unit=200,
                                                  save_as_property=True, verbose=True)
-print(templates_plot.get_traces().shape)
 templates_traces = templates_plot.get_traces()
 fig, ax = plt.subplots()
 #ax.plot(templates_plot[0].T, color='k')
