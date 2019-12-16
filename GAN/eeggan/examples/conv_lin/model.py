@@ -138,7 +138,7 @@ def create_gen_blocks(n_chans,z_vars):
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],1,-1]),
 								create_conv_sequence(1,base*n_featuremaps),
-								weight_scale(nn.Conv1d(base*n_featuremaps,n_featuremaps,9,padding=4),
+								weight_scale(nn.Conv1d(base*n_featuremaps,n_featuremaps,1,padding=0),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm()
