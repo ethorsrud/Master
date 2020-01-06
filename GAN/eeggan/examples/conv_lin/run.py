@@ -1,7 +1,7 @@
 #%load_ext autoreload
 #%autoreload 2
 import os
-#import joblib
+import joblib
 import sys
 #import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
@@ -157,7 +157,7 @@ generator = generator.cuda()
 discriminator = discriminator.cuda()
 fourier_discriminator = fourier_discriminator.cuda()
 AC_discriminator = AC_discriminator.cuda()
-
+"""
 #LOAD
 try:
     generator.load_model(os.path.join(modelpath,modelname%jobid+'.gen'))
@@ -170,7 +170,7 @@ try:
 except:
     print("No model found, creating new")
     pass
-
+"""
 generator.train()
 discriminator.train()
 fourier_discriminator.train()
@@ -307,7 +307,6 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
-
             #Originally mean over channels, but removed
             train_amps = np.abs(train_fft).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
 
@@ -456,7 +455,8 @@ for i_block in range(i_block_tmp,n_blocks):
             #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
 
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
-            #generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
+            generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
+            joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
 
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
