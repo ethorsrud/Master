@@ -59,7 +59,7 @@ freqs_tmp = np.fft.rfftfreq(batch_fake.shape[2],d=1/(datafreq/np.power(2,n_block
 
 print(batch_fake.shape)
 print(batch_fake_longer.shape)
-batch_fake_longer.view(1000*t_multiple,1,batch_fake.shape[2],2)
+batch_fake_longer.view(400*t_multiple,1,batch_fake.shape[2],2)
 print(batch_fake_longer.shape)
 torch_fake_longer_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake_longer.data.cpu(),2,3),1),2,3)
 torch_fake_longer_fft = torch.sqrt(torch_fake_longer_fft[:,:,:,:,0]**2+torch_fake_longer_fft[:,:,:,:,1]**2)
