@@ -12,13 +12,13 @@ import torch
 import numpy as np
 from torch.autograd import Variable
 import matplotlib.pyplot as plt
-"""
+
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
-"""
+torch.cuda.set_device(3)
+
 
 n_z = 128
 datafreq = 30000
