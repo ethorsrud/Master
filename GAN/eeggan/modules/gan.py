@@ -43,7 +43,7 @@ class GAN_Module(nn.Module):
 		if cuda:
 			self.cuda()
 
-	def load_model(self,fname):
+	def load_model(self,fname,location=None):
 		"""
 		Loads `state_dict` of model and optimizer
 
@@ -52,8 +52,7 @@ class GAN_Module(nn.Module):
 		fname : str
 			Filename to load from
 		"""
-		
-		model_state,opt_state,self.did_init_train = torch.load(fname)
+		model_state,opt_state,self.did_init_train = torch.load(fname,map_location=location)
 
 		self.load_state_dict(model_state)
 		self.optimizer.load_state_dict(opt_state)
