@@ -27,7 +27,7 @@ t_multiple = 3
 
 generator = Generator(2,128) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
-generator.load_model(os.path.join(model_path,"Progressive0.gen"))
+generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:0")
 i_block,fade_alpha = joblib.load(os.path.join(model_path,"Progressive0"+'.data'))
 
 generator.model.cur_block = i_block
