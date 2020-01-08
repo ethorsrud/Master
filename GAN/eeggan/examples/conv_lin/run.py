@@ -112,11 +112,13 @@ peak = (1./(sigma*np.sqrt(2*np.pi)))*np.exp(-0.5*((np.linspace(-10,10,input_leng
 peak = peak[(4096-40):(4096+40)]
 peak = peak/np.max(peak)
 
+"""
 train[0,0,(4096-40):(4096+40),0] = peak
 print("test",train[0,0,:,0].shape)
 plt.plot(train[0,0,:,0])
 plt.savefig("one_signal.png")
 plt.close()
+"""
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -223,6 +225,8 @@ for i_block in range(i_block_tmp,n_blocks):
             AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
+        print(batches.shape)
+        print(batches)
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
         for it in range(iters):
