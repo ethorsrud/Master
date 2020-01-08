@@ -113,6 +113,7 @@ peak = peak[(4096-40):(4096+40)]
 peak = peak/np.max(peak)
 
 train[0,0,(4096-40):(4096+40),0] = peak
+print("test",train[0,0,:,0].shape)
 plt.plot(train[0,0,:,0])
 plt.savefig("one_signal.png")
 plt.close()
