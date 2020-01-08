@@ -109,7 +109,9 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
 sigma = 900./sample_rate 
 peak = (1./(sigma*np.sqrt(2*np.pi)))*np.exp(-0.5*((np.linspace(-10,10,input_length)/sigma)**2))
-plt.plot(peak[(4096-40):(4096+40)])
+peak = peak[(4096-40):(4096+40)]
+plt.plot(peak)
+print("Length of peak:",peak.shape)
 #plt.plot(train[0,0,:,0])
 plt.savefig("one_signal.png")
 plt.close()
