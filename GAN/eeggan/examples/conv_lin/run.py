@@ -78,7 +78,9 @@ print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
 train = train.astype(np.float32)
-
+plt.plot(train[0,0,:,0])
+plt.savefig("one_signal.png")
+plt.close()
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
 torch.cuda.manual_seed_all(task_ind)
@@ -455,8 +457,8 @@ for i_block in range(i_block_tmp,n_blocks):
             #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
 
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
-            generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
-            joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
+            #generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
+            #joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
 
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
