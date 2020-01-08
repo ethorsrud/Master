@@ -107,6 +107,8 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
+peak = (1./np.sqrt(2*np.pi))*np.exp(-0.5*(np.linspace(-10,10,input_length)**2))
+plt.plot(peak)
 plt.plot(train[0,0,:,0])
 plt.savefig("one_signal.png")
 plt.close()
