@@ -78,9 +78,7 @@ print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
 train = train.astype(np.float32)
-plt.plot(train[0,0,:,0])
-plt.savefig("one_signal.png")
-plt.close()
+
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
 torch.cuda.manual_seed_all(task_ind)
@@ -109,6 +107,9 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
+plt.plot(train[0,0,:,0])
+plt.savefig("one_signal.png")
+plt.close()
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
