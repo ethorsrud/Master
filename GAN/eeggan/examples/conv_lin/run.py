@@ -61,7 +61,7 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:2,:input_length*760].T
+spike_data_small = spike_data[:2,:input_length*768].T
 print(spike_data_small.shape)
 
 train_new = []
@@ -225,8 +225,8 @@ for i_block in range(i_block_tmp,n_blocks):
             AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
-        print(len(batches))
-        print(batches)
+        print("n_batches: ",len(batches))
+
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
         for it in range(iters):
