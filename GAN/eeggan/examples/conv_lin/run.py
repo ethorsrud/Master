@@ -225,7 +225,7 @@ for i_block in range(i_block_tmp,n_blocks):
             AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
-        print(batches.shape)
+        print(len(batches))
         print(batches)
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
