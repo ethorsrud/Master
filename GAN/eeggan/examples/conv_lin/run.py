@@ -122,8 +122,10 @@ plt.plot(train[0,0,:,0])
 print("Peak0_loc:",np.where(time_labels[0,0,:,0]==1))
 plt.plot(train[1,0,:,0])
 print("Peak1_loc:",np.where(time_labels[1,0,:,0]==1))
-plt.legend(["Peak0","Peak1"])
-plt.savefig("2Peaks.png")
+plt.plot(train[2,0,:,0])
+print("Peak2_loc:",np.where(time_labels[2,0,:,0]==1))
+plt.legend(["Peak0","Peak1","Peak2"])
+plt.savefig("3Peaks.png")
 plt.close()
 
 
