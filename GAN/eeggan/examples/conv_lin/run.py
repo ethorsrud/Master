@@ -41,6 +41,7 @@ n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
 jobid = 0
+n_samples = 768 #Samples from dataset
 
 n_z = 128#200
 lr = 0.001#0.001
@@ -61,7 +62,7 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:2,:input_length*768].T
+spike_data_small = spike_data[:2,:input_length*n_samples].T
 print(spike_data_small.shape)
 
 train_new = []
@@ -111,6 +112,9 @@ sigma = 900./sample_rate
 peak = (1./(sigma*np.sqrt(2*np.pi)))*np.exp(-0.5*((np.linspace(-10,10,input_length)/sigma)**2))
 peak = peak[(4096-40):(4096+40)]
 peak = peak/np.max(peak)
+print(train.shape)
+quit()
+
 
 """
 train[0,0,(4096-40):(4096+40),0] = peak
