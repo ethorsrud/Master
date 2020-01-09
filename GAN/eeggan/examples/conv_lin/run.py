@@ -118,7 +118,7 @@ for i in range(n_samples):
     peak_location = np.random.randint(40,input_length-40)
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location-40):(peak_location+40),0] = peak
-np.concatenate((train,time_labels),axis=3)
+train = np.concatenate((train,time_labels),axis=3)
 print(train.shape)
 quit()
 
