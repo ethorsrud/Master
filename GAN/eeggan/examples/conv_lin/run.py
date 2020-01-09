@@ -112,8 +112,19 @@ sigma = 900./sample_rate
 peak = (1./(sigma*np.sqrt(2*np.pi)))*np.exp(-0.5*((np.linspace(-10,10,input_length)/sigma)**2))
 peak = peak[(4096-40):(4096+40)]
 peak = peak/np.max(peak)
-print(train.shape)
-quit()
+time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+#Placing random peaks
+for i in range(n_samples):
+    peak_location = np.random.randint(40,input_length-40)
+    time_labels[i,1,peak_location,1] = 1
+    train[i,1,(peak_location-40):(peak_location+40),0] = peak
+plt.plot(train[0,0,:,0])
+print("Peak0_loc:",np.where(time_labels[0,0,:,0]==1))
+plt.plot(train[1,0,:,0])
+print("Peak1_loc:",np.where(time_labels[1,0,:,0]==1))
+plt.legend(["Peak0","Peak1"])
+plt.savefig("2Peaks.png")
+plt.close()
 
 
 """
