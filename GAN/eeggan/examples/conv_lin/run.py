@@ -240,14 +240,11 @@ for i_block in range(i_block_tmp,n_blocks):
                 random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic])))
                 z_vars[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 z_vars = z_vars.astype(np.float32)
-                print(z_vars.shape)
-                print(z_vars[0])
-                print(random_times[0])
-                print(np.where(z_vars[0]==1))
-                quit()
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
+                print(batch_fake.shape)
+                quit()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
