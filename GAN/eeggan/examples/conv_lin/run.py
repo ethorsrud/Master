@@ -119,9 +119,6 @@ for i in range(n_samples):
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location-40):(peak_location+40),0] = peak
 train = np.concatenate((train,time_labels),axis=3)
-print(train.shape)
-quit()
-
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -236,16 +233,21 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
+                #z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
+
+                #Conditional
+                z_vars = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
+                random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic))
+                z_vars[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
+                z_vars = z_vars.astype(np.float32)
+                print(z_vars.shape)
+                print(z_vars[0])
+                print(random_times[0])
+                print(np.where(z_vars[0]==1))
+                quit()
+
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-
-                #batch_fake_for_investigation = batch_fake.data.cpu().numpy()
-                """
-                z_vars_for_investigation = z_vars.cpu().numpy()
-                if not np.all(np.isfinite(batch_fake_for_investigation)):
-                    print("All z_vars finite?",np.all(np.isfinite(z_vars_for_investigation)))
-                """
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
