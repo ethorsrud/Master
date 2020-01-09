@@ -237,7 +237,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #Conditional
                 z_vars = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
-                random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic))
+                random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic)))
                 z_vars[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 z_vars = z_vars.astype(np.float32)
                 print(z_vars.shape)
