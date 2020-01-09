@@ -118,24 +118,10 @@ for i in range(n_samples):
     peak_location = np.random.randint(40,input_length-40)
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location-40):(peak_location+40),0] = peak
-plt.plot(train[0,0,:,0])
-print("Peak0_loc:",np.where(time_labels[0,0,:,0]==1))
-plt.plot(train[1,0,:,0])
-print("Peak1_loc:",np.where(time_labels[1,0,:,0]==1))
-plt.plot(train[2,0,:,0])
-print("Peak2_loc:",np.where(time_labels[2,0,:,0]==1))
-plt.legend(["Peak0","Peak1","Peak2"])
-plt.savefig("3Peaks.png")
-plt.close()
+np.concatenate((train,time_labels),axis=3)
+print(train.shape)
+quit()
 
-
-"""
-train[0,0,(4096-40):(4096+40),0] = peak
-print("test",train[0,0,:,0].shape)
-plt.plot(train[0,0,:,0])
-plt.savefig("one_signal.png")
-plt.close()
-"""
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
