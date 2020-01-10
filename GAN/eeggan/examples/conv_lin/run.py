@@ -74,7 +74,7 @@ train = np.swapaxes(train,1,2)
 train = np.swapaxes(train,1,3)
 #Only first channel
 #train = train[:,:,:,0][:,:,:,np.newaxis]
-n_chans = train.shape[3]
+n_chans = train.shape[3]+1 # +1 FOR CONDITIONAL
 print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
