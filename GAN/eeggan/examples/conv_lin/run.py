@@ -112,6 +112,7 @@ sigma = 900./sample_rate
 peak = (1./(sigma*np.sqrt(2*np.pi)))*np.exp(-0.5*((np.linspace(-10,10,input_length)/sigma)**2))
 peak = peak[(4096-40):(4096+40)]
 peak = peak/np.max(peak)
+peak = peak/3
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Placing random peaks
 for i in range(n_samples):
