@@ -118,7 +118,7 @@ for i in range(n_samples):
     peak_location = np.random.randint(40,input_length-40)
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location-40):(peak_location+40),0] = peak
-train = np.concatenate((train,time_labels),axis=3)
+train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
