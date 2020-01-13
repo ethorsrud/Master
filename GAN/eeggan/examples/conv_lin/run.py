@@ -74,7 +74,7 @@ train = np.swapaxes(train,1,2)
 train = np.swapaxes(train,1,3)
 #Only first channel
 #train = train[:,:,:,0][:,:,:,np.newaxis]
-n_chans = train.shape[3]+1 # +1 FOR CONDITIONAL
+n_chans = train.shape[3]#+1 # +1 FOR CONDITIONAL
 print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
@@ -137,8 +137,8 @@ if not os.path.exists(modelpath):
 if not os.path.exists(outputpath):
     os.makedirs(outputpath)
 
-generator = Generator(n_chans,n_z)
-discriminator = Discriminator(n_chans)
+generator = Generator(n_chans+1,n_z)
+discriminator = Discriminator(n_chans+1)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
 
@@ -196,6 +196,14 @@ losses_fourier = []
 
 i_epoch = 0
 z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
+#Conditional
+z_vars_im_label = np.zeros(shape=(1000,n_z))
+random_times_im = np.random.randint(0,n_z,size=(1000))
+z_vars_im_label[np.arange(1000),random_times_im] = 0.5
+z_vars_im_label = z_vars_im_label.astype(np.float32)
+z_vars_im = z_vars_im[:,:,np.newaxis]
+z_vars_im_label = z_vars_im_label[:,:,np.newaxis]
+#z_vars_im = np.concatenate((z_vars_im,z_vars_im_label),axis=2)
 
 for i_block in range(i_block_tmp,n_blocks):
     c = 0
@@ -234,20 +242,24 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                #z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
+                z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
 
                 #Conditional
-                z_vars = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
+                z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                 random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic])))
-                z_vars[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
-                z_vars = z_vars.astype(np.float32)
-
+                z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 0.5
+                z_vars_label = z_vars_label.astype(np.float32)
+                z_vars = z_vars[:,:,np.newaxis]
+                z_vars_label = z_vars_label[:,:,np.newaxis]
+                #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
+                
+                #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
                 #batch_fake_fft = torch.log(batch_fake_fft)
@@ -293,11 +305,22 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
+
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
                 z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
+
+                #Conditional
+                z_vars_label = np.zeros(shape=(n_batch,n_z))
+                random_times = np.random.randint(0,n_z,size=(n_batch))
+                z_vars_label[np.arange(n_batch),random_times] = 0.5
+                z_vars_label = z_vars_label.astype(np.float32)
+                z_vars = z_vars[:,:,np.newaxis]
+                z_vars_label = z_vars_label[:,:,np.newaxis]
+                #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
+
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
                 loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator)
 

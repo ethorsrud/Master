@@ -399,8 +399,10 @@ class WGAN_I_Generator(GAN_Generator):
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
+		#test_array = torch.from_numpy(np.ones(shape=(gen.shape[0],1,256,1)).astype(np.float32)).cuda()
+		#gen = torch.cat((gen,test_array),3)
 		
-		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
+		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
 
 		#fft = torch.log(fft)
