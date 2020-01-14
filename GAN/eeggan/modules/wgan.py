@@ -374,7 +374,7 @@ class WGAN_I_Generator(GAN_Generator):
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
 	"""
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,i_block):
 		"""
 		Train generator for one batch of latent noise
 
@@ -399,9 +399,20 @@ class WGAN_I_Generator(GAN_Generator):
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 		gen = self(batch_noise)
-		#test_array = torch.from_numpy(np.ones(shape=(gen.shape[0],1,256,1)).astype(np.float32)).cuda()
-		#gen = torch.cat((gen,test_array),3)
-		
+
+		label_index = batch_noise.cpu().detach().numpy()
+		label_index = label_index[:,:,1]
+		label_index = np.where(label_index==1)
+		label_index = label_index[1]*2**(i_block+1)
+		label_index = (np.arange(gen.shape[0]).astype(np.int),label_index.astype(np.int),np.zeros(gen.shape[0]).astype(np.int))
+		appending_label = np.zeros(shape=(gen.shape[0],gen.shape[2],1))
+		appending_label[label_index] = 1.
+		appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
+		appending_label = torch.from_numpy(appending_label).cuda()
+
+		gen = torch.cat((gen,appending_label),3)
+
+		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
 
