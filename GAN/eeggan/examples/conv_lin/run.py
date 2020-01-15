@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 1
+n_critic = 5
 n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
@@ -105,14 +105,14 @@ print("Number of channels:",n_chans)
 print(train.shape)
 """
 
-peak = np.linspace(0,6*np.pi,80)
-peak = np.sin(peak)*1000
+peak = np.linspace(0,2*np.pi,80)
+peak = np.sin(peak)*700
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Placing random peaks
 for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
     time_labels[i,0,peak_location,0] = 1
-    train[i,0,(peak_location):(peak_location+80),0] = peak
+    train[i,0,(peak_location):(peak_location+80),0] += peak
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
@@ -408,11 +408,16 @@ for i_block in range(i_block_tmp,n_blocks):
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
+            peak_loc_idx = np.where(z_vars_im_label==1)[1]*2**(i_block+1)
+            peak_loc_idx = (np.arange(z_vars_im_label.shape[0]).astype(np.int),peak_loc_idx.astype(np.int),np.zeros(z_vars_im_label.shape[2]).astype(np.int))
+            peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
+            peak_loc[peak_loc_idx] = 1.
             for channel_i in range(2):
                 plt.figure(figsize=(20,10))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
+                    plt.plot(peak_loc[i,:,0]*0.05,alpha=0.5)
                     if i==1:
                         plt.title("Fakes")
                     plt.xticks((),())
