@@ -142,7 +142,7 @@ def create_gen_blocks(n_chans,z_vars):
 
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],2,-1]),
-								weight_scale(nn.Conv1d(2,1,3,padding=1),
+								weight_scale(nn.Conv1d(2,n_featuremaps,21,padding=10),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 								weight_scale(nn.Conv1d(1,n_featuremaps,21,padding=10),
@@ -163,25 +163,25 @@ def create_gen_blocks(n_chans,z_vars):
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_conv_sequence(n_featuremaps+1,n_featuremaps),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_conv_sequence(n_featuremaps+1,n_featuremaps),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_conv_sequence(n_featuremaps+1,n_featuremaps),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps,n_featuremaps),
+								create_conv_sequence(n_featuremaps+1,n_featuremaps),
 								create_out_sequence(n_chans,n_featuremaps),
 								None
 								)
