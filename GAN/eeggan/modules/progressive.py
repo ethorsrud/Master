@@ -119,10 +119,10 @@ class ProgressiveGenerator(nn.Module):
 				print("i==0",input.shape,labels.shape)
 				input = torch.cat((input,labels),dim=2)
 			else:
-				labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+				labels = labels[:,np.newaxis,:].astype(np.float32)
 				labels = torch.from_numpy(labels).cuda()
 				print("i!=0",input.shape,labels.shape)
-				input = torch.cat((input,labels),dim=3)
+				input = torch.cat((input,labels),dim=1)
 
 			
 
