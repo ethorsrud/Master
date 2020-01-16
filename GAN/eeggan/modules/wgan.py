@@ -398,9 +398,9 @@ class WGAN_I_Generator(GAN_Generator):
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
-		print("We got here")
-		gen = self(batch_noise)
-		print("Not here")
+
+		gen = self(batch_noise,random_times)
+		print("GEN-shape",gen.shape)
 		label_index = batch_noise.cpu().detach().numpy()
 		label_index = label_index[:,:,1]
 		label_index = np.where(label_index==1)
