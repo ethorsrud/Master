@@ -99,7 +99,6 @@ class ProgressiveGenerator(nn.Module):
 		self.alpha = 1.
 
 	def forward(self,input,label):
-		print("First input size",input.shape)
 		#print("Label",label.shape)
 		n_blocks = len(self.blocks)
 		base = input.shape[1]
@@ -113,11 +112,18 @@ class ProgressiveGenerator(nn.Module):
 			labels[indexes] = 1.
 			labels=labels[:,:,np.newaxis].astype(np.float32)
 			labels = torch.from_numpy(labels).cuda()
-			input = input[:,:,None]
+			if i==0:
+				input = input[:,:,None]
+				labels = labels[:,:,np.newaxis].astype(np.float32)
+				labels = torch.from_numpy(labels).cuda()
+			else:
+				labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+				labels = torch.from_numpy(labels).cuda()
+
 			input = torch.cat((input,labels),dim=2)
 
 			input = self.blocks[i](input,last=(i==self.cur_block))
-			print("After",input.shape)
+
 			if alpha<1. and i==self.cur_block-1:
 				tmp = self.blocks[i].out_sequence(input)
 				fade = True
