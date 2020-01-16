@@ -314,23 +314,17 @@ for i_block in range(i_block_tmp,n_blocks):
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 
-                #Upscaling the input label
+                #Conditional
                 labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-                #label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
                 label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
                 labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
                 labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
                 labels = torch.from_numpy(labels).cuda()
-                #label_indexes = (np.arange(batch_fake.shape[0]).astype(np.int),label_indexes.astype(np.int),np.zeros(batch_fake.shape[0]).astype(np.int))
-                #appending_label = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
-                #appending_label[label_indexes] = 1.
-                #appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
-                #appending_label = torch.from_numpy(appending_label).cuda()
 
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
-                print("loss_d",loss_d)
+                #print("loss_d",loss_d)
  
                 assert np.all(np.isfinite(loss_d))
             
@@ -347,7 +341,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,i_block,random_times)
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],random_times)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)

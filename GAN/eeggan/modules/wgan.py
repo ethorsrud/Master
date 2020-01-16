@@ -374,7 +374,7 @@ class WGAN_I_Generator(GAN_Generator):
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
 	"""
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,i_block,random_times):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,block_info,random_times):
 		"""
 		Train generator for one batch of latent noise
 
@@ -400,19 +400,28 @@ class WGAN_I_Generator(GAN_Generator):
 		# Generate and discriminate
 
 		gen = self(batch_noise,random_times)
-		print("GEN-shape",gen.shape)
-		quit()
-		label_index = batch_noise.cpu().detach().numpy()
-		label_index = label_index[:,:,1]
-		label_index = np.where(label_index==1)
-		label_index = label_index[1]*2**(i_block+1)
-		label_index = (np.arange(gen.shape[0]).astype(np.int),label_index.astype(np.int),np.zeros(gen.shape[0]).astype(np.int))
-		appending_label = np.zeros(shape=(gen.shape[0],gen.shape[2],1))
-		appending_label[label_index] = 1.
-		appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
-		appending_label = torch.from_numpy(appending_label).cuda()
 
-		gen = torch.cat((gen,appending_label),3)
+        #Conditional
+		i_block,n_blocks = block_info
+		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
+		label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
+		labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
+		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+		labels = torch.from_numpy(labels).cuda()
+		print(labels.shape)
+		quit()
+
+		#label_index = batch_noise.cpu().detach().numpy()
+		#label_index = label_index[:,:,1]
+		#label_index = np.where(label_index==1)
+		#label_index = label_index[1]*2**(i_block+1)
+		#label_index = (np.arange(gen.shape[0]).astype(np.int),label_index.astype(np.int),np.zeros(gen.shape[0]).astype(np.int))
+		#appending_label = np.zeros(shape=(gen.shape[0],gen.shape[2],1))
+		#appending_label[label_index] = 1.
+		#appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
+		#appending_label = torch.from_numpy(appending_label).cuda()
+
+		gen = torch.cat((gen,labels),3)
 
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
