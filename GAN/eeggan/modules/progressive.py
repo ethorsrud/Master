@@ -110,8 +110,8 @@ class ProgressiveGenerator(nn.Module):
 			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
 			labels[indexes] = 1.
-			labels=labels[:,:,np.newaxis].astype(np.float32)
-			labels = torch.from_numpy(labels).cuda()
+			#labels=labels[:,:,np.newaxis].astype(np.float32)
+			#labels = torch.from_numpy(labels).cuda()
 			if i==0:
 				input = input[:,:,None]
 				labels = labels[:,:,np.newaxis].astype(np.float32)
