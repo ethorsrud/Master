@@ -97,8 +97,9 @@ class ProgressiveGenerator(nn.Module):
 		self.cur_block = 0
 		self.alpha = 1.
 
-	def forward(self,input):
+	def forward(self,input,label):
 		print(input.shape)
+		print("Label",label.shape)
 		quit()
 		fade = False
 		alpha = self.alpha
