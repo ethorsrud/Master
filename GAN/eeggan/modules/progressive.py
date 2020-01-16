@@ -101,14 +101,14 @@ class ProgressiveGenerator(nn.Module):
 	def forward(self,input,label):
 		print(input.shape)
 		print("Label",label.shape)
-		print("BLOCKS LEN",len(self.blocks))
+		n_blocks = len(self.blocks)
 		base = input.shape[1]
 		fade = False
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
 			#Adding labels to input
 			labels = np.zeros(shape=(input.shape[0],base*2**i))
-			label_downsampled = np.floor(label/(2**i)).astype(np.int)
+			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
 			labels[indexes] = 1.
 			labels=labels[:,:,np.newaxis].astype(np.float32)
