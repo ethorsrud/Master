@@ -100,10 +100,20 @@ class ProgressiveGenerator(nn.Module):
 	def forward(self,input,label):
 		print(input.shape)
 		print("Label",label.shape)
-		quit()
+		base = input.shape[1]
 		fade = False
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
+			#Adding labels to input
+			labels = np.zeros(shape=(input.shape[0],base*2**i))
+			label_downsampled = np.floor(label/(2**i))
+			indexes = (np.arange(input.shape[0]),label_downsampled)
+			labels[indexes] = 1.
+			labels=labels[:,:,np.newaxis].astype(np.float32)
+			labels = torch.from_numpy(labels)
+			print(labels.shape)
+			quit()
+			
 			input = self.blocks[i](input,last=(i==self.cur_block))
 			if alpha<1. and i==self.cur_block-1:
 				tmp = self.blocks[i].out_sequence(input)
