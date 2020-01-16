@@ -264,9 +264,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars,random_times).data,requires_grad=True).cuda()
-                print("TEST -> ",batch_fake.shape)
-                print("SHOULD BE -> ",batch_real.shape)
-                quit()
+
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
@@ -315,15 +313,19 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                label_indexes = np.where(z_vars_label==1)
                 
                 #Upscaling the input label
-                label_indexes = label_indexes[1]*2**(i_block+1)
-                label_indexes = (np.arange(batch_fake.shape[0]).astype(np.int),label_indexes.astype(np.int),np.zeros(batch_fake.shape[0]).astype(np.int))
-                appending_label = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
-                appending_label[label_indexes] = 1.
-                appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
-                appending_label = torch.from_numpy(appending_label).cuda()
+                labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
+                #label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
+                label_downsampled = np.floor(random_times/(2**(n_blocks-1-i))).astype(np.int)
+                label[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
+                print("Labels,",label.shape)
+                quit()
+                #label_indexes = (np.arange(batch_fake.shape[0]).astype(np.int),label_indexes.astype(np.int),np.zeros(batch_fake.shape[0]).astype(np.int))
+                #appending_label = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
+                #appending_label[label_indexes] = 1.
+                #appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
+                #appending_label = torch.from_numpy(appending_label).cuda()
 
                 batch_fake = torch.cat((batch_fake,appending_label),dim=3)
 
