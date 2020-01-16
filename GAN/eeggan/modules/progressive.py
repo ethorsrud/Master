@@ -113,8 +113,10 @@ class ProgressiveGenerator(nn.Module):
 			labels[indexes] = 1.
 			labels=labels[:,:,np.newaxis].astype(np.float32)
 			labels = torch.from_numpy(labels)
-			print(labels.shape)
+			input = input[:,:,None]
+			print("one in the end?",input.shape)
 			quit()
+
 
 			input = self.blocks[i](input,last=(i==self.cur_block))
 			if alpha<1. and i==self.cur_block-1:
