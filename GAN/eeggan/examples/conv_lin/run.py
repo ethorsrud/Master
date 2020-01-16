@@ -265,6 +265,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars,random_times).data,requires_grad=True).cuda()
                 print("TEST -> ",batch_fake.shape)
+                print("SHOULD BE -> ",batch_real.shape)
                 quit()
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
