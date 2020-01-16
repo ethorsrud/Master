@@ -107,7 +107,7 @@ class ProgressiveGenerator(nn.Module):
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
 			#Adding labels to input
-			#labels = np.zeros(shape=(input.shape[0],base*2**i))
+			labels = np.zeros(shape=(input.shape[0],base*2**i))
 			#label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			#indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
 			#labels[indexes] = 1.
