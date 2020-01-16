@@ -328,11 +328,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 #appending_label = torch.from_numpy(appending_label).cuda()
 
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
-                print(batch_fake.shape)
-                quit()
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
-                #print("loss_d",loss_d)
+                print("loss_d",loss_d)
+                quit()
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
