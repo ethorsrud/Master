@@ -99,6 +99,7 @@ class ProgressiveGenerator(nn.Module):
 
 	def forward(self,input):
 		print(input.shape)
+		quit()
 		fade = False
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):

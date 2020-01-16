@@ -243,7 +243,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
-
+                """
                 #Conditional
                 z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                 random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic])))
@@ -252,12 +252,12 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = z_vars[:,:,np.newaxis]
                 z_vars_label = z_vars_label[:,:,np.newaxis]
                 z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
-
+                """
                 #New_conditional
-                #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
-                #random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic])))
-                #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
-                #z_vars_label = z_vars_label.astype(np.float32)
+                z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
+                random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic])))
+                z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
+                z_vars_label = z_vars_label.astype(np.float32)
                 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
