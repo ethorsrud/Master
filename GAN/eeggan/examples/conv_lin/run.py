@@ -319,15 +319,17 @@ for i_block in range(i_block_tmp,n_blocks):
                 #label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
                 label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
                 labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
-                print("Labels,",labels.shape)
-                quit()
+                labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+                labels = torch.from_numpy(labels).cuda()
                 #label_indexes = (np.arange(batch_fake.shape[0]).astype(np.int),label_indexes.astype(np.int),np.zeros(batch_fake.shape[0]).astype(np.int))
                 #appending_label = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
                 #appending_label[label_indexes] = 1.
                 #appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
                 #appending_label = torch.from_numpy(appending_label).cuda()
 
-                batch_fake = torch.cat((batch_fake,appending_label),dim=3)
+                batch_fake = torch.cat((batch_fake,labels),dim=3)
+                print(batch_fake.shape)
+                quit()
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
