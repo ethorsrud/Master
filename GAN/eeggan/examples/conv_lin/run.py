@@ -319,7 +319,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
                 label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
                 labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
-                print("Labels,",label.shape)
+                print("Labels,",labels.shape)
                 quit()
                 #label_indexes = (np.arange(batch_fake.shape[0]).astype(np.int),label_indexes.astype(np.int),np.zeros(batch_fake.shape[0]).astype(np.int))
                 #appending_label = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
