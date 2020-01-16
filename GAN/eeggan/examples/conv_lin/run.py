@@ -370,8 +370,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars,random_times_im)
-            print("Testphase",batch_fake.shape)
-            quit()
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
@@ -418,16 +416,19 @@ for i_block in range(i_block_tmp,n_blocks):
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
-            peak_loc_idx = np.where(z_vars_im_label==1)[1]*2**(i_block+1)
-            peak_loc_idx = (np.arange(z_vars_im_label.shape[0]).astype(np.int),peak_loc_idx.astype(np.int),np.zeros(z_vars_im_label.shape[2]).astype(np.int))
-            peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
-            peak_loc[peak_loc_idx] = 1.
+            #peak_loc_idx = np.where(z_vars_im_label==1)[1]*2**(i_block+1)
+            #peak_loc_idx = (np.arange(z_vars_im_label.shape[0]).astype(np.int),peak_loc_idx.astype(np.int),np.zeros(z_vars_im_label.shape[2]).astype(np.int))
+            #peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
+            #peak_loc[peak_loc_idx] = 1.
+            peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
+            peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
+            peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
             for channel_i in range(2):
                 plt.figure(figsize=(20,10))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
-                    plt.plot(peak_loc[i,:,0]*0.05,alpha=0.5)
+                    plt.plot(peak_loc[i,:]*0.05,alpha=0.5)
                     if i==1:
                         plt.title("Fakes")
                     plt.xticks((),())
