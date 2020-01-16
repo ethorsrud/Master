@@ -114,7 +114,7 @@ class ProgressiveGenerator(nn.Module):
 			labels=labels[:,:,np.newaxis].astype(np.float32)
 			labels = torch.from_numpy(labels).cuda()
 			input = input[:,:,None]
-			torch.cat((input,labels),dim=2)
+			input = torch.cat((input,labels),dim=2)
 
 			input = self.blocks[i](input,last=(i==self.cur_block))
 			if alpha<1. and i==self.cur_block-1:
