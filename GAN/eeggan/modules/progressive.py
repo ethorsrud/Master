@@ -101,7 +101,7 @@ class ProgressiveGenerator(nn.Module):
 	def forward(self,input,label):
 		print(input.shape)
 		print("Label",label.shape)
-		print("BLOCKS LEN",self.blocks.shape)
+		print("BLOCKS LEN",len(self.blocks))
 		base = input.shape[1]
 		fade = False
 		alpha = self.alpha
