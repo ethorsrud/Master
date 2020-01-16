@@ -420,8 +420,6 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
 		gen = torch.cat((gen,labels),3)
-		print(gen.shape)
-		quit()
 
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)

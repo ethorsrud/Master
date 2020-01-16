@@ -197,13 +197,14 @@ losses_fourier = []
 i_epoch = 0
 z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
 #Conditional
-z_vars_im_label = np.zeros(shape=(1000,n_z))
-random_times_im = np.random.randint(0,n_z,size=(1000))
-z_vars_im_label[np.arange(1000),random_times_im] = 1.
-z_vars_im_label = z_vars_im_label.astype(np.float32)
-z_vars_im = z_vars_im[:,:,np.newaxis]
-z_vars_im_label = z_vars_im_label[:,:,np.newaxis]
-z_vars_im = np.concatenate((z_vars_im,z_vars_im_label),axis=2)
+random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
+#z_vars_im_label = np.zeros(shape=(1000,n_z))
+#random_times_im = np.random.randint(0,n_z,size=(1000))
+#z_vars_im_label[np.arange(1000),random_times_im] = 1.
+#z_vars_im_label = z_vars_im_label.astype(np.float32)
+#z_vars_im = z_vars_im[:,:,np.newaxis]
+#z_vars_im_label = z_vars_im_label[:,:,np.newaxis]
+#z_vars_im = np.concatenate((z_vars_im,z_vars_im_label),axis=2)
 
 for i_block in range(i_block_tmp,n_blocks):
     c = 0
@@ -368,7 +369,9 @@ for i_block in range(i_block_tmp,n_blocks):
             train_amps = np.abs(train_fft).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
-            batch_fake = generator(z_vars)
+            batch_fake = generator(z_vars,random_times_im)
+            print("Testphase",batch_fake.shape)
+            quit()
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
