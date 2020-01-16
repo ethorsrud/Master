@@ -1,6 +1,7 @@
 # coding=utf-8
 from torch import nn
 import torch
+import numpy as np
 
 """
 Karras, T., Aila, T., Laine, S., & Lehtinen, J. (2017).
@@ -113,7 +114,7 @@ class ProgressiveGenerator(nn.Module):
 			labels = torch.from_numpy(labels)
 			print(labels.shape)
 			quit()
-			
+
 			input = self.blocks[i](input,last=(i==self.cur_block))
 			if alpha<1. and i==self.cur_block-1:
 				tmp = self.blocks[i].out_sequence(input)
