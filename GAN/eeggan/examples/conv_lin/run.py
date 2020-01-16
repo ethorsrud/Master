@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 5
+n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
@@ -252,6 +252,12 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = z_vars[:,:,np.newaxis]
                 z_vars_label = z_vars_label[:,:,np.newaxis]
                 z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
+
+                #New_conditional
+                #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
+                #random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic])))
+                #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
+                #z_vars_label = z_vars_label.astype(np.float32)
                 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
