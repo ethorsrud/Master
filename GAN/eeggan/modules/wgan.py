@@ -400,7 +400,7 @@ class WGAN_I_Generator(GAN_Generator):
 		# Generate and discriminate
 		print("We got here")
 		gen = self(batch_noise)
-
+		print("Not here")
 		label_index = batch_noise.cpu().detach().numpy()
 		label_index = label_index[:,:,1]
 		label_index = np.where(label_index==1)
