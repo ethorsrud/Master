@@ -374,7 +374,7 @@ class WGAN_I_Generator(GAN_Generator):
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
 	"""
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,i_block):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,i_block,random_times):
 		"""
 		Train generator for one batch of latent noise
 
@@ -398,6 +398,7 @@ class WGAN_I_Generator(GAN_Generator):
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
+		print("We got here")
 		gen = self(batch_noise)
 
 		label_index = batch_noise.cpu().detach().numpy()

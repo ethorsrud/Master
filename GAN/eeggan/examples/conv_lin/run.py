@@ -331,23 +331,23 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 print("loss_d",loss_d)
-                quit()
+ 
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
                 z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
                 #Conditional
-                z_vars_label = np.zeros(shape=(n_batch,n_z))
-                random_times = np.random.randint(0,n_z,size=(n_batch))
-                z_vars_label[np.arange(n_batch),random_times] = 1.
-                z_vars_label = z_vars_label.astype(np.float32)
-                z_vars = z_vars[:,:,np.newaxis]
-                z_vars_label = z_vars_label[:,:,np.newaxis]
-                z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
+                #z_vars_label = np.zeros(shape=(n_batch,n_z))
+                random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
+                #z_vars_label[np.arange(n_batch),random_times] = 1.
+                #z_vars_label = z_vars_label.astype(np.float32)
+                #z_vars = z_vars[:,:,np.newaxis]
+                #z_vars_label = z_vars_label[:,:,np.newaxis]
+                #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,i_block)
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,i_block,random_times)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
