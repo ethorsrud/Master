@@ -401,6 +401,7 @@ class WGAN_I_Generator(GAN_Generator):
 
 		gen = self(batch_noise,random_times)
 		print("GEN-shape",gen.shape)
+		quit()
 		label_index = batch_noise.cpu().detach().numpy()
 		label_index = label_index[:,:,1]
 		label_index = np.where(label_index==1)
