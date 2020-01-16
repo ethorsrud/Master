@@ -408,8 +408,6 @@ class WGAN_I_Generator(GAN_Generator):
 		labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
 		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
 		labels = torch.from_numpy(labels).cuda()
-		print(labels.shape)
-		quit()
 
 		#label_index = batch_noise.cpu().detach().numpy()
 		#label_index = label_index[:,:,1]
@@ -422,6 +420,8 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
 		gen = torch.cat((gen,labels),3)
+		print(gen.shape)
+		quit()
 
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
