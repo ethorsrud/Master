@@ -107,7 +107,6 @@ class ProgressiveGenerator(nn.Module):
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
 			#Adding labels to input
-			print("Loop shape",input.shape)
 			labels = np.zeros(shape=(input.shape[0],base*2**i))
 			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
@@ -118,6 +117,7 @@ class ProgressiveGenerator(nn.Module):
 			input = torch.cat((input,labels),dim=2)
 
 			input = self.blocks[i](input,last=(i==self.cur_block))
+			print("After",input.shape)
 			if alpha<1. and i==self.cur_block-1:
 				tmp = self.blocks[i].out_sequence(input)
 				fade = True
