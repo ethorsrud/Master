@@ -44,7 +44,7 @@ class ProgressiveDiscriminator(nn.Module):
 			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
 			random_times = np.where(orig_label_np==1)
-			print(random_times)
+			print(orig_label_np)
 			quit()
 
 		for i in range(self.cur_block,len(self.blocks)):
