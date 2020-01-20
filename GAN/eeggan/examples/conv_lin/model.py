@@ -77,7 +77,7 @@ def create_disc_blocks(n_chans,base):
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps,n_featuremaps),
+							  create_conv_sequence(n_featuremaps,n_featuremaps-1),
 							  create_in_sequence(n_chans,n_featuremaps),
 							  create_fade_sequence(2)
 							  )

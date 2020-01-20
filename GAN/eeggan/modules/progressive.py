@@ -75,10 +75,8 @@ class ProgressiveDiscriminator(nn.Module):
 					print("Labelshape",label.shape)
 				input = torch.cat((input,label),1)	
 
-			print(input.shape)
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
-			print(input.shape)
 		return input
 
 	def downsample_to_block(self,input,i_block):
