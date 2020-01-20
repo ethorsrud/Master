@@ -240,7 +240,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
 		#print("Loss_real:",loss_real)
 		fx_fake = self(batch_fake)
-		print("YEAH")
 		loss_fake = fx_fake.mean()
 		#print("Loss_fake:",loss_fake)
 		#loss_fake_for_print = loss_fake.data.item()
