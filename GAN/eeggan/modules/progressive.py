@@ -39,8 +39,8 @@ class ProgressiveDiscriminator(nn.Module):
 	def forward(self,input):
 		fade = False
 		alpha = self.alpha
+		print(input.shape)
 		orig_label = input[:,:,:,-1]
-		print(orig_label)
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
 			orig_label_np = orig_label.cpu().detach().numpy()
