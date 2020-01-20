@@ -41,6 +41,7 @@ class ProgressiveDiscriminator(nn.Module):
 		alpha = self.alpha
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
+			print(input[:,:,:,1])
 			print(input[:,:,:,2])
 			quit()
 			orig_label = input[:,:,:,-1]
