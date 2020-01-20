@@ -310,6 +310,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			Gradient penalties
 		"""
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
+		print(alpha.shape)
 		alpha = alpha.expand(batch_real.data.size())
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
 
