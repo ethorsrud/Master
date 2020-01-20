@@ -57,7 +57,7 @@ class ProgressiveDiscriminator(nn.Module):
 			if self.conditional and i!=self.cur_block:
 				factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
-				label = np.zeros(shape=(input.shape[0],1,input.shape[1]))
+				label = np.zeros(shape=(input.shape[0],1,input.shape[2]))
 				if idxes.shape[0]<input.shape[0]:
 					#Penalty calculation
 					print("inside penalty")
