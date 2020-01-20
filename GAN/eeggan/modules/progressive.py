@@ -78,6 +78,7 @@ class ProgressiveDiscriminator(nn.Module):
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
+			print(input.shape)
 		return input
 
 	def downsample_to_block(self,input,i_block):
