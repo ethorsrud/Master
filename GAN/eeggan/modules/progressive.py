@@ -39,13 +39,12 @@ class ProgressiveDiscriminator(nn.Module):
 	def forward(self,input):
 		fade = False
 		alpha = self.alpha
-		print(input.shape)
-		orig_label = input[:,:,:,-1]
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
+			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
 			random_times = np.where(orig_label_np==1.)
-			print(random_times)
+			print(random_times.shape)
 			quit()
 
 		for i in range(self.cur_block,len(self.blocks)):
