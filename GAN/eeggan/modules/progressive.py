@@ -186,6 +186,7 @@ class ProgressiveDiscriminatorBlock(nn.Module):
 	def forward(self,input,first=False):
 		if first:
 			input = self.in_sequence(input)
+			print("THIS ONE",input.shape)
 		out = self.intermediate_sequence(input)
 		return out
 
