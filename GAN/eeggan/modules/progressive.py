@@ -70,7 +70,7 @@ class ProgressiveDiscriminator(nn.Module):
 					idxes = np.floor(idxes/factor)
 					idxes = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes.astype(np.int))
 					label[idxes] = 1.
-					label.astype(np.float32)
+					label = label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
 					print("Labelshape",label.shape)
 				torch.cat((input,label),1)	
