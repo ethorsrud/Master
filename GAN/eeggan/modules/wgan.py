@@ -289,8 +289,8 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 
 		loss_real = -loss_real.data.item()
 		loss_fake = loss_fake.data.item()
-		loss_penalty = loss_penalty.data.item()
-		
+		#loss_penalty = loss_penalty.data.item()
+		loss_penalty=0
 		return loss_real,loss_fake,loss_penalty,loss_drift,loss_center # return loss
 
 
