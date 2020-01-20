@@ -60,14 +60,19 @@ class ProgressiveDiscriminator(nn.Module):
 				label = np.zeros(shape=(input.shape[0],1,input.shape[1]))
 				if idxes.shape[0]<input.shape[0]:
 					#Penalty calculation
+					print("inside penalty")
 					label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
 				else:
 					#Normal passing
+					print("inside normal")
+					print("inputshape",input.shape)
 					idxes = np.floor(idxes/factor)
-					idxes = (np.arange(label.shape[0]),1,idxes)
+					idxes = (np.arange(label.shape[0]).astype(np.int),1,idxes.astype(np.int))
 					label[idxes] = 1.
+					label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
+					print("Labelshape",label.shape)
 				torch.cat((input,label),1)	
 
 
