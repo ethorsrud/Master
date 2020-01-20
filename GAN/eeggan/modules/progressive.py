@@ -28,23 +28,32 @@ class ProgressiveDiscriminator(nn.Module):
 	blocks : int
 		Number of progression stages
 	"""
-	def __init__(self,blocks):
+	def __init__(self,blocks,conditional=False):
 		super(ProgressiveDiscriminator,self).__init__()
 		self.blocks = nn.ModuleList(blocks)
 		self.cur_block = len(self.blocks)-1
 		self.alpha = 1.
+		#To make sure labels arent added to the fourier discriminator
+		self.conditional = conditional
 
 	def forward(self,input):
 		fade = False
 		alpha = self.alpha
+		orig_label = input[:,:,:,-1]
+        #MAKE NUMPY ARRAY OF LABEL
+
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
 				tmp = self.blocks[i].fade_sequence(input)
 				tmp = self.blocks[i+1].in_sequence(tmp)
 				fade = True
-
+			
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
+			
+			if self.conditional and i!=self.cur_block:
+				factor = orig_label.shape[-1]/input.shape[-1]
+                #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
@@ -110,8 +119,6 @@ class ProgressiveGenerator(nn.Module):
 			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
 			labels[indexes] = 1.
-			#labels=labels[:,:,np.newaxis].astype(np.float32)
-			#labels = torch.from_numpy(labels).cuda()
 			if i==0:
 				input = input[:,:,None]
 				labels = labels[:,:,np.newaxis].astype(np.float32)
