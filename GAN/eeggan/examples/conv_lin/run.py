@@ -321,7 +321,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
                 labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
                 labels = torch.from_numpy(labels).cuda()
-                print(labels)
+                print(torch.where(labels==1.))
                 quit()
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
                 #print(batch_fake.shape,batch_real.shape)
