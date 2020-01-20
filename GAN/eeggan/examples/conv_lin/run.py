@@ -114,13 +114,13 @@ for i in range(n_samples):
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location):(peak_location+80),0] += peak
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-print(train[:,:,:,-1])
-quit()
+
 
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
-
+print(train[:,:,:,-1])
+quit()
 
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
