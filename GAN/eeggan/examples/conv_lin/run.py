@@ -243,14 +243,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 #Fixing labels getting downsampled
-                print(batch_real[0,0,:,-1])
-                print(batch_real[1,0,:,-1])
                 idxes = np.nonzero(batch_real[:,:,:,-1])
                 idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
                 batch_real[idxes] = 1.
-                print(batch_real[0,0,:,-1])
-                print(batch_real[1,0,:,-1])
-                quit()
+
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
                 #Conditional
