@@ -118,8 +118,6 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-print(train[:,:,:,-1])
-quit()
 
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
@@ -323,7 +321,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
                 labels = torch.from_numpy(labels).cuda()
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
-                print(batch_real.shape)
                 #print(batch_fake.shape,batch_real.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
