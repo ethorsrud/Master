@@ -242,9 +242,7 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                for i in range(64):
-                    print(batch_real[i,0,:,-1])
-                quit()
+                print(torch.nonzero(batch_real[:,:,:,-1]))
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
                 #Conditional
