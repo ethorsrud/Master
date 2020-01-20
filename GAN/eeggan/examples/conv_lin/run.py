@@ -242,8 +242,8 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                batch_real[:,:,:,-1]+=1
-                print(np.nonzero(batch_real[:,:,:,-1]))
+                idxes = np.nonzero(batch_real[:,:,:,-1])
+                print(idxes.shape)
                 quit()
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
