@@ -113,12 +113,11 @@ for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
     time_labels[i,0,peak_location,0] = 1
     train[i,0,(peak_location):(peak_location+80),0] += peak
-train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-
 
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print(train[:,:,:,-1])
 quit()
 
