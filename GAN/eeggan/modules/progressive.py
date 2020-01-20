@@ -43,8 +43,9 @@ class ProgressiveDiscriminator(nn.Module):
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
 			orig_label_np = orig_label.cpu().detach().numpy()
-			print(orig_label_np.shape)
-			quit()
+			random_times = np.where(orig_label_np==1)
+			print(random_times.shape)
+
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
 				tmp = self.blocks[i].fade_sequence(input)
