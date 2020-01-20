@@ -322,6 +322,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
                 labels = torch.from_numpy(labels).cuda()
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
+                print(batch_fake[:,:,:,-1])
                 #print(batch_fake.shape,batch_real.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
