@@ -59,7 +59,6 @@ class ProgressiveDiscriminator(nn.Module):
 			if self.conditional and i!=self.cur_block:
 				factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
-				print("hey2")
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
