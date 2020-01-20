@@ -73,7 +73,7 @@ class ProgressiveDiscriminator(nn.Module):
 					label = label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
 					print("Labelshape",label.shape)
-				torch.cat((input,label),1)	
+				input = torch.cat((input,label),1)	
 
 
 			input = self.blocks[i](input,
