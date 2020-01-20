@@ -43,7 +43,8 @@ class ProgressiveDiscriminator(nn.Module):
 		if self.conditional:
 			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
-			print(input.shape)
+			idxes = np.where(orig_label_np==1.)
+			print(idxes)
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
@@ -57,13 +58,11 @@ class ProgressiveDiscriminator(nn.Module):
 			if self.conditional and i!=self.cur_block:
 				factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
-				
-				#label = np.zeros(shape=(input.shape[0],input.shape[1],input.shape[2],1))
+				label = np.zeros(shape=(input.shape[0],1,input.shape[1]))
 				pass
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
-			print(input.shape)
 		return input
 
 	def downsample_to_block(self,input,i_block):
