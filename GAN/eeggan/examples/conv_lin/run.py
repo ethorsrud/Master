@@ -241,7 +241,7 @@ for i_block in range(i_block_tmp,n_blocks):
         for it in range(iters):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
-                print(train_batches)
+                print(train_batches.shape)
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 #Fixing labels getting downsampled
                 #idxes = np.nonzero(batch_real[:,:,:,-1])
