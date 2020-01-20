@@ -34,7 +34,7 @@ Also changed in_filters,infilters to ----> in_filters,out_filters
 """
 
 
-def create_disc_blocks(n_chans,base):
+def create_disc_blocks(n_chans,base,conditional):
 	def create_conv_sequence(in_filters,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
@@ -77,8 +77,8 @@ def create_disc_blocks(n_chans,base):
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+1,n_featuremaps),
-							  create_in_sequence(n_chans,n_featuremaps+1),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps),
+							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
@@ -88,11 +88,11 @@ def create_disc_blocks(n_chans,base):
 
 	tmp_block = ProgressiveDiscriminatorBlock(
 							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(n_featuremaps+2,n_featuremaps),
+											create_conv_sequence(n_featuremaps+1+conditional,n_featuremaps),
 											Reshape([[0],-1]),
 											weight_scale(nn.Linear(n_featuremaps*base,1),
 															gain=calculate_gain('linear'))),
-							  create_in_sequence(n_chans,n_featuremaps+1),
+							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  None
 							  )
 	blocks.append(tmp_block)
@@ -200,7 +200,7 @@ class Generator(WGAN_I_Generator):
 class Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base),conditional=True)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=True),conditional=True)
 
 	def forward(self,input):
 		return self.model(input)
@@ -208,7 +208,7 @@ class Discriminator(WGAN_I_Discriminator):
 class Fourier_Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Fourier_Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)),conditional=False)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False)
 
 	def forward(self,input):
 		return self.model(input)
@@ -216,7 +216,7 @@ class Fourier_Discriminator(WGAN_I_Discriminator):
 class AC_Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(AC_Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)),conditional=False)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False)
 
 	def forward(self,input):
 		return self.model(input)
