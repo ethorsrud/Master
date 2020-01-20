@@ -242,6 +242,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		#print("Loss_real:",loss_real)
 		print("Batch_fake")
 		fx_fake = self(batch_fake)
+		print("Hello?")
 		loss_fake = fx_fake.mean()
 		#print("Loss_fake:",loss_fake)
 		#loss_fake_for_print = loss_fake.data.item()
@@ -291,7 +292,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_real = -loss_real.data.item()
 		loss_fake = loss_fake.data.item()
 		loss_penalty = loss_penalty.data.item()
-		print("Hello?")
+		
 		return loss_real,loss_fake,loss_penalty,loss_drift,loss_center # return loss
 
 
