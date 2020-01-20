@@ -43,7 +43,7 @@ class ProgressiveDiscriminator(nn.Module):
 		if self.conditional:
 			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
-			random_times = np.where(orig_label_np==1.)
+			random_times = np.where(orig_label_np==1)
 			print(random_times)
 			quit()
 
