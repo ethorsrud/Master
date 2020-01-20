@@ -88,7 +88,7 @@ def create_disc_blocks(n_chans,base,conditional):
 
 	tmp_block = ProgressiveDiscriminatorBlock(
 							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(n_featuremaps+1+conditional,n_featuremaps),
+											create_conv_sequence(n_featuremaps+1,n_featuremaps),
 											Reshape([[0],-1]),
 											weight_scale(nn.Linear(n_featuremaps*base,1),
 															gain=calculate_gain('linear'))),
