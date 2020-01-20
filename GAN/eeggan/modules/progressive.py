@@ -57,8 +57,9 @@ class ProgressiveDiscriminator(nn.Module):
 				input = alpha*input+(1.-alpha)*tmp
 			
 			if self.conditional and i!=self.cur_block:
-				factor = orig_label.shape[-1]/input.shape[-1]
+				#factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
+				pass
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
