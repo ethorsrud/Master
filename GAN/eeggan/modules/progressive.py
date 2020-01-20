@@ -40,12 +40,16 @@ class ProgressiveDiscriminator(nn.Module):
 		fade = False
 		alpha = self.alpha
 		#MAKE NUMPY ARRAY OF LABEL
+		add_label_flag = False
 		if self.conditional:
 			#print(input[:,:,:,-1])
-			#orig_label = input[:,:,:,-1]
-			#orig_label_np = orig_label.cpu().detach().numpy()
-			#print(np.where(orig_label_np==1.))
-			pass
+			orig_label = input[:,:,:,-1]
+			orig_label_np = orig_label.cpu().detach().numpy()
+			if len(np.where(orig_label_np==1.)[0])<orig_label_np.shape[0]:
+				pass
+			else:
+				add_label_flag = True
+				print(np.where(orig_label_np==1.))
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
@@ -56,7 +60,7 @@ class ProgressiveDiscriminator(nn.Module):
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
 			
-			if self.conditional and i!=self.cur_block:
+			if self.conditional and i!=self.cur_block and add_label_flag:
 				#factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
 				pass
