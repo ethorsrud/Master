@@ -44,7 +44,8 @@ class ProgressiveDiscriminator(nn.Module):
 		if self.conditional:
 			orig_label_np = orig_label.cpu().detach().numpy()
 			random_times = np.where(orig_label_np==1)
-			print(random_times.shape)
+			print(random_times)
+			quit()
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
