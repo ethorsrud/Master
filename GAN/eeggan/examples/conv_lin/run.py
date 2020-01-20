@@ -245,8 +245,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 idxes = np.nonzero(train_batches[:,:,:,-1])
                 idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
                 train_batches[:,:,:,-1][idxes] = 1.
-                print(train_batches[1,0,:,-1])
-                quit()
+
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
 
 
