@@ -271,7 +271,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		if self.distance_weighting:
 			dist = (loss_real-loss_fake).detach()
 			dist = dist.clamp(min=0)
-		loss_penalty = self.calc_gradient_penalty(batch_real[:,:,:,:-1], batch_fake[:,:,:,:-1])
+		loss_penalty = self.calc_gradient_penalty(batch_real, batch_fake)
 		loss_penalty = self.lambd*dist*loss_penalty
 		loss_penalty.backward()
 		#print("Loss_penalty:",loss_penalty)
