@@ -59,9 +59,17 @@ class ProgressiveDiscriminator(nn.Module):
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
 				label = np.zeros(shape=(input.shape[0],1,input.shape[1]))
 				if idxes.shape[0]<input.shape[0]:
-					print("This is penalty")
+					#Penalty calculation
+					label.astype(np.float32)
+					label = torch.from_numpy(label).cuda()
 				else:
-					print("This is normal")
+					#Normal passing
+					idxes = np.floor(idxes/factor)
+					idxes = (np.arange(label.shape[0]),1,idxes)
+					label[idxes] = 1.
+					label = torch.from_numpy(label).cuda()
+				torch.cat((input,label),1)	
+
 
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
