@@ -41,10 +41,10 @@ class ProgressiveDiscriminator(nn.Module):
 		alpha = self.alpha
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
-			print(input[:,:,:,-1])
-			#orig_label = input[:,:,:,-1].clone()
-			#orig_label_np = orig_label.cpu().detach().numpy()
-			#print(np.where(orig_label_np==1.))
+			#print(input[:,:,:,-1])
+			orig_label = input[:,:,:,-1]
+			orig_label_np = orig_label.cpu().detach().numpy()
+			print(np.where(orig_label_np==1.))
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
