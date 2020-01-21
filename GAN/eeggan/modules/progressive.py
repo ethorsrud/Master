@@ -71,8 +71,8 @@ class ProgressiveDiscriminator(nn.Module):
 					label = torch.from_numpy(label).cuda()
 				input = torch.cat((input,label),1)	
 
-			print("inputshape",input.shape)
-			print("tmpshape",tmp.shape)
+				print("inputshape",input.shape)
+				print("tmpshape",tmp.shape)
 
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
