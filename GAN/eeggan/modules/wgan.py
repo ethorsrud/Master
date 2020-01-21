@@ -266,7 +266,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		#loss_consistency_term
 		#if self.lambd_consistency_term>0:
 		#	batch_real_1
-		"""
+		
 		dist = 1
 		if self.distance_weighting:
 			dist = (loss_real-loss_fake).detach()
@@ -275,7 +275,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_penalty = self.lambd*dist*loss_penalty
 		loss_penalty.backward()
 		#print("Loss_penalty:",loss_penalty)
-		"""
+		
 		"""
 		for p in self.parameters():
 			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
@@ -289,8 +289,8 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 
 		loss_real = -loss_real.data.item()
 		loss_fake = loss_fake.data.item()
-		#loss_penalty = loss_penalty.data.item()
-		loss_penalty=0
+		loss_penalty = loss_penalty.data.item()
+		#loss_penalty=0
 		return loss_real,loss_fake,loss_penalty,loss_drift,loss_center # return loss
 
 
