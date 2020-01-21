@@ -44,7 +44,6 @@ class ProgressiveDiscriminator(nn.Module):
 			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
 			idxes = np.where(orig_label_np==1.)[2]
-			#print(np.where(orig_label_np==1.))
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
@@ -58,13 +57,10 @@ class ProgressiveDiscriminator(nn.Module):
 				label = np.zeros(shape=(input.shape[0],1,input.shape[2]))
 				if idxes.shape[0]<input.shape[0]:
 					#Penalty calculation
-					print("inside penalty")
 					label = label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
 				else:
 					#Normal passing
-					print("inside normal")
-
 					idxes_2 = np.floor(idxes/factor)
 					idxes_2 = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes_2.astype(np.int))
 					label[idxes_2] = 1.
@@ -72,8 +68,6 @@ class ProgressiveDiscriminator(nn.Module):
 					label = torch.from_numpy(label).cuda()
 				input = torch.cat((input,label),1)	
 
-				print("inputshape",input.shape)
-				print("tmpshape",tmp.shape)
 
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
