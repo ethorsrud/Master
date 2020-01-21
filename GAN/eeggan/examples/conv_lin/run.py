@@ -80,6 +80,7 @@ print(train.shape)
 #Spike data end
 train = train.astype(np.float32)
 
+
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
 torch.cuda.manual_seed_all(task_ind)
