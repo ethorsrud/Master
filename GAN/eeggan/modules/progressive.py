@@ -52,7 +52,7 @@ class ProgressiveDiscriminator(nn.Module):
 				fade = True
 			
 
-			if self.conditional: print(input.shape)
+			if self.conditional and i!=self.cur_block: print(input.shape)
 
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
