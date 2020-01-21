@@ -107,7 +107,7 @@ print(train.shape)
 
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*700
-peak+=np.random.normal(80)*70
+#peak+=np.random.normal(80)*70
 plt.plot(peak)
 plt.savefig("plotwithnoise.png")
 plt.close()
