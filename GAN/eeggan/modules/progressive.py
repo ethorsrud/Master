@@ -63,8 +63,7 @@ class ProgressiveDiscriminator(nn.Module):
 				else:
 					#Normal passing
 					print("inside normal")
-					print("inputshape",input.shape)
-					print("tmpshape",tmp.shape)
+
 					idxes = np.floor(idxes/factor)
 					idxes = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes.astype(np.int))
 					label[idxes] = 1.
@@ -72,6 +71,8 @@ class ProgressiveDiscriminator(nn.Module):
 					label = torch.from_numpy(label).cuda()
 				input = torch.cat((input,label),1)	
 
+			print("inputshape",input.shape)
+			print("tmpshape",tmp.shape)
 
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
