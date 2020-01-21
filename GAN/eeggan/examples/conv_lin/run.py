@@ -109,10 +109,10 @@ print(train.shape)
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
 peak+=np.random.normal(size=(80))*70
-plt.plot(peak)
-plt.savefig("plotwithnoise.png")
-plt.close()
+
+peak_train = train.copy()
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+peak_train = np.concatenate((peak_train,time_labels),axis=3).astype(np.float32)
 #Placing random peaks
 for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
@@ -123,7 +123,8 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-
+train = np.concatenate((train,peak_train),axis=0)
+print("train_shape",train.shape)
 
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
