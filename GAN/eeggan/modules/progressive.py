@@ -51,13 +51,6 @@ class ProgressiveDiscriminator(nn.Module):
 				tmp = self.blocks[i+1].in_sequence(tmp)
 				fade = True
 			
-
-			if self.conditional and i!=self.cur_block: print(input.shape)
-
-			if fade and i==self.cur_block+1:
-				input = alpha*input+(1.-alpha)*tmp
-			
-			"""
 			if self.conditional and i!=self.cur_block:
 				factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
@@ -71,14 +64,19 @@ class ProgressiveDiscriminator(nn.Module):
 					#Normal passing
 					print("inside normal")
 					print("inputshape",input.shape)
+					print("tmpshape",tmp.shape)
 					idxes = np.floor(idxes/factor)
 					idxes = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes.astype(np.int))
 					label[idxes] = 1.
 					label = label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
-					print("Labelshape",label.shape)
 				input = torch.cat((input,label),1)	
-			"""
+
+
+			if fade and i==self.cur_block+1:
+				input = alpha*input+(1.-alpha)*tmp
+			
+
 			input = self.blocks[i](input,
 								first=(i==self.cur_block))
 		return input
