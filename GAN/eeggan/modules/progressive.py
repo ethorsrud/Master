@@ -44,7 +44,7 @@ class ProgressiveDiscriminator(nn.Module):
 			orig_label = input[:,:,:,-1]
 			orig_label_np = orig_label.cpu().detach().numpy()
 			idxes = np.where(orig_label_np==1.)[2]
-			print(np.where(orig_label_np==1.))
+			#print(np.where(orig_label_np==1.))
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
