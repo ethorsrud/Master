@@ -315,7 +315,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
 
 		interpolates = alpha * batch_real.data + ((1 - alpha) * batch_fake.data)
-		print(self.conditional)
+		if interpolates.shape[-1]==3: interpolates[:,:,:,-1] = 0
 		interpolates = Variable(interpolates, requires_grad=True)
 		alpha,interpolates = utils.cuda_check([alpha,interpolates])
 		disc_interpolates = self(interpolates)
