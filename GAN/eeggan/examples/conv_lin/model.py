@@ -129,8 +129,8 @@ def create_gen_blocks(n_chans,z_vars):
 								nn.Sequential(Reshape([[0],1,2*base]),weight_scale(nn.Linear(z_vars*2,base),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
-												Reshape([[0],n_featuremaps+1,-1]),
-												create_conv_sequence(n_featuremaps+1,n_featuremaps)),
+												Reshape([[0],n_featuremaps,-1]),
+												create_conv_sequence(n_featuremaps,n_featuremaps)),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
