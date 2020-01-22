@@ -111,8 +111,8 @@ peak = np.sin(peak)*200
 peak+=np.random.normal(size=(80))*70
 
 peak_train = train.copy()
-time_labels = np.zeros(shape=(n_samples*2,1,input_length,1))
-train = np.concatenate((train,peak_train),axis=0)
+time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+#train = np.concatenate((train,peak_train),axis=0)
 #Placing random peaks
 for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
