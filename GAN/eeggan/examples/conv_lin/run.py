@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 1
+n_critic = 5
 n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
@@ -323,6 +323,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
+                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 
                 #Conditional
@@ -352,7 +353,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
                 loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],random_times)
-        fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
