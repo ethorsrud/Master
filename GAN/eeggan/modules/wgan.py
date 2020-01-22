@@ -424,6 +424,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
+		#conditional
 		gen = torch.cat((gen,labels),3)
 
 		#NOT INCLUDING THE LABEL VECTOR

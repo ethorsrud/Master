@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 5
+n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
@@ -323,7 +323,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                if i_epoch%10: fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 
                 #Conditional

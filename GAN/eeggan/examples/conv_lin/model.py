@@ -192,7 +192,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 class Generator(WGAN_I_Generator):
 	def __init__(self,n_chans,z_vars):
 		super(Generator,self).__init__()
-		self.model = ProgressiveGenerator(create_gen_blocks(n_chans,z_vars,conditional=True),conditional=True)
+		self.model = ProgressiveGenerator(create_gen_blocks(n_chans,z_vars,conditional=False),conditional=False)
 
 	def forward(self,input,label):
 		return self.model(input,label)
@@ -200,7 +200,7 @@ class Generator(WGAN_I_Generator):
 class Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=True),conditional=True)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=False),conditional=False)
 
 	def forward(self,input):
 		return self.model(input)
