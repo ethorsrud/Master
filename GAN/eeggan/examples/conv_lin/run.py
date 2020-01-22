@@ -531,8 +531,8 @@ for i_block in range(i_block_tmp,n_blocks):
             #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
 
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
-            #generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
-            #joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
+            generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
+            joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
 
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
