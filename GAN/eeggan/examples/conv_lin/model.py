@@ -126,7 +126,10 @@ def create_gen_blocks(n_chans,z_vars):
 
 	#Original No reshape, only one linear layer z_vars,base*featuremaps
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(Reshape([[0],1,2*base]),weight_scale(nn.Linear(z_vars*2,base*n_featuremaps),
+								nn.Sequential(Reshape([[0],1,2*base]),weight_scale(nn.Linear(z_vars*2,base),
+														gain=calculate_gain('leaky_relu')),
+												nn.LeakyReLU(0.2),
+												weight_scale(nn.Linear(base,base*n_featuremaps),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps,-1]),
