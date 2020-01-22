@@ -134,21 +134,22 @@ class ProgressiveGenerator(nn.Module):
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
 			#Adding labels to input
-			labels = np.zeros(shape=(input.shape[0],base*2**i))
-			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
-			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
-			labels[indexes] = 1.
-			if i==0:
-				input = input[:,:,None]
-				labels = labels[:,:,np.newaxis].astype(np.float32)
-				labels = torch.from_numpy(labels).cuda()
-				#print("i==0",input.shape,labels.shape)
-				input = torch.cat((input,labels),dim=2)
-			else:
-				labels = labels[:,np.newaxis,:].astype(np.float32)
-				labels = torch.from_numpy(labels).cuda()
-				#print("i!=0",input.shape,labels.shape)
-				input = torch.cat((input,labels),dim=1)
+			if self.conditional:
+				labels = np.zeros(shape=(input.shape[0],base*2**i))
+				label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
+				indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
+				labels[indexes] = 1.
+				if i==0:
+					input = input[:,:,None]
+					labels = labels[:,:,np.newaxis].astype(np.float32)
+					labels = torch.from_numpy(labels).cuda()
+					#print("i==0",input.shape,labels.shape)
+					input = torch.cat((input,labels),dim=2)
+				else:
+					labels = labels[:,np.newaxis,:].astype(np.float32)
+					labels = torch.from_numpy(labels).cuda()
+					#print("i!=0",input.shape,labels.shape)
+					input = torch.cat((input,labels),dim=1)
 
 			
 
