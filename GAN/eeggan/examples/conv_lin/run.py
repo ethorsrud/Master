@@ -323,7 +323,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                if i_epoch%10: fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 
                 #Conditional
