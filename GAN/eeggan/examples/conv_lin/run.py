@@ -36,8 +36,8 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 5
-n_gen = 1
+n_critic = 1
+n_gen = 5
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
 jobid = 0
