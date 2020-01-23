@@ -111,6 +111,10 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
+								PixelNorm(),
+								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
+														gain=calculate_gain('leaky_relu')),
+								nn.LeakyReLU(0.2),
 								PixelNorm())
 
 	def create_out_sequence(n_chans,in_filters):
@@ -130,9 +134,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps+conditional,-1]),
-												create_conv_sequence(n_featuremaps+conditional,n_featuremaps),
-												create_conv_sequence(n_featuremaps,n_chans),
-												create_conv_sequence(n_chans,n_featuremaps)),
+												create_conv_sequence(n_featuremaps+conditional,n_featuremaps)),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
