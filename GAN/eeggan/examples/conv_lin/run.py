@@ -44,7 +44,7 @@ jobid = 0
 n_samples = 768 #Samples from dataset
 conditional = True
 
-n_z = 128*(1+conditional)#200
+n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 400.#2000.
@@ -142,7 +142,7 @@ if not os.path.exists(modelpath):
 if not os.path.exists(outputpath):
     os.makedirs(outputpath)
 
-generator = Generator(n_chans,n_z)
+generator = Generator(n_chans,n_z*(1+conditional))
 discriminator = Discriminator(n_chans+1)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
@@ -270,7 +270,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
-                    labels = np.zeros(shape=(batch_real.shape[0],n_z/2))
+                    labels = np.zeros(shape=(batch_real.shape[0],n_z))
                     label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
                     indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
                     labels[indexes] = 1.
