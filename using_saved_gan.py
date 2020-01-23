@@ -3,7 +3,7 @@ import sys
 import joblib
 code_path = os.path.normpath(os.getcwd())
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
-model_path = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN"+os.sep+"denseconditional")
+model_path = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
 sys.path.append(os.path.join(code_path,"GAN"))
 sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
