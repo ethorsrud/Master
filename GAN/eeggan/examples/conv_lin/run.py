@@ -369,7 +369,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels[indexes] = 1.
                     labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
-                print(z_vars.shape)
                 #z_vars_label[np.arange(n_batch),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
                 #z_vars = z_vars[:,:,np.newaxis]
