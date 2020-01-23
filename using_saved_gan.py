@@ -31,8 +31,6 @@ generator.train_init(alpha=1e-3,betas=(0.,0.99))
 generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:3")
 i_block,fade_alpha = joblib.load(os.path.join(model_path,"Progressive0"+'.data'))
 
-i_block=1
-
 generator.model.cur_block = i_block
 generator.model.alpha = fade_alpha
 
@@ -50,12 +48,15 @@ z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
-batch_fake = generator(z_vars)
 
-for i in range(128):
-    plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy()+0.5*i,linewidth=0.5)
-plt.savefig("Label_swipe.png",dpi=800)
-plt.close()
+
+for block in range(n_blocks):
+    generator.model.cur_block = block
+    batch_fake = generator(z_vars)
+    for i in range(128):
+        plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy()+0.5*i,linewidth=0.5)
+    plt.savefig("Label_swipe_block_%i.png"%block,dpi=800)
+    plt.close()
 #z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
 #z_vars_longer = Variable(torch.from_numpy(z_vars_im_longer),requires_grad=False).cuda()
 #batch_fake_longer = generator(z_vars_longer)
