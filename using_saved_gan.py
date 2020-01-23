@@ -3,7 +3,7 @@ import sys
 import joblib
 code_path = os.path.normpath(os.getcwd())
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
-model_path = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
+model_path = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN"+os.sep+"denseconditional")
 sys.path.append(os.path.join(code_path,"GAN"))
 sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
@@ -24,6 +24,7 @@ n_z = 128
 datafreq = 30000
 n_blocks = 6
 t_multiple = 3
+input_length = 8192
 
 generator = Generator(2,128) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
@@ -37,20 +38,26 @@ generator.cuda()
 print("Model loaded")
 
 rng = np.random.RandomState(0)
-z_vars_im = rng.normal(0,1,size=(400,n_z)).astype(np.float32)
+z_vars_im = rng.normal(0,1,size=(128,n_z)).astype(np.float32)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
-batch_fake = generator(z_vars)
 
-z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
-z_vars_longer = Variable(torch.from_numpy(z_vars_im_longer),requires_grad=False).cuda()
-batch_fake_longer = generator(z_vars_longer)
+random_times = np.random.randint(0,input_length-80,size=(128)).astype(np.int)
 
+batch_fake = generator(z_vars,random_times)
+print(batch_fake.shape)
+
+#z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
+#z_vars_longer = Variable(torch.from_numpy(z_vars_im_longer),requires_grad=False).cuda()
+#batch_fake_longer = generator(z_vars_longer)
+
+"""
 plt.plot(batch_fake[0,0,:,0].detach().cpu().numpy())
 plt.plot(batch_fake_longer[0,0,:,0].detach().cpu().numpy()+0.5)
 plt.ylim(-1,1)
 plt.legend(["Trained length","Extended length"])
 plt.savefig("Loaded_GAN_time.png")
 plt.close()
+
 
 torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
 torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
@@ -71,3 +78,4 @@ plt.plot(freqs_tmp_longer,fake_amps_longer[:,0]/3)
 plt.legend(["Trained length","Extended length"])
 plt.savefig("Loaded_GAN_fft.png")
 plt.close()
+"""
