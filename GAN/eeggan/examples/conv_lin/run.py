@@ -331,9 +331,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake_autocor = functions.autocorrelation(batch_fake)
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
-                print("F",batch_fake.shape)
-                print("R",batch_real.shape)
-                quit()
 
                 fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
