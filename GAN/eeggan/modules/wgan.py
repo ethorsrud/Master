@@ -405,15 +405,14 @@ class WGAN_I_Generator(GAN_Generator):
 		# Generate and discriminate
 
         #Conditional
-		i_block,n_blocks = block_info
-		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
-		label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
-		labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
-		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
-		labels = torch.from_numpy(labels).cuda()
-		batch_noise = torch.cat((batch_noise,labels),3)
-		print(batch_noise.shape)
-		quit()
+		#i_block,n_blocks = block_info
+		#labels = np.zeros(shape=(batch_noise.shape[0],bathc.shape[2]))
+		#label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
+		#labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
+		#labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+		#labels = torch.from_numpy(labels).cuda()
+		#batch_noise = torch.cat((batch_noise,labels),3)
+
 		gen = self(batch_noise)
 
 		#label_index = batch_noise.cpu().detach().numpy()
