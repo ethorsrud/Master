@@ -283,11 +283,9 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
-                print("z_vars",z_vars.shape)
+
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-                print(batch_fake.shape)
-                print("YEAH")
-                quit()
+
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
@@ -347,7 +345,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #print(batch_fake.shape,batch_real.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
- 
+                print("I got here")
+                quit()
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
