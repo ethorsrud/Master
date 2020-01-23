@@ -126,7 +126,7 @@ class ProgressiveGenerator(nn.Module):
 		self.alpha = 1.
 		self.conditional = conditional
 
-	def forward(self,input,label):
+	def forward(self,input):
 		#print("Label",label.shape)
 		n_blocks = len(self.blocks)
 		base = input.shape[1]
