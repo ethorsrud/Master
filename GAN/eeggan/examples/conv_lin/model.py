@@ -39,9 +39,6 @@ def create_disc_blocks(n_chans,base,conditional):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
 
 								weight_scale(nn.Conv1d(out_filters,out_filters,2,stride=2),
 														gain=calculate_gain('leaky_relu')),
@@ -115,10 +112,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm(),
-								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
-								PixelNorm())
+								)
 
 	def create_out_sequence(n_chans,in_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,n_chans,1),
@@ -133,7 +127,10 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	
 	#Original No reshape, only one linear layer z_vars,base*featuremaps
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(weight_scale(nn.Linear(z_vars,base*(n_featuremaps+conditional)),
+								nn.Sequential(weight_scale(nn.Linear(z_vars,base),
+														gain=calculate_gain('leaky_relu')),
+												nn.LeakyReLU(0.2),
+											weight_scale(nn.Linear(base,base*(n_featuremaps+conditional)),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps+conditional,-1]),
