@@ -272,8 +272,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
                 indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
                 labels[indexes] = 1.
+                z_vars = np.concatenate((z_vars,labels),axis=1)
                 print(z_vars.shape)
-                print(labels.shape)
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
                 #z_vars_label = torch.from_numpy(z_vars_label).cuda()
