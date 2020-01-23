@@ -210,8 +210,8 @@ if conditional:
     label_im_downsampled = np.floor(random_times_im/(2**n_blocks)).astype(np.int)
     indexes_im = (np.arange(1000).astype(np.int),label_im_downsampled)
     labels_im[indexes_im] = 1.
-    labels_im = labels.astype(np.float32)
-    z_vars = np.concatenate((z_vars_im,labels_im),axis=1)
+    labels_im = labels_im.astype(np.float32)
+    z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
