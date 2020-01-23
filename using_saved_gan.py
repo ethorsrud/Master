@@ -36,7 +36,7 @@ generator.model.alpha = fade_alpha
 
 generator.cuda()
 print("Model loaded")
-
+quit()
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(128,n_z)).astype(np.float32)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
