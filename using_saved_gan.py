@@ -53,7 +53,7 @@ z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 batch_fake = generator(z_vars)
 
 for i in range(128):
-    plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy()+0.5*i,linewidth=0.3)
+    plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy()+0.5*i,linewidth=0.5)
 plt.savefig("Label_swipe.png",dpi=800)
 plt.close()
 #z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
