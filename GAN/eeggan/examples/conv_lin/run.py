@@ -270,10 +270,11 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
-                    labels = np.zeros(shape=(batch_real.shape[0],n_z))
+                    labels = np.zeros(shape=(batch_real.shape[0],n_z/2))
                     label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
                     indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
                     labels[indexes] = 1.
+                    labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
@@ -282,7 +283,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
-                print(z_vars.shape)
+                print("z_vars",z_vars.shape)
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
                 print(batch_fake.shape)
                 print("YEAH")
