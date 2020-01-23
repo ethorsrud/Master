@@ -134,6 +134,7 @@ class ProgressiveGenerator(nn.Module):
 		alpha = self.alpha
 		for i in range(0,self.cur_block+1):
 			#Adding labels to input
+			"""
 			labels = np.zeros(shape=(input.shape[0],base*2**i))
 			label_downsampled = np.floor(label/(2**(n_blocks-i))).astype(np.int)
 			indexes = (np.arange(input.shape[0]).astype(np.int),label_downsampled)
@@ -149,7 +150,7 @@ class ProgressiveGenerator(nn.Module):
 				labels = torch.from_numpy(labels).cuda()
 				#print("i!=0",input.shape,labels.shape)
 				input = torch.cat((input,labels),dim=1)
-
+			"""
 			
 
 			input = self.blocks[i](input,last=(i==self.cur_block))

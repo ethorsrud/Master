@@ -268,6 +268,12 @@ for i_block in range(i_block_tmp,n_blocks):
                 #New_conditional
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
+                labels = np.zeros(shape=(batch_real.shape[0],n_z))
+                label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
+                indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
+                labels[indexes] = 1.
+                print(z_vars.shape)
+                print(labels.shape)
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
                 #z_vars_label = torch.from_numpy(z_vars_label).cuda()
