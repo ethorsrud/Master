@@ -38,7 +38,7 @@ generator.cuda()
 
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(128,n_z)).astype(np.float32)
-random_times = np.random.randint(0,input_length-80,size=(128)).astype(np.int)
+random_times = np.linspace(0,input_length-80,128).astype(np.int)
 labels = np.zeros(shape=(128,n_z))
 label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
 indexes = (np.arange(128).astype(np.int),label_downsampled)
@@ -49,7 +49,7 @@ z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
-print(batch_fake.shape)
+
 
 #z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
 #z_vars_longer = Variable(torch.from_numpy(z_vars_im_longer),requires_grad=False).cuda()
