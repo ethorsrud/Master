@@ -404,8 +404,6 @@ class WGAN_I_Generator(GAN_Generator):
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
 
-		gen = self(batch_noise,random_times)
-
         #Conditional
 		i_block,n_blocks = block_info
 		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
@@ -413,6 +411,10 @@ class WGAN_I_Generator(GAN_Generator):
 		labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
 		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
 		labels = torch.from_numpy(labels).cuda()
+		batch_noise = torch.cat((batch_noise,labels),3)
+		print(batch_noise.shape)
+		quit()
+		gen = self(batch_noise)
 
 		#label_index = batch_noise.cpu().detach().numpy()
 		#label_index = label_index[:,:,1]
@@ -424,8 +426,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
-		#conditional
-		gen = torch.cat((gen,labels),3)
+
 
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
