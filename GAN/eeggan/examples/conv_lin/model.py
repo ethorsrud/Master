@@ -13,7 +13,7 @@ from torch.nn.init import calculate_gain
 from eeggan.modules.layers.xray import xrayscanner
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
-n_featuremaps = 50#25
+n_featuremaps = 10#25
 #base = starting samples => base = input_size/(2**N_blocks)
 base = int(8192/(2**6))#int(1536/(2**6))
 """
