@@ -370,8 +370,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
                 loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],random_times)
-                print("That worked too")
-                quit()
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
@@ -550,8 +548,8 @@ for i_block in range(i_block_tmp,n_blocks):
             #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
 
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
-            #generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
-            #joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
+            generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
+            joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
 
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
