@@ -13,7 +13,7 @@ from torch.nn.init import calculate_gain
 from eeggan.modules.layers.xray import xrayscanner
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
-n_featuremaps = 25
+n_featuremaps = 50#25
 #base = starting samples => base = input_size/(2**N_blocks)
 base = int(8192/(2**6))#int(1536/(2**6))
 """
@@ -127,12 +127,10 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	
 	#Original No reshape, only one linear layer z_vars,base*featuremaps
 	tmp_block = ProgressiveGeneratorBlock(
-								nn.Sequential(weight_scale(nn.Linear(z_vars,base),
+								nn.Sequential(weight_scale(nn.Linear(z_vars,base*(n_featuremaps+conditional)),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
-											weight_scale(nn.Linear(base,base*(n_featuremaps+conditional)),
-														gain=calculate_gain('leaky_relu')),
-												nn.LeakyReLU(0.2),
+												
 												Reshape([[0],n_featuremaps+conditional,-1]),
 												create_conv_sequence(n_featuremaps+conditional,n_featuremaps)),
 								create_out_sequence(n_chans,n_featuremaps),
