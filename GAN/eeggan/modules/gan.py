@@ -54,7 +54,7 @@ class GAN_Module(nn.Module):
 		"""
 		model_state,opt_state,self.did_init_train = torch.load(fname,map_location=location)
 
-		self.load_state_dict(model_state)
+		self.load_state_dict(model_state,strict=False)
 		self.optimizer.load_state_dict(opt_state)
 
 
