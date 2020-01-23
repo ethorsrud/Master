@@ -345,8 +345,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 #print(batch_fake.shape,batch_real.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
-                print("I got here")
-                quit()
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
@@ -363,6 +361,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
                 loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],random_times)
+                print("That worked too")
+                quit()
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
