@@ -48,7 +48,7 @@ n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 400.#2000.
-block_epochs = [100,200,400,800,1600,3200]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [400,800,800,800,800,800]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -117,7 +117,7 @@ time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Placing random peaks
 for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
-    time_labels[i,0,peak_location,0] = 1
+    time_labels[i,0,peak_location:(peak_location+80),0] = 1
     train[i,0,(peak_location):(peak_location+80),0] += peak
 
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
@@ -204,14 +204,16 @@ z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
 #Conditional
 if conditional:
     random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
-    z_vars_im_label = np.zeros(shape=(1000,n_z))
-    random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
+    labels_im = np.zeros(shape=(1000,input_length))
+    for i in range(1000):
+        labels_im[i,random_times_im[i]:(random_times_im[i]+80)] = 1.
+    index_im = np.where(labels_im==1.)
+    index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     labels_im = np.zeros(shape=(1000,n_z))
-    label_im_downsampled = np.floor(random_times_im/(2**n_blocks)).astype(np.int)
-    indexes_im = (np.arange(1000).astype(np.int),label_im_downsampled)
-    labels_im[indexes_im] = 1.
+    labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
+
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
@@ -278,12 +280,21 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
-                    labels = np.zeros(shape=(batch_real.shape[0],n_z))
-                    label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
-                    indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
-                    labels[indexes] = 1.
+                    labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
+                    for i in range(len(batches[it*n_critic+i_critic])):
+                        labels_big[i,random_times[i]:(random_times[i]+80)] = 1.
+                    index = np.where(labels_big==1.)
+                    index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
+                    labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
+                    labels[index] = 1.
                     labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
+                    #labels = np.zeros(shape=(batch_real.shape[0],n_z))
+                    #label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
+                    #indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
+                    #labels[indexes] = 1.
+                    #labels = labels.astype(np.float32)
+                    #z_vars = np.concatenate((z_vars,labels),axis=1)
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
@@ -345,11 +356,19 @@ for i_block in range(i_block_tmp,n_blocks):
                 
                 #Conditional
                 labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-                label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
-                labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
-                labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+                index = np.where(labels_big==1.)
+                index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
+                labels[index] = 1.
+                labels = labels.astype(np.float32)
+                labels = labels[:,np.newaxis,:,np.newaxis]
                 labels = torch.from_numpy(labels).cuda()
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
+
+                #label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
+                #labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
+                #labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+                #labels = torch.from_numpy(labels).cuda()
+                #batch_fake = torch.cat((batch_fake,labels),dim=3)
                 #print(batch_fake.shape,batch_real.shape)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
@@ -363,12 +382,16 @@ for i_block in range(i_block_tmp,n_blocks):
                 
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
+                    labels = np.zeros(shape=(n_batch,input_length))
+                    for i in range(n_batch):
+                        labels[i,random_times[i]:(random_times[i]+80)] = 1.
+                    index = np.where(labels==1.)
+                    index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     labels = np.zeros(shape=(n_batch,n_z))
-                    label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
-                    indexes = (np.arange(n_batch).astype(np.int),label_downsampled)
-                    labels[indexes] = 1.
+                    labels[index] = 1.
                     labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
+
                 #z_vars_label[np.arange(n_batch),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
                 #z_vars = z_vars[:,:,np.newaxis]

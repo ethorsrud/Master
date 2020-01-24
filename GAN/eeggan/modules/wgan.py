@@ -408,11 +408,22 @@ class WGAN_I_Generator(GAN_Generator):
 
         #Conditional
 		i_block,n_blocks = block_info
+		labels = np.zeros(shape=(gen.shape[0],8192))
+		for i in range(gen.shape[0]):
+			labels[i,random_times[i]:(random_times[i]+80)] = 1.
+		index = np.where(labels==1.)
+		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
 		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
-		label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
-		labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
-		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+		labels[index] = 1.
+		labels = labels.astype(np.float32)
+		labels = labels[:,np.newaxis,:,np.newaxis]
 		labels = torch.from_numpy(labels).cuda()
+		
+		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
+		#label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
+		#labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
+		#labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+		#labels = torch.from_numpy(labels).cuda()
 
 		#label_index = batch_noise.cpu().detach().numpy()
 		#label_index = label_index[:,:,1]
