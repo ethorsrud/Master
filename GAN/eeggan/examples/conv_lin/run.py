@@ -36,7 +36,7 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
-n_critic = 5
+n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
 input_length = 8192#10240#12288#30720#1536#768
@@ -47,8 +47,8 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 400.#2000.
-block_epochs = [400,800,800,800,800,800]#[2000,4000,4000,4000,4000,4000]
+rampup = 1000#400.#2000.
+block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -150,7 +150,7 @@ AC_discriminator = AC_Discriminator(n_chans)
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
-fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
+fourier_discriminator.train_init(alpha=lr*0.1,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
