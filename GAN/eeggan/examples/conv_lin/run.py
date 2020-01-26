@@ -110,14 +110,14 @@ print(train.shape)
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
 peak+=np.random.normal(size=(80))*70
-
+label_length = 1
 peak_train = train.copy()
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #train = np.concatenate((train,peak_train),axis=0)
 #Placing random peaks
 for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
-    time_labels[i,0,peak_location:(peak_location+80),0] = 1
+    time_labels[i,0,peak_location:(peak_location+label_length),0] = 1
     train[i,0,(peak_location):(peak_location+80),0] += peak
 
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
@@ -150,7 +150,7 @@ AC_discriminator = AC_Discriminator(n_chans)
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
-fourier_discriminator.train_init(alpha=lr*0.1,betas=(0.,0.99),eps_center=0.001,
+fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
@@ -201,12 +201,13 @@ losses_fourier = []
 
 i_epoch = 0
 z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
+
 #Conditional
 if conditional:
     random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
     labels_im = np.zeros(shape=(1000,input_length))
     for i in range(1000):
-        labels_im[i,random_times_im[i]:(random_times_im[i]+80)] = 1.
+        labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
     index_im = np.where(labels_im==1.)
     index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     labels_im = np.zeros(shape=(1000,n_z))
@@ -282,7 +283,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
                     for i in range(len(batches[it*n_critic+i_critic])):
-                        labels_big[i,random_times[i]:(random_times[i]+80)] = 1.
+                        labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels_big==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
@@ -384,7 +385,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     labels = np.zeros(shape=(n_batch,input_length))
                     for i in range(n_batch):
-                        labels[i,random_times[i]:(random_times[i]+80)] = 1.
+                        labels[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     labels = np.zeros(shape=(n_batch,n_z))
