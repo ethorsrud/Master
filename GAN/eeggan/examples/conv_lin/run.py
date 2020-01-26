@@ -109,7 +109,7 @@ print(train.shape)
 
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
-peak+=np.random.normal(size=(80))*70
+#peak+=np.random.normal(size=(80))*70
 label_length = 1
 peak_train = train.copy()
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
@@ -259,7 +259,9 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
+                print(train_batches.shape)
                 idxes = np.nonzero(train_batches[:,:,:,-1])
+                print(idxes)
                 idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
                 train_batches[:,:,:,-1][idxes] = 1.
 
