@@ -259,9 +259,7 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
-                print(train_batches.shape)
                 idxes = np.nonzero(train_batches[:,:,:,-1])
-                print(idxes)
                 idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
                 train_batches[:,:,:,-1][idxes] = 1.
 
@@ -286,6 +284,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
                     for i in range(len(batches[it*n_critic+i_critic])):
                         labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
+                    print("SAME?",batch_real.shape[0],len(batches[it*n_critic+i_critic]))
                     index = np.where(labels_big==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
