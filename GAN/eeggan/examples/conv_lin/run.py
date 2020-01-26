@@ -45,7 +45,7 @@ n_samples = 768 #Samples from dataset
 conditional = True
 
 n_z = 128#200
-lr = 0.001#0.001
+lr = 0.01#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
 block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
@@ -284,7 +284,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
                     for i in range(len(batches[it*n_critic+i_critic])):
                         labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
-                    print("SAME?",batch_real.shape[0],len(batches[it*n_critic+i_critic]))
                     index = np.where(labels_big==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
