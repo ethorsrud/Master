@@ -51,7 +51,9 @@ z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
 for i in range(30):
-    plt.plot(batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
+    plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
+plt.title("30 signals where the label is set to create peak in the middle")
+plt.xlabel("Sample i of 8192 total")
 plt.savefig("Block_5_MiddlePeak.png",dpi=1000)
 plt.close()
 
