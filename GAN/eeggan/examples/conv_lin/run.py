@@ -63,7 +63,7 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:384,:input_length*n_samples].T
+spike_data_small = spike_data[:50,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,n_channels_dat))
 """
 train_new = []
@@ -113,7 +113,7 @@ peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
 #peak+=np.random.normal(size=(80))*70
 label_length = 1
-peak_train = train.copy()
+#peak_train = train.copy()
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #train = np.concatenate((train,peak_train),axis=0)
 #Placing random peaks
