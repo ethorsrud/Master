@@ -64,7 +64,7 @@ hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
 spike_data_small = spike_data[:50,:input_length*n_samples].T
-train = spike_data_small.reshape((n_samples,1,input_length,n_channels_dat))
+train = spike_data_small.reshape((n_samples,1,input_length,50))
 """
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
