@@ -63,16 +63,20 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:100,:input_length*n_samples].T
+spike_data_small = spike_data[:50,:input_length*n_samples].T
 print(spike_data_small.shape)
 
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
     print("%i/%i"%(i,int(spike_data_small.shape[0]/input_length)))
     train_new.append(spike_data_small[i*input_length:i*input_length+input_length])
+print("creating array")
 train_new = np.array(train_new)
+print("new axis")
 train = train_new[:,:,:,np.newaxis]
+print("swap1")
 train = np.swapaxes(train,1,2)
+print("swap2")
 train = np.swapaxes(train,1,3)
 #Only first channel
 #train = train[:,:,:,0][:,:,:,np.newaxis]
