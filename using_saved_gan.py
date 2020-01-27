@@ -50,8 +50,8 @@ z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
-for i in range(5):
-    plt.plot(batch_fake[i,0,4000:4200,0].detach().cpu().numpy(),linewidth=0.5)
+for i in range(10):
+    plt.plot(batch_fake[i,0,4000:4200,0].detach().cpu().numpy(),linewidth=0.5,alpha=0.5)
 plt.savefig("Block_5_MiddlePeak.png",dpi=1000)
 plt.close()
 
