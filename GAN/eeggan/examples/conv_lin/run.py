@@ -137,8 +137,8 @@ time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 spike_times = spike_times[temp_index]
 spike_times = spike_times[spike_times<(input_length*n_samples)]
 for i in range(spike_times.shape[0]):
-    cur_sample = spike_times[i]//input_length
-    cur_ind = spike_times[i]%input_length
+    cur_sample = int(spike_times[i]//input_length)
+    cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
