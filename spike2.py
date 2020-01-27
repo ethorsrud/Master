@@ -22,8 +22,8 @@ amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).as
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
 for i in range(templates.shape[2]):
-    plt.plot(templates[0,:,i]+0.5*i)
-plt.savefig("Template0.png",dpi=400)
+    plt.plot(templates[0,:,i]+1*i,linewidth=0.5)
+plt.savefig("Template0.png",dpi=800)
 plt.close()
 
 quit()
