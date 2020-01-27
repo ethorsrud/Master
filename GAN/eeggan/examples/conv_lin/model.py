@@ -13,7 +13,7 @@ from torch.nn.init import calculate_gain
 from eeggan.modules.layers.xray import xrayscanner
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
-n_featuremaps = 25#25
+n_featuremaps = 50#25
 #base = starting samples => base = input_size/(2**N_blocks)
 base = int(8192/(2**6))#int(1536/(2**6))
 """
@@ -36,10 +36,7 @@ Also changed in_filters,infilters to ----> in_filters,out_filters
 
 def create_disc_blocks(n_chans,base,conditional):
 	def create_conv_sequence(in_filters,out_filters):
-		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,in_filters,9,padding=4),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(in_filters,out_filters,5,padding=2),
+		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 
@@ -115,10 +112,6 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								PixelNorm(),
-								weight_scale(nn.Conv1d(out_filters,out_filters,5,padding=2),
-														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),
-								PixelNorm()
 								)
 
 	def create_out_sequence(n_chans,in_filters):
