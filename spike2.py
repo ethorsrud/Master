@@ -21,6 +21,9 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
+spike_times = spike_times[spike_times<(8192*768)]
+print("number of spikes",spike_times.shape)
+spike_templates = spike_templates[:spike_times.shape[0]]
 index = np.where(spike_templates==0)[0]
 print(spike_times[index])
 

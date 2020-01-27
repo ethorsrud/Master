@@ -65,6 +65,7 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
 spike_data_small = spike_data[:15,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,15))
+
 """
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
@@ -108,7 +109,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-
+"""
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
 #peak+=np.random.normal(size=(80))*70
@@ -121,10 +122,19 @@ for i in range(n_samples):
     peak_location = np.random.randint(0,input_length-80)
     time_labels[i,0,peak_location:(peak_location+label_length),0] = 1
     train[i,0,(peak_location):(peak_location+80),0] += peak
-
+"""
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+
+spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
+spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
+selected_template = 0
+temp_index = np.where(spike_templates==selected_template)[0]
+time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+#Only spikes with selected template
+spike_times = spike_times[temp_index]
+
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 
