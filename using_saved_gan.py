@@ -39,6 +39,7 @@ generator.cuda()
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(128,n_z)).astype(np.float32)
 random_times = np.linspace(0,input_length-80,128).astype(np.int)
+random_times = (np.zeros(128)+input_length/2).astype(np.int)
 labels = np.zeros(shape=(128,n_z))
 label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
 indexes = (np.arange(128).astype(np.int),label_downsampled)
@@ -48,8 +49,14 @@ z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
+batch_fake = generator(z_vars)
+for i in range(5):
+    plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy(),linewidth=0.5)
+plt.savefig("Block_5_MiddlePeak.png",dpi=1000)
+plt.close()
 
 
+"""
 for block in range(i_block+1):
     generator.model.cur_block = block
     batch_fake = generator(z_vars)
@@ -57,6 +64,7 @@ for block in range(i_block+1):
         plt.plot(batch_fake[i,0,:,0].detach().cpu().numpy()+0.5*i,linewidth=0.5)
     plt.savefig("Label_swipe_block_%i.png"%block,dpi=800)
     plt.close()
+"""
 #z_vars_im_longer = rng.normal(0,1,size=(400,n_z*t_multiple)).astype(np.float32)
 #z_vars_longer = Variable(torch.from_numpy(z_vars_im_longer),requires_grad=False).cuda()
 #batch_fake_longer = generator(z_vars_longer)
