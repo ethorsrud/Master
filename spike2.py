@@ -20,11 +20,11 @@ templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).asty
 templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy")).astype(np.float64) #[nTemplates,nTempChannels]
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
-
-for i in range(20):
-    plt.plot(templates[0,:,i]+1*i,linewidth=0.5)
-plt.savefig("Template0.png",dpi=800)
-plt.close()
+for j in range(20):
+    for i in range(20):
+        plt.plot(templates[j,:,i]+0.5*i,linewidth=0.5)
+    plt.savefig("Template%i.png"%j,dpi=800)
+    plt.close()
 
 quit()
 seconds_of_data = 15
