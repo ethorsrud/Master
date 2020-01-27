@@ -225,7 +225,7 @@ if conditional:
     random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
     labels_im = np.zeros(shape=(1000,input_length))
     #800/1000 is getting labeled
-    for i in range(800):
+    for i in range(1000):
         labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
     index_im = np.where(labels_im==1.)
     index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
@@ -301,7 +301,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
-                    for i in range(len(batches[it*n_critic+i_critic])-12):
+                    for i in range(len(batches[it*n_critic+i_critic])):
                         labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels_big==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
@@ -403,7 +403,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     labels = np.zeros(shape=(n_batch,input_length))
-                    for i in range(n_batch-12):
+                    for i in range(n_batch):
                         labels[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
