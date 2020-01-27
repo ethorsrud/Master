@@ -63,7 +63,7 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//n_channels_dat))
-spike_data_small = spike_data[:2,:input_length*n_samples].T
+spike_data_small = spike_data[:,:input_length*n_samples].T
 print(spike_data_small.shape)
 
 train_new = []
