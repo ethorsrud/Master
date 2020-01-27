@@ -66,10 +66,9 @@ spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//
 spike_data_small = spike_data[:3,:input_length*n_samples].T
 print(spike_data_small.shape)
 spike_data_test = spike_data_small.reshape((n_samples,1,input_length,3))
-print(spike_data_test[0,0,:,0])
+print(spike_data_test[5,0,:,2])
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
-    print("%i/%i"%(i,int(spike_data_small.shape[0]/input_length)))
     train_new.append(spike_data_small[i*input_length:i*input_length+input_length])
 print("creating array")
 train_new = np.array(train_new)
@@ -79,7 +78,7 @@ train = np.swapaxes(train,1,3)
 #Only first channel
 #train = train[:,:,:,0][:,:,:,np.newaxis]
 n_chans = train.shape[3]#+1 # +1 FOR CONDITIONAL
-print(train[0,0,:,0])
+print(train[5,0,:,2])
 print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
