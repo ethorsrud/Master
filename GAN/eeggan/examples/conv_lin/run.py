@@ -109,11 +109,12 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
+label_length = 1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
 #peak+=np.random.normal(size=(80))*70
-label_length = 1
+
 #peak_train = train.copy()
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #train = np.concatenate((train,peak_train),axis=0)
@@ -135,8 +136,10 @@ time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
 spike_times = spike_times[temp_index]
 spike_times = spike_times[spike_times<(input_length*n_samples)]
-print(spike_times.shape)
-quit()
+for i in range(spike_times.shape[0]):
+    cur_sample = spike_times[i]//input_length
+    cur_ind = spike_times[i]%input_length
+    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
@@ -221,7 +224,8 @@ z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
 if conditional:
     random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
     labels_im = np.zeros(shape=(1000,input_length))
-    for i in range(1000):
+    #800/1000 is getting labeled
+    for i in range(800):
         labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
     index_im = np.where(labels_im==1.)
     index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
@@ -297,7 +301,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
-                    for i in range(len(batches[it*n_critic+i_critic])):
+                    for i in range(len(batches[it*n_critic+i_critic])-12):
                         labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels_big==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
@@ -399,7 +403,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     labels = np.zeros(shape=(n_batch,input_length))
-                    for i in range(n_batch):
+                    for i in range(n_batch-12):
                         labels[i,random_times[i]:(random_times[i]+label_length)] = 1.
                     index = np.where(labels==1.)
                     index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
@@ -501,7 +505,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
-                    plt.plot(peak_loc[i,:]*0.05,alpha=0.5)
+                    #plt.plot(peak_loc[i,:]*0.05,alpha=0.5)
                     if i==1:
                         plt.title("Fakes")
                     plt.xticks((),())
