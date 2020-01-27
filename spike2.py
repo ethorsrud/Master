@@ -22,8 +22,8 @@ amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).as
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
 
-print(templates[0,0])
-print(templates[0,1])
+print(templates_ind[0])
+
 quit()
 seconds_of_data = 15
 small_n_channels = 384
