@@ -48,7 +48,7 @@ n_z = 128#200
 lr = 0.0001#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
-block_epochs = [10,10,10,10,10,10]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -134,6 +134,9 @@ temp_index = np.where(spike_templates==selected_template)[0]
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
 spike_times = spike_times[temp_index]
+spike_times = spike_times[spike_times<(input_length*n_samples)]
+print(spike_times.shape)
+quit()
 
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
