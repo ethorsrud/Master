@@ -21,7 +21,7 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
-for i in range(templates.shape[2]):
+for i in range(20):
     plt.plot(templates[0,:,i]+1*i,linewidth=0.5)
 plt.savefig("Template0.png",dpi=800)
 plt.close()
