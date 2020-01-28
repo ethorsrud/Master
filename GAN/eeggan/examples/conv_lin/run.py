@@ -68,7 +68,7 @@ spike_data_small = spike_data[:15,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
-b,a = butter(6,[200/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
+b,a = butter(10,[300/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
 train = lfilter(b,a,train,axis=2)
 
 """
@@ -154,7 +154,6 @@ fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=
 #fft_mean = fft_train.mean()
 #fft_std = fft_train.std()
 #fft_max = np.abs(fft_train).max()
-
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
 outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
