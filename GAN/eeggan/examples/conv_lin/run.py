@@ -68,7 +68,7 @@ spike_data_small = spike_data[:15,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
-b,a = butter(10,[300/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
+b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 train = lfilter(b,a,train,axis=2)
 
 """
