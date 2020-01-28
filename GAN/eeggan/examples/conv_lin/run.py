@@ -46,7 +46,7 @@ n_samples = 768 #Samples from dataset
 conditional = True
 
 n_z = 128#200
-lr = 0.001#0.001
+lr = 0.0001#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
 block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
@@ -67,16 +67,10 @@ spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//
 spike_data_small = spike_data[:15,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,15))
 
-plt.plot(train[0,0,100:300,0],label="Original")
-
 #FILTERING
 b,a = butter(6,[200/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
 train = lfilter(b,a,train,axis=2)
 
-plt.plot(train[0,0,100:300,0],label="Filtered")
-plt.savefig("Filtered_signal.png")
-plt.close()
-quit()
 """
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
