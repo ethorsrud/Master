@@ -70,7 +70,7 @@ train = spike_data_small.reshape((n_samples,1,input_length,15))
 plt.plot(train[0,0,100:300,0],label="Original")
 
 #FILTERING
-b,a = butter(order=6,[200/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
+b,a = butter(6,[200/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
 train = lfilter(b,a,train,axis=2)
 
 plt.plot(train[0,0,100:300,0],label="Filtered")
