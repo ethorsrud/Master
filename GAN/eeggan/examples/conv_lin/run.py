@@ -109,7 +109,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 1
+label_length = 80
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
