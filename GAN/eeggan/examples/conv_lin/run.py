@@ -45,7 +45,7 @@ n_samples = 768 #Samples from dataset
 conditional = True
 
 n_z = 128#200
-lr = 0.0001#0.001
+lr = 0.001#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
 block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
@@ -109,7 +109,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 80
+label_length = 1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
