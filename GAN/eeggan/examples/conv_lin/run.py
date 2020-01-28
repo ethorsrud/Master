@@ -20,6 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import scipy.io
+from scipy.signal import butter,lfilter
 from  datetime import datetime
 #from torchviz import make_dot
 from my_utils import functions
@@ -66,6 +67,16 @@ spike_data = np.memmap(dat_path, dtype, "r", offset, (n_channels_dat, data_len//
 spike_data_small = spike_data[:15,:input_length*n_samples].T
 train = spike_data_small.reshape((n_samples,1,input_length,15))
 
+plt.plot(train[0,0,100:300,0],label="Original")
+
+#FILTERING
+b,a = butter(order=6,[200/(0.5*sample_rate),6000/(0.5*sample_rate)],btype="band")
+train = lfilter(b,a,train,axis=2)
+
+plt.plot(train[0,0,100:300,0],label="Filtered")
+plt.savefig("Filtered_signal.png")
+plt.close()
+quit()
 """
 train_new = []
 for i in range(int(spike_data_small.shape[0]/input_length)):
