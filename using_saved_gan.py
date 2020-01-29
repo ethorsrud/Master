@@ -20,8 +20,8 @@ torch.backends.cudnn.benchmark=True
 torch.cuda.set_device(3)
 
 kilosort_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
-print(kilosort_path)
-quit()
+templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
+
 
 n_z = 128
 datafreq = 30000
@@ -54,8 +54,16 @@ z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
+
+template_0_extended = np.zeros(input_length)
+peak_length = templates.shape[1]
+print("Peak_length,",peak_length)
+print((int(input_length//2)-int(peak_length//2)),":",(int(input_length//2)+int(peak_length//2)))
+template_0_extended[(int(input_length//2)-int(peak_length//2)):(int(input_length//2)+int(peak_length//2))]
+quit()
 for i in range(100):
     plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
+
 plt.title("100 signals where the label is set \n to create spike of template 0 in the middle")
 plt.xlabel("Sample i of 8192 total")
 plt.savefig("Block_5_MiddlePeak.png",dpi=1000)
