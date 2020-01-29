@@ -57,10 +57,10 @@ batch_fake = generator(z_vars)
 
 template_0_extended = np.zeros(input_length)
 peak_length = templates.shape[1]
-template_0_extended[(int(input_length//2)-int(peak_length//2)):(int(input_length//2)+int(peak_length//2))] = templates[0,:,0]
+template_0_extended[(int(input_length//2)-int(peak_length//2)):(int(input_length//2)+int(peak_length//2))] = templates[0,:,0]*0.5
 for i in range(100):
     plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
-plt.plot(np.arange(4025,4175),template_0_extended[4025:4175],label="Template",linewidth = 0.6,alpha=0.5)
+plt.plot(np.arange(4025,4175),template_0_extended[4025:4175],label="Template",linewidth = 1.0,alpha=0.5)
 plt.legend()
 plt.title("100 signals where the label is set \n to create spike of template 0 in the middle")
 plt.xlabel("Sample i of 8192 total")
