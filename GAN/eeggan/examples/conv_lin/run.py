@@ -55,6 +55,8 @@ task_ind = 0#subj_ind
 
 #Spike data start
 kilosort_path = os.path.normpath(os.getcwd()+7*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
+print(kilosort_path)
+quit()
 dat_path = os.path.normpath(kilosort_path+os.sep+os.pardir+os.sep+"continuous.dat")
 n_channels_dat = 384
 data_len = 112933688832
