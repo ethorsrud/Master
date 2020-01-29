@@ -19,6 +19,9 @@ torch.backends.cudnn.benchmark=True
 
 torch.cuda.set_device(3)
 
+kilosort_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
+print(kilosort_path)
+quit()
 
 n_z = 128
 datafreq = 30000
@@ -53,7 +56,7 @@ z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 batch_fake = generator(z_vars)
 for i in range(100):
     plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
-plt.title("100 signals where the label is set to create peak in the middle")
+plt.title("100 signals where the label is set \n to create spike of template 0 in the middle")
 plt.xlabel("Sample i of 8192 total")
 plt.savefig("Block_5_MiddlePeak.png",dpi=1000)
 plt.close()
