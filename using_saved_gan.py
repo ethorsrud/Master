@@ -58,7 +58,7 @@ batch_fake = generator(z_vars)
 for ch in range(6):
     template_extended = np.zeros(input_length)
     peak_length = templates.shape[1]
-    template_extended[(int(input_length//2)-45):(int(input_length//2+peak_length)-45)] = templates[0,:,ch]*0.3
+    template_extended[(int(input_length//2)-45):(int(input_length//2+peak_length)-45)] = templates[0,:,ch]*0.5
     for i in range(200):
         plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,ch].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
     plt.plot(np.arange(4025,4175),template_extended[4025:4175],label="Template",linewidth = 1.5,alpha=0.4)
