@@ -28,14 +28,16 @@ from scipy import signal
 from scipy.fftpack import fft
 from scipy import fftpack
 import seaborn as sns
+import json
+
 
 #plt.switch_backend('agg')
 #Error tracebacking
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
-
-torch.cuda.set_device(3)
+cuda_device = 3
+torch.cuda.set_device(cuda_device)
 
 n_critic = 1
 n_gen = 1
@@ -53,9 +55,27 @@ block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
+config_data = {"n_critic":n_critic,
+                "n_gen":n_gen,
+                "n_batch":n_batch,
+                "input_length":input_length,
+                "n_samples":n_samples,
+                "conditional":conditional,
+                "n_z":n_z,
+                "lr":lr,
+                "rampup":rampup,
+                "cuda_device:":cuda_device}
+
+modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
+outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
+
+with open(os.path.normpath(modelpath+os.sep+"config.txt"),"w") as fp:
+    json.dump(config_data,fp,indent=4)
+
 #Spike data start
 kilosort_path = os.path.normpath(os.getcwd()+7*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
 dat_path = os.path.normpath(kilosort_path+os.sep+os.pardir+os.sep+"continuous.dat")
+
 n_channels_dat = 384
 data_len = 112933688832
 dtype = 'int16'
@@ -155,8 +175,7 @@ fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=
 #fft_std = fft_train.std()
 #fft_max = np.abs(fft_train).max()
 
-modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
-outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
+
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
     os.makedirs(modelpath)
