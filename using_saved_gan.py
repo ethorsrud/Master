@@ -25,8 +25,9 @@ datafreq = 30000
 n_blocks = 6
 t_multiple = 3
 input_length = 8192
+n_chans = 15
 
-generator = Generator(2,128*2) #Channels, random vector input size
+generator = Generator(n_chans,128*2) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
 generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:3")
 i_block,fade_alpha = joblib.load(os.path.join(model_path,"Progressive0"+'.data'))
