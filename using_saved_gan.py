@@ -63,9 +63,9 @@ for ch in range(11):
         plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,ch].detach().cpu().numpy()-np.mean(batch_fake[i,0,4025:4175,ch].detach().cpu().numpy()),linewidth=0.3,alpha=0.5)
     plt.plot(np.arange(4025,4175),template_extended[4025:4175],label="Template",linewidth = 1.5,alpha=0.45)
     plt.legend()
-    plt.title("100 signals where the label is set \n to create spike of template 0 in the middle \n CHANNEL %i"%ch)
+    plt.title("200 signals where the label is set \n to create spike of template 0 in the middle \n CHANNEL %i"%ch)
     plt.xlabel("Sample i of 8192 total")
-    plt.savefig("Block_5_MiddlePeak_ch%i.png"%ch,dpi=1000)
+    plt.savefig("Block_5_MiddlePeak_ch%i.png"%ch,dpi=500)
     plt.close()
 
 
