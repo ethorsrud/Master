@@ -65,7 +65,7 @@ for ch in range(11):
     plt.legend()
     plt.title("200 signals where the label is set \n to create spike of template 0 in the middle \n CHANNEL %i"%ch)
     plt.xlabel("Sample i of 8192 total")
-    plt.savefig("Block_5_MiddlePeak_ch%i.png"%ch,dpi=500)
+    plt.savefig("Block_5_MiddlePeak_ch%i.png"%ch,dpi=300)
     plt.close()
 
 
