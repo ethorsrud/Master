@@ -41,12 +41,12 @@ generator.model.alpha = fade_alpha
 generator.cuda()
 
 rng = np.random.RandomState(0)
-z_vars_im = rng.normal(0,1,size=(128,n_z)).astype(np.float32)
-random_times = np.linspace(0,input_length-80,128).astype(np.int)
-random_times = (np.zeros(128)+input_length/2).astype(np.int)
-labels = np.zeros(shape=(128,n_z))
+z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
+random_times = np.linspace(0,input_length-80,500).astype(np.int)
+random_times = (np.zeros(500)+input_length/2).astype(np.int)
+labels = np.zeros(shape=(500,n_z))
 label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
-indexes = (np.arange(128).astype(np.int),label_downsampled)
+indexes = (np.arange(500).astype(np.int),label_downsampled)
 labels[indexes] = 1.
 labels = labels.astype(np.float32)
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
@@ -57,8 +57,8 @@ batch_fake = generator(z_vars)
 
 template_0_extended = np.zeros(input_length)
 peak_length = templates.shape[1]
-template_0_extended[(int(input_length//2)-int(peak_length//2)):(int(input_length//2)+int(peak_length//2))] = templates[0,:,0]*0.5
-for i in range(100):
+template_0_extended[int(input_length//2):(int(input_length//2+peak_length))] = templates[0,:,0]*0.3
+for i in range(200):
     plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
 plt.plot(np.arange(4025,4175),template_0_extended[4025:4175],label="Template",linewidth = 1.0,alpha=0.5)
 plt.legend()
