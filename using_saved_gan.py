@@ -55,10 +55,10 @@ z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
 
-for ch in range(3):
+for ch in range(6):
     template_extended = np.zeros(input_length)
     peak_length = templates.shape[1]
-    template_extended[(int(input_length//2)):(int(input_length//2+peak_length))] = templates[0,:,ch]*0.6
+    template_extended[(int(input_length//2)-40):(int(input_length//2+peak_length)-40)] = templates[0,:,ch]*0.4
     for i in range(200):
         plt.plot(np.arange(4025,4175),batch_fake[i,0,4025:4175,ch].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
     plt.plot(np.arange(4025,4175),template_extended[4025:4175],label="Template",linewidth = 1.5,alpha=0.6)
