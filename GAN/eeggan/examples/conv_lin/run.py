@@ -64,6 +64,7 @@ config_data = {"n_critic":n_critic,
                 "n_z":n_z,
                 "lr":lr,
                 "rampup":rampup,
+                "block_epochs":block_epochs,
                 "cuda_device:":cuda_device}
 
 modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
