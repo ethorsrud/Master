@@ -184,7 +184,8 @@ if not os.path.exists(modelpath):
 if not os.path.exists(outputpath):
     os.makedirs(outputpath)
 
-generator = Generator(n_chans,n_z*(1+conditional))
+#generator = Generator(n_chans,n_z*(1+conditional))
+generator = Generator(n_chans,n_z+input_length)
 discriminator = Discriminator(n_chans+1)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
@@ -248,13 +249,12 @@ z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
 if conditional:
     random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
     labels_im = np.zeros(shape=(1000,input_length))
-    #800/1000 is getting labeled
     for i in range(1000):
         labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
-    index_im = np.where(labels_im==1.)
-    index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
-    labels_im = np.zeros(shape=(1000,n_z))
-    labels_im[index_im] = 1.
+    #index_im = np.where(labels_im==1.)
+    #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
+    #labels_im = np.zeros(shape=(1000,n_z))
+    #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
@@ -324,21 +324,16 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
                     random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
-                    labels_big = np.zeros(shape=(batch_real.shape[0],input_length))
+                    labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
-                    index = np.where(labels_big==1.)
-                    index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
-                    labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
-                    labels[index] = 1.
-                    labels = labels.astype(np.float32)
-                    z_vars = np.concatenate((z_vars,labels),axis=1)
-                    #labels = np.zeros(shape=(batch_real.shape[0],n_z))
-                    #label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
-                    #indexes = (np.arange(batch_real.shape[0]).astype(np.int),label_downsampled)
-                    #labels[indexes] = 1.
+                    #index = np.where(labels_big==1.)
+                    #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
+                    #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
+                    #labels[index] = 1.
                     #labels = labels.astype(np.float32)
-                    #z_vars = np.concatenate((z_vars,labels),axis=1)
+                    z_vars = np.concatenate((z_vars,labels_big),axis=1)
+
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
@@ -429,10 +424,10 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = np.zeros(shape=(n_batch,input_length))
                     for i in range(n_batch):
                         labels[i,random_times[i]:(random_times[i]+label_length)] = 1.
-                    index = np.where(labels==1.)
-                    index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
-                    labels = np.zeros(shape=(n_batch,n_z))
-                    labels[index] = 1.
+                    #index = np.where(labels==1.)
+                    #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
+                    #labels = np.zeros(shape=(n_batch,n_z))
+                    #labels[index] = 1.
                     labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
 

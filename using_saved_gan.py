@@ -30,7 +30,7 @@ t_multiple = 3
 input_length = 8192
 n_chans = 15
 
-generator = Generator(n_chans,128*2) #Channels, random vector input size
+generator = Generator(n_chans,128+input_length) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
 generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:3")
 i_block,fade_alpha = joblib.load(os.path.join(model_path,"Progressive0"+'.data'))
@@ -44,10 +44,13 @@ rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
 random_times = np.linspace(0,input_length-80,500).astype(np.int)
 random_times = (np.zeros(500)+input_length/2).astype(np.int)
-labels = np.zeros(shape=(500,n_z))
-label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
-indexes = (np.arange(500).astype(np.int),label_downsampled)
-labels[indexes] = 1.
+#labels = np.zeros(shape=(500,n_z))
+labels = np.zeros(shape=(500,input_length))
+for i in range(500):
+    labels[i,random_times[i]:(random_times[i]+1)] = 1.
+#label_downsampled = np.floor(random_times/(2**n_blocks)).astype(np.int)
+#indexes = (np.arange(500).astype(np.int),label_downsampled)
+#labels[indexes] = 1.
 labels = labels.astype(np.float32)
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 
@@ -55,6 +58,12 @@ z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 
 batch_fake = generator(z_vars)
 
+mid = int(batch_fake.shape[2]//2)
+for i in range(100):
+    plt.plot(np.arange(mid-80,mid+80),batch_fake[i,0,(mid-80):(mid+80),0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
+plt.savefig("Checking_mode_collapse_ch0.png",dpi=500)
+plt.close()
+"""
 for ch in range(11):
     template_extended = np.zeros(input_length)
     peak_length = templates.shape[1]
@@ -67,7 +76,7 @@ for ch in range(11):
     plt.xlabel("Sample i of 8192 total")
     plt.savefig("Block_5_spike_ch%i.png"%ch,dpi=300)
     plt.close()
-
+"""
 
 """
 for block in range(i_block+1):
