@@ -22,8 +22,7 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)#[nSpikes, ]
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
-print(channel_map)
-quit()
+
 
 selected_template = 0
 n_samples = 768
@@ -43,7 +42,7 @@ spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 
 
 for i in range(3):
-    plt.plot(spike_data_small[(int(spike_times[i])):(int(spike_times[i])+82),0],linewidth=0.3,alpha=0.5,label="%i"%i)
+    plt.plot(spike_data_small[(int(spike_times[i])):(int(spike_times[i])+82),1],linewidth=0.3,alpha=0.5,label="%i"%i)
     plt.plot(templates[0,:,0]*amplitudes[i],linewidth=0.5,alpha=0.5)
     print("Amp",amplitudes[i])
 plt.legend()
