@@ -4,6 +4,7 @@ import os
 import spikeinterface.extractors as se
 import spikeinterface.toolkit as st
 from scipy.signal import butter,lfilter
+import spikeinterface.sorters as ss
 
 kilosort_path = os.path.normpath(os.getcwd()+3*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
 dat_path = os.path.normpath(kilosort_path+os.sep+os.pardir+os.sep+"continuous.dat")
@@ -35,7 +36,9 @@ recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_
 recording = st.preprocessing.bandpass_filter(recording, freq_min=300, freq_max=6000)
 recording = st.preprocessing.notch_filter(recording, freq=1000, q=10)
 recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
+recording = st.preprocessing.common_reference(recording, reference='median')
 
+print(ss.available_sorters())
 """
 selected_template = 0
 n_samples = 768
