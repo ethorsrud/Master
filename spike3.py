@@ -31,7 +31,8 @@ channel_map = channel_map[:15]
 channel_positions = channel_positions[:15,:]
 n_samples = 768
 input_length = 8192
-spike_data_small = data[channel_map,:input_length*n_samples]
+spike_data_small = data[channel_map,:input_length*n_samples].astype(np.int16)
+np.save("spike_data_small.npy",spike_data_small)
 recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
 
 #recording = st.preprocessing.bandpass_filter(recording, freq_min=300, freq_max=6000)
