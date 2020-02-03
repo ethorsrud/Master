@@ -31,11 +31,9 @@ n_samples = 768
 input_length = 8192
 spike_data_small = data[channel_map,:input_length*n_samples]
 recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
-print('Num. channels = {}'.format(len(recording.get_channel_ids())))
-print('Sampling frequency = {} Hz'.format(recording.get_sampling_frequency()))
-print('Num. timepoints = {}'.format(recording.get_num_frames()))
-print('Stdev. on third channel = {}'.format(np.std(recording.get_traces(channel_ids=2))))
-print('Location of third electrode = {}'.format(recording.get_channel_property(channel_id=2, property_name='location')))
+
+recording_bp = st.preprocessing.bandpass_filter(recording, freq_min=300, freq_max=6000)
+recording_notch = st.preprocessing.notch_filter(recording, freq=1000, q=10)
 
 """
 selected_template = 0
