@@ -41,7 +41,7 @@ amplitudes = amplitudes[:spike_times.shape[0]]
 #FILTERING
 #b,a = butter(4,6000/(0.5*sample_rate),btype="low")
 #spike_data_small = lfilter(b,a,spike_data_small,axis=0)
-b,a = butter(4,150/(0.5*sample_rate),btype="high")
+b,a = butter(4,300/(0.5*sample_rate),btype="high")
 spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 
 print(spike_data_small.shape)
