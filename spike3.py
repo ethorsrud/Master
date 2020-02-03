@@ -26,6 +26,7 @@ whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy
 
 
 channel_map = channel_map[:15]
+channel_positions = channel_positions[:15,:]
 n_samples = 768
 input_length = 8192
 spike_data_small = data[channel_map,:input_length*n_samples]
