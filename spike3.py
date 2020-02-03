@@ -38,7 +38,8 @@ recording = st.preprocessing.notch_filter(recording, freq=1000, q=10)
 recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
 recording = st.preprocessing.common_reference(recording, reference='median')
 
-print(ss.available_sorters())
+default_kilosort2_params = ss.Kilosort2.default_params()
+print(default_kilosort2_params)
 """
 selected_template = 0
 n_samples = 768
