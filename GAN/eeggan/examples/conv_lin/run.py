@@ -243,13 +243,13 @@ losses_g = []
 losses_fourier = []
 
 i_epoch = 0
-z_vars_im = rng.normal(0,1,size=(1000,n_z)).astype(np.float32)
+z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 
 #Conditional
 if conditional:
-    random_times_im = np.random.randint(0,input_length-80,size=(1000)).astype(np.int)
-    labels_im = np.zeros(shape=(1000,input_length))
-    for i in range(1000):
+    random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
+    labels_im = np.zeros(shape=(700,input_length))
+    for i in range(700):
         labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
