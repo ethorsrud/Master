@@ -48,10 +48,10 @@ print(spike_data_small.shape)
 spike_data_small = (whitening_mat_small@spike_data_small.T).T
 print(spike_data_small.shape)
 
-for i in range(3):
+for i in range(100):
     plt.plot(spike_data_small[(int(spike_times[i])):(int(spike_times[i])+82),1],linewidth=0.3,alpha=0.5,label="%i"%i)
-    plt.plot(templates[0,:,0],linewidth=0.5,alpha=0.5)
-    print("Amp",amplitudes[i])
+    #plt.plot(templates[0,:,0],linewidth=0.5,alpha=0.5)
+    #print("Amp",amplitudes[i])
 plt.legend()
 plt.savefig("Template0_realdata_spikes.png",dpi=500)
 plt.close()
