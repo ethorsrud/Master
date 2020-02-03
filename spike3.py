@@ -22,8 +22,8 @@ templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)#[nSpikes, ]
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
-
-
+print(templates_ind[0])
+quit()
 
 selected_template = 0
 n_samples = 768
