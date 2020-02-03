@@ -20,11 +20,21 @@ spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates
 templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
 templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy")).astype(np.float64) #[nTemplates,nTempChannels]
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)#[nSpikes, ]
-channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
+channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)#[n_channels]
+channel_positions = np.load(os.path.normpath(kilosort_path+os.sep+"channel_positions.npy")).astype(np.float64)#[n_channels,2]
 whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy")).astype(np.float64) #[n_channels,n_channels]
 
+n_samples = 768
+input_length = 8192
+spike_data_small = data[:,:input_length*n_samples]
+recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
+print('Num. channels = {}'.format(len(recording.get_channel_ids())))
+print('Sampling frequency = {} Hz'.format(recording.get_sampling_frequency()))
+print('Num. timepoints = {}'.format(recording.get_num_frames()))
+print('Stdev. on third channel = {}'.format(np.std(recording.get_traces(channel_ids=2))))
+print('Location of third electrode = {}'.format(recording.get_channel_property(channel_id=2, property_name='location')))
 
-
+"""
 selected_template = 0
 n_samples = 768
 input_length = 8192
@@ -54,4 +64,4 @@ for i in range(3):
 plt.legend()
 plt.savefig("Template0_realdata_spikes.png",dpi=500)
 plt.close()
-
+"""
