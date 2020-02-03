@@ -44,13 +44,13 @@ amplitudes = amplitudes[:spike_times.shape[0]]
 b,a = butter(6,300/(0.5*sample_rate),btype="high")
 spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 
-print(spike_data_small.shape)
+
 spike_data_small = (whitening_mat_small@spike_data_small.T).T
-print(spike_data_small.shape)
+template_0 = (whitening_mat_small@templates[0,:,:15].T).T
 
 for i in range(3):
     plt.plot(spike_data_small[(int(spike_times[i])-41):(int(spike_times[i])+41),0],linewidth=0.3,alpha=0.5,label="%i"%i)
-    plt.plot(templates[0,:,0]*amplitudes[i],linewidth=0.5,alpha=0.5)
+    plt.plot(template_0[:,0]*amplitudes[i],linewidth=0.5,alpha=0.5)
     print("Amp",amplitudes[i])
 plt.legend()
 plt.savefig("Template0_realdata_spikes.png",dpi=500)
