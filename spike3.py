@@ -28,8 +28,8 @@ whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy
 
 n_samples = 768
 input_length = 8192
-spike_data_small = data[:,:input_length*n_samples]
-recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_map,sampling_frequency=sample_rate)
+spike_data_small = data[channel_map,:input_length*n_samples]
+recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
 print('Num. channels = {}'.format(len(recording.get_channel_ids())))
 print('Sampling frequency = {} Hz'.format(recording.get_sampling_frequency()))
 print('Num. timepoints = {}'.format(recording.get_num_frames()))
