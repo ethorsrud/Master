@@ -23,9 +23,7 @@ amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).as
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy")).astype(np.float64) #[n_channels,n_channels]
 
-print(whitening_mat[5,20])
-print(whitening_mat[20,5])
-quit()
+
 
 selected_template = 0
 n_samples = 768
@@ -38,9 +36,9 @@ spike_times = spike_times[spike_times<(input_length*n_samples)]
 amplitudes = amplitudes[temp_index]
 amplitudes = amplitudes[:spike_times.shape[0]]
 #FILTERING
-b,a = butter(4,6000/(0.5*sample_rate),btype="low")
-spike_data_small = lfilter(b,a,spike_data_small,axis=0)
-b,a = butter(4,300/(0.5*sample_rate),btype="high")
+#b,a = butter(4,6000/(0.5*sample_rate),btype="low")
+#spike_data_small = lfilter(b,a,spike_data_small,axis=0)
+b,a = butter(4,150/(0.5*sample_rate),btype="high")
 spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 
 
