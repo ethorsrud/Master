@@ -38,7 +38,11 @@ recording = st.preprocessing.notch_filter(recording, freq=1000, q=10)
 recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
 recording = st.preprocessing.common_reference(recording, reference='median')
 
+KS2 = ss.Kilosort2Sorter
+KS2.set_kilosort2_path(os.path.normpath(os.getcwd()+os.sep+"Kilosort2"))
 sorting_KS2 = ss.run_kilosort2(recording, output_folder='tmp_KS2')
+#default_kilosort2_params = ss.kilosort2.default_params()
+
 """
 selected_template = 0
 n_samples = 768
