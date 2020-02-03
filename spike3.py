@@ -48,7 +48,7 @@ spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 spike_data_small = (whitening_mat_small@spike_data_small.T).T
 
 for i in range(3):
-    plt.plot(spike_data_small[(int(spike_times[i])-41):(int(spike_times[i])+41),0],linewidth=0.3,alpha=0.5,label="%i"%i)
+    plt.plot(spike_data_small[(int(spike_times[i])-41):(int(spike_times[i])+41),1],linewidth=0.3,alpha=0.5,label="%i"%i)
     plt.plot(templates[0,:,0]*amplitudes[i],linewidth=0.5,alpha=0.5)
     print("Amp",amplitudes[i])
 plt.legend()
