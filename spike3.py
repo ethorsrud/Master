@@ -40,7 +40,7 @@ recording = st.preprocessing.common_reference(recording, reference='median')
 
 print(os.path.normpath(os.getcwd()+os.sep+os.pardir+os.sep+"Kilosort2"))
 os.environ["KILOSORT2_PATH"] = os.path.normpath(os.getcwd()+os.sep+os.pardir+os.sep+"Kilosort2")
-print(os.getenv("KILOSORT_PATH"))
+print(os.getenv("KILOSORT_PATH",None))
 sorting_KS2 = ss.run_kilosort2(recording, output_folder='tmp_KS2')
 #default_kilosort2_params = ss.kilosort2.default_params()
 
