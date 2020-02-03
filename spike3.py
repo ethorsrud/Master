@@ -28,7 +28,10 @@ whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy
 selected_template = 0
 n_samples = 768
 input_length = 8192
+
 spike_data_small = data[:15,:input_length*n_samples].T
+whitening_mat_small = whitening_mat[:15,:15]
+
 print(spike_data_small.shape)
 temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = spike_times[temp_index]
@@ -41,6 +44,9 @@ amplitudes = amplitudes[:spike_times.shape[0]]
 b,a = butter(4,150/(0.5*sample_rate),btype="high")
 spike_data_small = lfilter(b,a,spike_data_small,axis=0)
 
+print(spike_data_small.shape)
+spike_data_small = (whitening_mat_small@spike_data_small.T).T
+print(spike_data_small.shape)
 
 for i in range(3):
     plt.plot(spike_data_small[(int(spike_times[i])):(int(spike_times[i])+82),1],linewidth=0.3,alpha=0.5,label="%i"%i)
