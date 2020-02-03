@@ -21,9 +21,10 @@ templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).asty
 templates_ind = np.load(os.path.normpath(kilosort_path+os.sep+"templates_ind.npy")).astype(np.float64) #[nTemplates,nTempChannels]
 amplitudes = np.load(os.path.normpath(kilosort_path+os.sep+"amplitudes.npy")).astype(np.double)#[nSpikes, ]
 channel_map = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
-whitening_map = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy")).astype(np.float64)
+whitening_mat = np.load(os.path.normpath(kilosort_path+os.sep+"whitening_mat.npy")).astype(np.float64) #[n_channels,n_channels]
 
-print(whitening_map)
+print(whitening_mat[5,20])
+print(whitening_mat[20,5])
 quit()
 
 selected_template = 0
