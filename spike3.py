@@ -34,10 +34,10 @@ input_length = 8192
 spike_data_small = data[channel_map,:input_length*n_samples]
 recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
 
-recording = st.preprocessing.bandpass_filter(recording, freq_min=300, freq_max=6000)
-recording = st.preprocessing.notch_filter(recording, freq=1000, q=10)
-recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
-recording = st.preprocessing.common_reference(recording, reference='median')
+#recording = st.preprocessing.bandpass_filter(recording, freq_min=300, freq_max=6000)
+#recording = st.preprocessing.notch_filter(recording, freq=1000, q=10)
+#recording = st.preprocessing.resample(st.preprocessing.rectify(recording), 1000)
+#recording = st.preprocessing.common_reference(recording, reference='median')
 
 #print(os.path.normpath(os.getcwd()+os.sep+os.pardir+os.sep+"Kilosort2"))
 
