@@ -50,7 +50,7 @@ print(spike_data_small.shape)
 
 for i in range(3):
     plt.plot(spike_data_small[(int(spike_times[i])):(int(spike_times[i])+82),0],linewidth=0.3,alpha=0.5,label="%i"%i)
-    plt.plot(templates[0,:,0]*amplitudes[i],linewidth=0.5,alpha=0.5)
+    plt.plot(templates[0,:,0],linewidth=0.5,alpha=0.5)
     print("Amp",amplitudes[i])
 plt.legend()
 plt.savefig("Template0_realdata_spikes.png",dpi=500)
