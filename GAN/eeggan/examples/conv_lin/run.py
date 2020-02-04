@@ -162,8 +162,8 @@ spike_times = np.load("spike_times_15ch.npy").astype(np.uint64)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
-#spike_times = spike_times[spike_times<(input_length*n_samples)]
-for i in range(spike_times.shape[0]-1):
+spike_times = spike_times[spike_times<(input_length*n_samples)]
+for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
