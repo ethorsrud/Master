@@ -168,7 +168,8 @@ for i in range(spike_times.shape[0]):
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
-print(np.sum(time_labels,axis=2).squeeze().shape)
+print(np.sum(time_labels,axis=2).squeeze())
+print(np.mean(np.sum(time_labels,axis=2).squeeze()))
 quit()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
