@@ -172,7 +172,7 @@ n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()
 spikes_mean = np.mean(n_spikes_per_channel)
 spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
-quit()
+
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 
@@ -253,17 +253,23 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 
 #Conditional
 if conditional:
-    random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
+    ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
     for i in range(700):
-        labels_im[i,random_times_im[i]:(random_times_im[i]+label_length)] = 1.
+        #Random number of spikes
+        n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+        #Create n_spikes randomly timed spikes
+        random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+        for j in range(n_spikes):
+            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
-
+print("That worked")
+quit()
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
