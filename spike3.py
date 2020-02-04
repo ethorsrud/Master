@@ -33,6 +33,7 @@ n_samples = 768
 input_length = 8192
 spike_data_small = data[channel_map,:input_length*n_samples].astype(np.int16)
 print(spike_times[0:50])
+print(templates_ind[0,:])
 
 #recording = se.NumpyRecordingExtractor(timeseries=spike_data_small,geom=channel_positions,sampling_frequency=sample_rate)
 
