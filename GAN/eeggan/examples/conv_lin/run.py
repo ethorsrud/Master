@@ -85,8 +85,9 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,:15].T
-train = spike_data_small.reshape((n_samples,1,input_length,15))
+spike_data_small = spike_data[:input_length*n_samples,:15]
+train = spike_data_small.reshape((n_samples,input_length,15))[:,np.newaxis,:,:]
+#train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
