@@ -258,6 +258,7 @@ if conditional:
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+        print("im spikes",n_spikes)
         if n_spikes<0:
             n_spikes=0
         #Create n_spikes randomly timed spikes
@@ -340,6 +341,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+                        print("disc-gen spikes",n_spikes)
                         if n_spikes<0:
                             n_spikes=0
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
@@ -442,6 +444,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = np.zeros(shape=(n_batch,input_length))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+                        print("gen spikes",n_spikes)
                         if n_spikes<0:
                             n_spikes=0
                         #Create n_spikes randomly timed spikes
@@ -540,9 +543,9 @@ for i_block in range(i_block_tmp,n_blocks):
             #peak_loc_idx = (np.arange(z_vars_im_label.shape[0]).astype(np.int),peak_loc_idx.astype(np.int),np.zeros(z_vars_im_label.shape[2]).astype(np.int))
             #peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
             #peak_loc[peak_loc_idx] = 1.
-            peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-            peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
-            peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
+            #peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
+            #peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
+            #peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
             for channel_i in range(2):
                 plt.figure(figsize=(20,10))
                 for i in range(1,21,2):
