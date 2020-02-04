@@ -379,7 +379,7 @@ class WGAN_I_Generator(GAN_Generator):
 		for p in self.parameters():
 			p.data.clamp_(-self.c,self.c)
 	"""
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,block_info,random_times):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,block_info,labels):
 		"""
 		Train generator for one batch of latent noise
 
@@ -408,9 +408,11 @@ class WGAN_I_Generator(GAN_Generator):
 
         #Conditional
 		i_block,n_blocks = block_info
+		"""
 		labels = np.zeros(shape=(gen.shape[0],4096))
 		for i in range(gen.shape[0]):
 			labels[i,random_times[i]:(random_times[i]+1)] = 1.
+		"""
 		index = np.where(labels==1.)
 		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
 		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))

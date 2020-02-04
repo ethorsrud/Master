@@ -268,8 +268,7 @@ if conditional:
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
-print("That worked")
-quit()
+
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
@@ -335,10 +334,13 @@ for i_block in range(i_block_tmp,n_blocks):
                 #New_conditional
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
-                    random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
+                    ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
-                        labels_big[i,random_times[i]:(random_times[i]+label_length)] = 1.
+                        n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+                        random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+                        for j in range(n_spikes):
+                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
@@ -432,10 +434,14 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(n_batch,n_z))
                 
                 if conditional:
-                    random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
+                    ##random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     labels = np.zeros(shape=(n_batch,input_length))
                     for i in range(n_batch):
-                        labels[i,random_times[i]:(random_times[i]+label_length)] = 1.
+                        n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+                        #Create n_spikes randomly timed spikes
+                        random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+                        for j in range(n_spikes):
+                            labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
                     #index = np.where(labels==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))
@@ -450,7 +456,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],random_times)
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],labels)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
