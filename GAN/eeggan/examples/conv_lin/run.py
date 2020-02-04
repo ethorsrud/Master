@@ -86,7 +86,6 @@ hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,:15]
-np.save("spike_data_15ch.npy",spike_data_small)
 train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
