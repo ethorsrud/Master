@@ -258,7 +258,6 @@ if conditional:
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
-        print("im spikes",n_spikes)
         if n_spikes<0:
             n_spikes=0
         #Create n_spikes randomly timed spikes
@@ -341,7 +340,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
-                        print("disc-gen spikes",n_spikes)
                         if n_spikes<0:
                             n_spikes=0
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
@@ -444,7 +442,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = np.zeros(shape=(n_batch,input_length))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
-                        print("gen spikes",n_spikes)
                         if n_spikes<0:
                             n_spikes=0
                         #Create n_spikes randomly timed spikes
