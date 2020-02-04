@@ -40,7 +40,7 @@ cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
 n_critic = 1
-n_gen = 5
+n_gen = 1
 n_batch = 64#56#64
 input_length = 4096#8192#10240#12288#30720#1536#768
 jobid = 0
@@ -597,7 +597,7 @@ for i_block in range(i_block_tmp,n_blocks):
             fig,ax = plt.subplots(1,2,figsize=(8,3))
             corr_fake = functions.channel_correlation(batch_fake)
             corr_real = functions.channel_correlation(batch_real)
-            corr_fake = corr_fake[:corr_real.shape[0],:corr_real.shape[1]]
+            corr_real = corr_fake[:corr_fake.shape[0],:corr_fake.shape[1]]
             sns.heatmap(
                 corr_fake, 
                 ax=ax[0],
