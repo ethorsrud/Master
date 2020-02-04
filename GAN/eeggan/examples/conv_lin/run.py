@@ -154,19 +154,22 @@ train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
-spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
-spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
-selected_template = 0
-temp_index = np.where(spike_templates==selected_template)[0]
+#spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
+#spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
+#selected_template = 0
+#temp_index = np.where(spike_templates==selected_template)[0]
+spike_times = np.load("spike_times_15ch.npy").astype(np.uint64)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
-spike_times = spike_times[temp_index]
-spike_times = spike_times[spike_times<(input_length*n_samples)]
+#spike_times = spike_times[temp_index]
+#spike_times = spike_times[spike_times<(input_length*n_samples)]
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
+print(np.sum(time_labels,axis=2).squeeze().shape)
+quit()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 
