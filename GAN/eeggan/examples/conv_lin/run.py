@@ -597,7 +597,7 @@ for i_block in range(i_block_tmp,n_blocks):
             fig,ax = plt.subplots(1,2,figsize=(8,3))
             corr_fake = functions.channel_correlation(batch_fake)
             corr_real = functions.channel_correlation(batch_real)
-            corr_real = corr_fake[:corr_fake.shape[0],:corr_fake.shape[1]]
+            corr_real = corr_real[:corr_fake.shape[0],:corr_fake.shape[1]]
             sns.heatmap(
                 corr_fake, 
                 ax=ax[0],
