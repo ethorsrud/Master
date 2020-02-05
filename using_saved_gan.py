@@ -66,9 +66,10 @@ dataset = dataset.squeeze()
 
 dataset = dataset.reshape((input_length*768,15))
 labels = labels.reshape(-1)
-print(dataset.shape)
 spike_times = np.where(labels==1.)[0]
-print(spike_times)
+
+np.save("fake_dataset_15ch.npy",dataset)
+np.save("fake_dataset_15ch_labels.npy",spike_times)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
