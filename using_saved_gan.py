@@ -60,7 +60,7 @@ batch_fake = generator(z_vars)
 
 mid = int(batch_fake.shape[2]//2)
 for i in range(100):
-    plt.plot(np.arange(mid-80,mid+80),batch_fake[i,0,(mid-80):(mid+80),0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
+    plt.plot(np.arange(mid-40,mid+40),batch_fake[i,0,(mid-40):(mid+40),0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
 plt.savefig("Checking_mode_collapse_ch0.png",dpi=500)
 plt.close()
 """
