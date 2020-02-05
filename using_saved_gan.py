@@ -64,7 +64,7 @@ dataset = batch_fake.detach().cpu().numpy()
 print(dataset.shape)
 print(dataset[0,0,:,0])
 print(dataset[1,0,:,1])
-dataset = dataset.squeeze().reshape((-1,15))
+dataset = dataset.squeeze().swapaxes(0,1).reshape((-1,15))
 print(dataset[0:768,0])
 print(dataset[768:(2*768),1])
 
