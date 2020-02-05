@@ -67,7 +67,7 @@ dataset = dataset.squeeze()
 dataset = dataset.reshape((input_length*768,15))
 labels = labels.reshape(-1)
 print(dataset.shape)
-spike_times = np.where(labels==1.)
+spike_times = np.where(labels==1.)[0]
 print(spike_times)
 """
 rng = np.random.RandomState(0)
