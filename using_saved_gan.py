@@ -68,8 +68,8 @@ dataset = dataset.squeeze()
 print(dataset.shape)
 dataset = dataset.reshape((input_length*768,15))
 print(dataset.shape)
-print(dataset[0:768,0])
-print(dataset[768:(2*768),1])
+print(dataset[0:input_length,0])
+print(dataset[input_length:(2*input_length),1])
 
 """
 rng = np.random.RandomState(0)
