@@ -491,7 +491,11 @@ for i_block in range(i_block_tmp,n_blocks):
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
-            batch_fake = (batch_fake-torch.mean(batch_fake,dim=(0,2)))/torch.std(batch_fake,dim=(0,2)).squeeze()
+
+            #normalizing
+            bf_mean = torch.mean(torch.mean(batch_fake,dim=0).squeeze(),dim=0)
+            bf_std = torch.std(torch.std(batch_fake,dim=0).squeeze(),dim=0)
+            batch_fake = (batch_fake-bf_mean)/bf_std
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
