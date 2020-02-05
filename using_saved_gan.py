@@ -57,6 +57,7 @@ for i in range(768):
         labels[i,random_times[j]:(random_times[j]+1)] = 1.
 
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
+print(z_vars_im.shape)
 batch_fake = generator(z_vars_im)
 print(batch_fake.shape)
 
