@@ -498,7 +498,7 @@ for i_block in range(i_block_tmp,n_blocks):
             bf_std = torch.std(torch.std(batch_fake,dim=0).squeeze(),dim=0)
             bf = batch_fake.cpu().detach().numpy()
             bf_max = np.max(np.abs(bf),axis=(0,2)).squeeze()
-            bf_max = bf_max.from_numpy()
+            bf_max = torch.from_numpy(bf_max)
             batch_fake = (batch_fake-bf_mean)/bf_std
             batch_fake = batch_fake/bf_max
 
