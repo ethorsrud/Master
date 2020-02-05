@@ -40,6 +40,35 @@ generator.model.alpha = fade_alpha
 
 generator.cuda()
 
+mean_std = np.load("real_mean_std_dataset.npy")
+print(mean_std)
+rng = np.random.RandomState(0)
+z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
+labels = np.zeros(shape=(768,input_length))
+#for i in range(768):
+#    #Random number of spikes
+#    n_spikes = int(np.random.)
+
+
+"""
+    labels_im = np.zeros(shape=(700,input_length))
+    for i in range(700):
+        #Random number of spikes
+        n_spikes = int(np.random.normal(spikes_mean,spikes_std))
+        if n_spikes<0:
+            n_spikes=0
+        #Create n_spikes randomly timed spikes
+        random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+        for j in range(n_spikes):
+            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
+    #index_im = np.where(labels_im==1.)
+    #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
+    #labels_im = np.zeros(shape=(1000,n_z))
+    #labels_im[index_im] = 1.
+    labels_im = labels_im.astype(np.float32)
+    z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
+"""
+"""
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
 random_times = np.linspace(0,input_length-80,500).astype(np.int)
@@ -63,6 +92,7 @@ for i in range(100):
     plt.plot(np.arange(mid-40,mid+40),batch_fake[i,0,(mid-40):(mid+40),0].detach().cpu().numpy(),linewidth=0.3,alpha=0.5)
 plt.savefig("Checking_mode_collapse_ch0.png",dpi=500)
 plt.close()
+"""
 """
 for ch in range(11):
     template_extended = np.zeros(input_length)
