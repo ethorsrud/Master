@@ -60,7 +60,8 @@ labels = labels.astype(np.float32)
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 batch_fake = generator(z_vars)
-print(batch_fake.shape)
+dataset = batch_fake.detach().cpu().numpy()
+print(dataset.shape)
 
 
 """
