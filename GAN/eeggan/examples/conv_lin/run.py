@@ -173,7 +173,8 @@ n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()
 spikes_mean = np.mean(n_spikes_per_channel)
 spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
-
+np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
+quit()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 
