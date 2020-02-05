@@ -494,8 +494,12 @@ for i_block in range(i_block_tmp,n_blocks):
 
             #normalizing
             bf_mean = torch.mean(torch.mean(batch_fake,dim=0).squeeze(),dim=0)
+            print(bf_mean.shape)
             bf_std = torch.std(torch.std(batch_fake,dim=0).squeeze(),dim=0)
+            bf_max = torch.max(torch.max(torch.abs(batch_fake).squeeze(),dim=0),dim=0)
+            print(bf_max.shape)
             batch_fake = (batch_fake-bf_mean)/bf_std
+            batch_fake = batch_fake/bf_max
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
