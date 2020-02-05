@@ -41,33 +41,26 @@ generator.model.alpha = fade_alpha
 generator.cuda()
 
 mean_std = np.load("real_mean_std_dataset.npy")
-print(mean_std)
+spike_mean = mean_std[0]
+spike_std = mean_std[1]
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
 labels = np.zeros(shape=(768,input_length))
-#for i in range(768):
-#    #Random number of spikes
-#    n_spikes = int(np.random.)
+for i in range(768):
+    #Random number of spikes
+    n_spikes = int(np.random.normal(spike_mean,spike_std))
+    if n_spikes<0:
+        n_spikes=0
+    #Create n_spikes randomly times spikes
+    random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+    for j in range(n_spikes):
+        labels[i,random_times[j]:(random_times[j]+1)] = 1.
+
+z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
+batch_fake = generator(z_vars_im)
+print(batch_fake.shape)
 
 
-"""
-    labels_im = np.zeros(shape=(700,input_length))
-    for i in range(700):
-        #Random number of spikes
-        n_spikes = int(np.random.normal(spikes_mean,spikes_std))
-        if n_spikes<0:
-            n_spikes=0
-        #Create n_spikes randomly timed spikes
-        random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
-        for j in range(n_spikes):
-            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
-    #index_im = np.where(labels_im==1.)
-    #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
-    #labels_im = np.zeros(shape=(1000,n_z))
-    #labels_im[index_im] = 1.
-    labels_im = labels_im.astype(np.float32)
-    z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
-"""
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
