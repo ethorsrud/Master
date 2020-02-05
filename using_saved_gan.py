@@ -56,6 +56,7 @@ for i in range(768):
     for j in range(n_spikes):
         labels[i,random_times[j]:(random_times[j]+1)] = 1.
 
+labels = labels.astype(np.float32)
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 batch_fake = generator(z_vars)
