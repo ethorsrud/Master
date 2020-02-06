@@ -153,7 +153,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
-	"""
+	
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
 								create_conv_sequence(n_featuremaps+conditional,n_featuremaps),
