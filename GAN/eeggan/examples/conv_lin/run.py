@@ -312,7 +312,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
         #writing for animation
         animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
-        animated_signal = generator(animate_z_var).data
+        animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
         print(animated_signal)
         print(animated_signal.shape)
         print(type(animated_signal))
