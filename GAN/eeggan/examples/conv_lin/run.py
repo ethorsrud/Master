@@ -512,7 +512,7 @@ for i_block in range(i_block_tmp,n_blocks):
             for channel_i in range(2):
                 plt.figure()
                 log_std_fake = np.std(torch_fake_fft.data.cpu().numpy(),axis=0).squeeze()
-                log_std_real = np.std(train_fft,axis=0).squeeze()
+                log_std_real = np.std(np.abs(train_fft),axis=0).squeeze()
                 logmin = np.min(train_amps[:,channel_i])
                 logmax = np.max(train_amps[:,channel_i])
                 plt.ylim(logmin-np.abs(logmax-logmin)*0.15,logmax+np.abs(logmax-logmin)*0.15)
