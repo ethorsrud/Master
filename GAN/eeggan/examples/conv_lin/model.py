@@ -141,7 +141,6 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],1,-1]),
-								xrayscanner(),
 								weight_scale(nn.Conv1d(1,n_featuremaps,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
