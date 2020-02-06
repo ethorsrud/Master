@@ -51,7 +51,7 @@ n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
-block_epochs = [3,3,3,3,3,3]#[1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -309,6 +309,13 @@ for i_block in range(i_block_tmp,n_blocks):
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
+
+        #writing for animation
+        animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
+        animated_signal = generator(animate_z_var).data
+        print(animated_signal)
+        print(animated_signal.shape)
+        print(type(animated_signal))
 
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
