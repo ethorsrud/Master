@@ -140,6 +140,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	"""
 	
 	tmp_block = ProgressiveGeneratorBlock(
+								nn.Sequential(Reshape([[0],1,-1]),
 								weight_scale(nn.Conv1d(1,n_featuremaps,9,padding=4),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
@@ -152,7 +153,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
-	
+	"""
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
 								create_conv_sequence(n_featuremaps+conditional,n_featuremaps),
