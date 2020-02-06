@@ -51,7 +51,7 @@ n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 1000#400.#2000.
-block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [3,3,3,3,3,3]#[1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -85,8 +85,8 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,100:150]
-train = spike_data_small.reshape((n_samples,input_length,50))[:,np.newaxis,:,:]
+spike_data_small = spike_data[:input_length*n_samples,90:220]
+train = spike_data_small.reshape((n_samples,input_length,130))[:,np.newaxis,:,:]
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
