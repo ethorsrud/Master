@@ -309,13 +309,12 @@ for i_block in range(i_block_tmp,n_blocks):
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
-
-        #writing for animation
-        animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
-        animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
-        print(animated_signal)
-        print(animated_signal.shape)
-        print(type(animated_signal))
+        
+        if i_epoch%10 == 0:
+            #writing for animation
+            animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
+            animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
+            np.save("Animate/block_%i_epoch_%i.npy"%(i_block,i_epoch))
 
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
