@@ -314,7 +314,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #writing for animation
             animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
             animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
-            np.save("Animate/block_%i_epoch_%i.npy"%(i_block,i_epoch))
+            np.save("Animate/block_%i_epoch_%i.npy"%(i_block,i_epoch),animated_signal)
 
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
