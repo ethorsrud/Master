@@ -85,10 +85,11 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,100:200]
-train = spike_data_small.reshape((n_samples,input_length,100))[:,np.newaxis,:,:]
+spike_data_small = spike_data[:input_length*n_samples,120:180]
+train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
-
+#np.save("spike_data_ch120:ch180.npy",spike_data_small)
+#quit()
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 #train = lfilter(b,a,train,axis=2)
@@ -159,7 +160,7 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load("spike_times_15ch.npy").astype(np.uint64)
+spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
@@ -310,12 +311,13 @@ for i_block in range(i_block_tmp,n_blocks):
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
         
+        """
         if i_epoch%10 == 0:
             #writing for animation
             animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
             animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
             np.save("Animate/block_%i_epoch_%i.npy"%(i_block,i_epoch),animated_signal)
-
+        """
         #batches = functions.get_batches_new(input_length,n_batch,[0],train)
         iters = int(len(batches)/n_critic)
         for it in range(iters):
@@ -370,9 +372,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
                 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
