@@ -442,7 +442,7 @@ class WGAN_I_Generator(GAN_Generator):
 
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
-		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
+		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
 
 		#fft = torch.log(fft)
 
@@ -464,7 +464,7 @@ class WGAN_I_Generator(GAN_Generator):
 		loss2 = disc2.mean()
 		#loss3 = disc3.mean()
 		#print("loss:",loss,"Loss2:",loss2)
-		loss = (loss+loss2)/2.0#0.8*loss+0.2*loss2#
+		loss = 0.2*loss2+0.8*loss#(loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)

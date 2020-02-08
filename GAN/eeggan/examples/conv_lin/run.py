@@ -85,8 +85,8 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,100:200]
-train = spike_data_small.reshape((n_samples,input_length,100))[:,np.newaxis,:,:]
+spike_data_small = spike_data[:input_length*n_samples,120:180]
+train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
 
 #FILTERING
@@ -370,9 +370,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
                 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
