@@ -376,7 +376,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
-
+                print("hey")
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
