@@ -88,8 +88,8 @@ spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n
 spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
-np.save("spike_data_ch120:ch180.npy",spike_data_small)
-quit()
+#np.save("spike_data_ch120:ch180.npy",spike_data_small)
+#quit()
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 #train = lfilter(b,a,train,axis=2)
@@ -160,7 +160,7 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load("spike_times_15ch.npy").astype(np.uint64)
+spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
