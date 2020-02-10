@@ -177,7 +177,7 @@ print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
 np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
-quit()
+
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
 #fft_mean = fft_train.mean()

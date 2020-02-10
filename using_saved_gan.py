@@ -28,7 +28,7 @@ datafreq = 30000
 n_blocks = 6
 t_multiple = 3
 input_length = 4096#8192
-n_chans = 15
+n_chans = 60
 
 generator = Generator(n_chans,128+input_length) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
@@ -64,12 +64,12 @@ dataset = batch_fake.detach().cpu().numpy()
 
 dataset = dataset.squeeze()
 
-dataset = dataset.reshape((input_length*768,15))
+dataset = dataset.reshape((input_length*768,n_chans))
 labels = labels.reshape(-1)
 spike_times = np.where(labels==1.)[0]
 
-np.save("fake_dataset_15ch.npy",dataset)
-np.save("fake_dataset_15ch_labels.npy",spike_times)
+np.save("fake_dataset_ch120_ch160.npy",dataset)
+np.save("fake_dataset_ch120_ch160_labels.npy",spike_times)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
