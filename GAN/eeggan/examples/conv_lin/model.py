@@ -117,9 +117,8 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	def create_out_sequence(n_chans,in_filters):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,n_chans,1),
 														gain=calculate_gain('linear')),
-								xrayscanner(),
 								Reshape([[0],[1],[2],1]),
-								PixelShuffle2d([1,n_chans]),xrayscanner())
+								PixelShuffle2d([1,n_chans]))
 	def create_fade_sequence(factor):
 		#return nn.Upsample(mode='bilinear',scale_factor=(2,1))
 		return upsample_layer(mode='bilinear',scale_factor=(2,1))
