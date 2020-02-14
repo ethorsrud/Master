@@ -193,7 +193,7 @@ print("Templates_mean",template_mean,"Templates_std",template_std)
 np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
 
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
+#train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 quit()
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
