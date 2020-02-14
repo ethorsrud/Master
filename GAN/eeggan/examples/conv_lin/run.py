@@ -171,6 +171,8 @@ print(spike_times.shape)
 mask = spike_times<(input_length*n_samples)
 mask = np.where(mask==1)
 spike_templates = spike_templates[mask]
+spike_templates = spike_templates[:,0]
+print(spike_templates)
 print(spike_templates.shape)
 print("MAX",np.max(spike_templates))
 print("MIN",np.min(spike_templates))
