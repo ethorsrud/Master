@@ -169,10 +169,8 @@ time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 spike_times = spike_times[spike_times<(input_length*n_samples)]
 print(spike_times.shape)
 mask = spike_times<(input_length*n_samples)
-print(mask.shape)
-print(mask)
-print(np.where(mask==1))
-spike_templates = spike_templates[spike_times<(input_length*n_samples)]
+mask = np.where(mask==1)
+spike_templates = spike_templates[mask]
 print(spike_templates.shape)
 print("MAX",np.max(spike_templates))
 print("MIN",np.min(spike_templates))
