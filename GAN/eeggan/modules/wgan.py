@@ -422,7 +422,7 @@ class WGAN_I_Generator(GAN_Generator):
 		labels[index] = 1.
 		"""
 		for i in range(n_blocks-i_block-1):
-			labels = block_reduce(labels,(0,1),np.mean)
+			labels = block_reduce(labels,(1,2),np.mean)
 		labels = labels.astype(np.float32)
 		labels = labels[:,np.newaxis,:,np.newaxis]
 		labels = torch.from_numpy(labels).cuda()

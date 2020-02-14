@@ -44,9 +44,8 @@ def create_disc_blocks(n_chans,base,conditional):
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2))
 	def create_in_sequence(n_chans,out_filters):
-		return nn.Sequential(xrayscanner(),weight_scale(nn.Conv2d(1,out_filters,(1,n_chans)),
+		return nn.Sequential(weight_scale(nn.Conv2d(1,out_filters,(1,n_chans)),
 														gain=calculate_gain('leaky_relu')),
-								xrayscanner(),
 								Reshape([[0],[1],[2]]),
 								nn.LeakyReLU(0.2))
 	def create_fade_sequence(factor):
