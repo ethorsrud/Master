@@ -207,8 +207,8 @@ fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=
 check_train = block_reduce(train,(1,1,2,1),np.mean)
 for i in range(4):
     check_train = block_reduce(check_train,(1,1,2,1),np.mean)
-print(check_train.shape)
-quit()
+print(check_train[20,0,:,40])
+
 
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
@@ -311,6 +311,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     print("train_tmp",train_tmp.shape)
+    print(train_tmp[20,0,:,40])
+    quit()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
