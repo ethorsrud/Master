@@ -163,30 +163,34 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(kilosort_path+os.sep+"spike_templates.npy").astype(np.uint32)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
 #mask
 spike_times = spike_times[spike_times<(input_length*n_samples)]
-print(spike_times.shape)
+
 mask = spike_times<(input_length*n_samples)
 mask = np.where(mask==1)
 spike_templates = spike_templates[mask]
 spike_templates = spike_templates[:,0]
-print(spike_templates)
-print(spike_templates.shape)
-print("MAX",np.max(spike_templates))
-print("MIN",np.min(spike_templates))
-quit()
+
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
+    template_labels[cur_sample,0,int(spike_templates[i]),0] = 1.
 
 n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()
 spikes_mean = np.mean(n_spikes_per_channel)
 spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
 np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
+
+n_templates_per_channel = np.sum(template_labels,axis=2).squeeze()
+template_mean = np.mean(n_templates_per_channel)
+template_std = np.sqrt(np.mean((n_templates_per_channel-template_mean)**2))
+print("Templates_mean",template_mean,"Templates_std",template_std)
+quit()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 
