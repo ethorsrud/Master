@@ -177,10 +177,9 @@ spike_templates = spike_templates[:,0]
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
-    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
-    template_labels[cur_sample,0,int(spike_templates[i]),0] = 1.
+    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = spike_templates[i]#1.
 
-n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()
+n_spikes_per_channel = np.sum(np.nonzero(time_labels)[0].shape[0],axis=2).squeeze()
 spikes_mean = np.mean(n_spikes_per_channel)
 spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
@@ -191,11 +190,10 @@ template_mean = np.mean(n_templates_per_channel)
 template_std = np.sqrt(np.mean((n_templates_per_channel-template_mean)**2))
 print("Templates_mean",template_mean,"Templates_std",template_std)
 np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
-
+quit()
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 #train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
-quit()
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
 #fft_mean = fft_train.mean()
