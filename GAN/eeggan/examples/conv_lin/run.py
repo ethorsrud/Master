@@ -204,7 +204,11 @@ fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=
 #fft_mean = fft_train.mean()
 #fft_std = fft_train.std()
 #fft_max = np.abs(fft_train).max()
-
+check_train = block_reduce(train,(1,1,2,1),np.mean)
+for i in range(4):
+    check_train = block_reduce(check_train,(1,1,2,1),np.mean)
+print(check_train.shape)
+quit()
 
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
