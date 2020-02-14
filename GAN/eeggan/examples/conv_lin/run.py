@@ -29,7 +29,7 @@ from scipy.fftpack import fft
 from scipy import fftpack
 import seaborn as sns
 import json
-
+from skimage.measure import block_reduce
 
 #plt.switch_backend('agg')
 #Error tracebacking
@@ -188,12 +188,14 @@ spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
 np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
 
+"""
 n_templates_per_channel = np.sum(template_labels,axis=2).squeeze()
 template_mean = np.mean(n_templates_per_channel)
 template_std = np.sqrt(np.mean((n_templates_per_channel-template_mean)**2))
 print("Templates_mean",template_mean,"Templates_std",template_std)
 np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
-quit()
+"""
+
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 #train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
@@ -304,6 +306,7 @@ for i_block in range(i_block_tmp,n_blocks):
     print("Block:",i_block)
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
+    print("train_tmp",train_tmp.shape)
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
