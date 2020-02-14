@@ -204,10 +204,7 @@ fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=
 #fft_mean = fft_train.mean()
 #fft_std = fft_train.std()
 #fft_max = np.abs(fft_train).max()
-check_train = block_reduce(train,(1,1,2,1),np.mean)
-for i in range(4):
-    check_train = block_reduce(check_train,(1,1,2,1),np.mean)
-print(check_train[20,0,:,40])
+
 
 
 modelname = 'Progressive%s'
@@ -290,7 +287,7 @@ if conditional:
         #Create n_spikes randomly timed spikes
         random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
-            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
+            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = np.random.randint(0,600)#1.
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
@@ -311,8 +308,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     print("train_tmp",train_tmp.shape)
-    print(train_tmp[20,0,:,40])
-    quit()
+
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
@@ -352,9 +348,9 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
-                idxes = np.nonzero(train_batches[:,:,:,-1])
-                idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
-                train_batches[:,:,:,-1][idxes] = 1.
+                #idxes = np.nonzero(train_batches[:,:,:,-1])
+                #idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
+                #train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
 
@@ -381,7 +377,7 @@ for i_block in range(i_block_tmp,n_blocks):
                             n_spikes=0
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
+                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = np.random.randint(0,600)#1.
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
@@ -452,6 +448,11 @@ for i_block in range(i_block_tmp,n_blocks):
                 index = np.where(labels_big==1.)
                 index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
                 labels[index] = 1.
+
+                labels = labels_big.copy()
+                for i in range(n_blocks-i_block-1):
+                    labels = block_reduce(labels,(1,2),np.mean)
+
                 labels = labels.astype(np.float32)
                 labels = labels[:,np.newaxis,:,np.newaxis]
                 labels = torch.from_numpy(labels).cuda()
@@ -483,7 +484,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         #Create n_spikes randomly timed spikes
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
+                            labels[i,random_times[j]:(random_times[j]+label_length)] = np.random.randint(0,600)#1.
                     #index = np.where(labels==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))

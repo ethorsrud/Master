@@ -10,6 +10,7 @@ import eeggan.util as utils
 from eeggan.modules.gan import GAN_Discriminator
 from eeggan.modules.gan import GAN_Generator
 from my_utils import functions
+from skimage.measure import block_reduce
 
 class WGAN_Discriminator(GAN_Discriminator):
 	"""
@@ -413,10 +414,14 @@ class WGAN_I_Generator(GAN_Generator):
 		for i in range(gen.shape[0]):
 			labels[i,random_times[i]:(random_times[i]+1)] = 1.
 		"""
+
+		"""
 		index = np.where(labels==1.)
 		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
 		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
 		labels[index] = 1.
+		"""
+		labels = block_reduce(labels,(0,1),np.mean)
 		labels = labels.astype(np.float32)
 		labels = labels[:,np.newaxis,:,np.newaxis]
 		labels = torch.from_numpy(labels).cuda()
