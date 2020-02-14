@@ -195,7 +195,7 @@ template_std = np.sqrt(np.mean((n_templates_per_channel-template_mean)**2))
 print("Templates_mean",template_mean,"Templates_std",template_std)
 np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
 """
-time_labels2 = (time_labels2-np.mean(time_labels2))/np.std(time_labels2)
+
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 #train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
@@ -293,7 +293,6 @@ if conditional:
     #labels_im = np.zeros(shape=(1000,n_z))
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
-    labels_im = (labels_im-np.mean(labels_im))/np.std(labels_im)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
 #random_times_im = np.random.randint(0,n_z,size=(1000))
@@ -384,7 +383,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                     #labels[index] = 1.
                     #labels = labels.astype(np.float32)
-                    labels_big = (labels_big-np.mean(labels_big))/np.std(labels_big)
                     z_vars = np.concatenate((z_vars,labels_big),axis=1)
 
 
@@ -491,7 +489,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))
                     #labels[index] = 1.
-                    labels = (labels-np.mean(labels))/np.std(labels)
                     labels = labels.astype(np.float32)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
 
