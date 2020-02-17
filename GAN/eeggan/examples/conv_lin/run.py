@@ -137,7 +137,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 20#1
+label_length = 80#1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
@@ -162,6 +162,8 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 #temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(kilosort_path+os.sep+"spike_templates.npy").astype(np.uint32)
+templates = np.load(kilosort_path+os.sep+"templates.npy").astype(np.float32)
+print(np.argmax(templates,axis=2))
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
