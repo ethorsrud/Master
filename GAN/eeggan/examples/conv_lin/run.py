@@ -163,7 +163,6 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(kilosort_path+os.sep+"spike_templates.npy").astype(np.uint32)
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
-time_labels2 = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
@@ -178,8 +177,7 @@ spike_templates = spike_templates[:,0]
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
-    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = spike_templates[i]#1.
-    time_labels2[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
+    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
 
 n_spikes_per_channel = np.sum(time_labels2,axis=2).squeeze()
@@ -287,7 +285,7 @@ if conditional:
         #Create n_spikes randomly timed spikes
         random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
-            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = np.random.randint(0,600)#1.
+            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
@@ -348,9 +346,9 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
-                #idxes = np.nonzero(train_batches[:,:,:,-1])
-                #idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
-                #train_batches[:,:,:,-1][idxes] = 1.
+                idxes = np.nonzero(train_batches[:,:,:,-1])
+                idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
+                train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
 
@@ -377,7 +375,7 @@ for i_block in range(i_block_tmp,n_blocks):
                             n_spikes=0
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = np.random.randint(0,600)#1.
+                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
@@ -449,9 +447,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
                 labels[index] = 1.
 
-                labels = labels_big.copy()
-                for i in range(n_blocks-i_block-1):
-                    labels = block_reduce(labels,(1,2),np.mean)
 
                 labels = labels.astype(np.float32)
                 labels = labels[:,np.newaxis,:,np.newaxis]
@@ -484,7 +479,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         #Create n_spikes randomly timed spikes
                         random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            labels[i,random_times[j]:(random_times[j]+label_length)] = np.random.randint(0,600)#1.
+                            labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
                     #index = np.where(labels==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))
