@@ -163,7 +163,8 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(kilosort_path+os.sep+"spike_templates.npy").astype(np.uint32)
 templates = np.load(kilosort_path+os.sep+"templates.npy").astype(np.float32)
-print(templates[np.argmax(templates,axis=2)].shape)
+templates = templates[:,:,150]
+print(np.max(templates,axis=1))
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
