@@ -180,10 +180,9 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
 
-n_spikes_per_channel = np.sum(time_labels,axis=(0,2)).squeeze()
-print(n_spikes_per_channel.shape)
-spikes_mean = np.mean(n_spikes_per_channel)
-spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
+n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
+spikes_mean = np.mean(n_spikes_per_samp)
+spikes_std = np.sqrt(np.mean((n_spikes_per_samp-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
 np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
 
