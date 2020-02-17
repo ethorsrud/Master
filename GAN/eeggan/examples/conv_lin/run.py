@@ -137,7 +137,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 80#1
+label_length = 1#80#1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
@@ -180,7 +180,7 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
 
 
-n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()/label_length
+n_spikes_per_channel = np.sum(time_labels,axis=2).squeeze()
 spikes_mean = np.mean(n_spikes_per_channel)
 spikes_std = np.sqrt(np.mean((n_spikes_per_channel-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
