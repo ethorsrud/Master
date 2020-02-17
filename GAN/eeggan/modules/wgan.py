@@ -408,7 +408,7 @@ class WGAN_I_Generator(GAN_Generator):
 		gen = self(batch_noise)
 
         #Conditional
-		i_block,n_blocks = block_info
+		i_block,n_blocks,i_epoch = block_info
 		"""
 		labels = np.zeros(shape=(gen.shape[0],4096))
 		for i in range(gen.shape[0]):
@@ -469,7 +469,7 @@ class WGAN_I_Generator(GAN_Generator):
 
 		#print("loss:",loss,"Loss2:",loss2)
 		
-		loss = 0.2*loss2+0.8*loss#(loss+loss2)/2.0
+		loss = (1./(i_epoch+1))*loss2+loss#(loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)

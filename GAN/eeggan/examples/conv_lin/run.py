@@ -50,8 +50,8 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 2000#400.#2000.
-block_epochs = [2000,4000,4000,4000,4000,4000]#[2000,4000,4000,4000,4000,4000]
+rampup = 1000#400.#2000.
+block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -497,7 +497,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks],labels)
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks,i_epoch],labels)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
