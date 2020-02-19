@@ -6,8 +6,6 @@ import sys
 #import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
-print(code_path)
-print(other_path)
 sys.path.append(os.path.join(code_path,"GAN"))
 sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
@@ -163,10 +161,12 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
-spike_templates = np.load(kilosort_path+os.sep+"spike_templates.npy").astype(np.uint32)
-templates = np.load(kilosort_path+os.sep+"templates.npy").astype(np.float32)
-templates = templates[:,:,150]
-print(np.max(templates,axis=1))
+spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
+templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
+#templates = templates[:,:,150]
+print(spike_templates.shape)
+quit()
+
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
