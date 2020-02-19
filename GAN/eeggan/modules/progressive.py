@@ -50,7 +50,7 @@ class ProgressiveDiscriminator(nn.Module):
 				tmp = self.blocks[i].fade_sequence(input)
 				tmp = self.blocks[i+1].in_sequence(tmp)
 				fade = True
-			
+			"""
 			if self.conditional and i!=self.cur_block:
 				factor = orig_label.shape[-1]/input.shape[-1]
                 #USE NUMPY ARRAY OF LABEL TO MAKE DOWNSAMPLED LABEL
@@ -67,7 +67,7 @@ class ProgressiveDiscriminator(nn.Module):
 					label = label.astype(np.float32)
 					label = torch.from_numpy(label).cuda()
 				input = torch.cat((input,label),1)	
-
+			"""
 
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
