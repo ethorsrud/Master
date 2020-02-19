@@ -6,6 +6,8 @@ import sys
 #import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
+print(code_path)
+print(other_path)
 sys.path.append(os.path.join(code_path,"GAN"))
 sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
