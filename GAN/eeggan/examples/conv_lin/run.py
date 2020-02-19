@@ -170,12 +170,12 @@ template_labels = np.zeros(shape=(n_samples,1,600,1))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
 #mask
-spike_times = spike_times[spike_times<(input_length*n_samples)]
+#spike_times = spike_times[spike_times<(input_length*n_samples)]
 
-mask = spike_times<(input_length*n_samples)
-mask = np.where(mask==1)
-spike_templates = spike_templates[mask]
-spike_templates = spike_templates[:,0]
+#mask = spike_times<(input_length*n_samples)
+#mask = np.where(mask==1)
+#spike_templates = spike_templates[mask]
+#spike_templates = spike_templates[:,0]
 
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
