@@ -87,6 +87,8 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
+print(train[0,0,:,31])
+quit()
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
 #np.save("spike_data_ch120:ch180.npy",spike_data_small)
 #quit()
@@ -137,7 +139,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 40#1#80#1
+label_length = 1#1#80#1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
