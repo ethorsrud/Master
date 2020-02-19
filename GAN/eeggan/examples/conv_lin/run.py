@@ -162,7 +162,7 @@ train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 #temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
-templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
+templates = np.load(code_path+os.sep+"templates_ch_120_ch_180.npy").astype(np.float32)
 #templates = templates[:,:,150]
 print(spike_templates.shape)
 quit()
