@@ -163,7 +163,7 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load("spike_times_ch220_ch2600.npy").astype(np.uint64)
+spike_times = np.load("spike_times_ch220_ch260.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch_120_ch_180.npy").astype(np.float32)
 channelmap = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
