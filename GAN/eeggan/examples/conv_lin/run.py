@@ -89,6 +89,7 @@ spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
 train = np.delete(train,31,3)
 train = np.delete(train,52,3)
+train = np.delete(train,24,3)
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
 #np.save("spike_data_ch120:ch180.npy",spike_data_small)
 #quit()
@@ -156,7 +157,7 @@ for i in range(n_samples):
 """
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
-train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+#train = train/np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
 #spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
