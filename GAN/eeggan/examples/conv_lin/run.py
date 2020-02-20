@@ -87,9 +87,9 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,220:260]
 train = spike_data_small.reshape((n_samples,input_length,40))[:,np.newaxis,:,:]
-train = np.delete(train,31,3)
-train = np.delete(train,52,3)
-train = np.delete(train,24,3)
+#train = np.delete(train,31,3)
+#train = np.delete(train,52,3)
+#train = np.delete(train,24,3)
 #train = spike_data_small.reshape((n_samples,1,input_length,15))
 np.save("spike_data_ch220_ch260.npy",spike_data_small)
 quit()
