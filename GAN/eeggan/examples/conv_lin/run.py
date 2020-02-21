@@ -365,7 +365,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-
+                print(batch_real.shape)
+                quit()
 
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
@@ -410,8 +411,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-                print(batch_fake.shape)
-                quit()
+
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
