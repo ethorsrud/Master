@@ -188,8 +188,7 @@ for i in range(spike_times.shape[0]):
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if cur_ind>41 and cur_ind<(input_length-41):
         conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:]
-print("Yeah")
-quit()
+
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
@@ -205,8 +204,8 @@ print("Templates_mean",template_mean,"Templates_std",template_std)
 np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
 """
 
-train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-#train = np.concatenate((train,template_labels),axis=3).astype(np.float32)
+#train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
+train = np.concatenate((train,conv_labels),axis=1).astype(np.float32)
 print("train_shape",train.shape)
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -288,6 +287,7 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
+    labels_im_new = np.zeros(shape=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -295,14 +295,18 @@ if conditional:
             n_spikes=0
         #Create n_spikes randomly timed spikes
         random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+        random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
+            labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
-    z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
+    labels_im_new = labels_im_new.astype(np.float32)
+    z_vars_im = labels_im_new
+    #z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
@@ -317,7 +321,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     print("train_tmp",train_tmp.shape)
-
+    quit()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
