@@ -365,8 +365,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                print(batch_real.shape)
-                quit()
+                batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
@@ -412,7 +411,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real_old,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
@@ -467,18 +466,21 @@ for i_block in range(i_block_tmp,n_blocks):
                 index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
                 labels[index] = 1.
 
-
-                labels = labels.astype(np.float32)
-                labels = labels[:,np.newaxis,:,np.newaxis]
-                labels = torch.from_numpy(labels).cuda()
-                batch_fake = torch.cat((batch_fake,labels),dim=3)
-
-                #label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
-                #labels[(np.arange(batch_fake.shape[0]).astype(np.int),label_downsampled)] = 1.
-                #labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+                labels = labels_big_new
+                for i in range(n_blocks-1-i_epoch):
+                    labels = block_reduce(labels,(1,2,1),np.mean)
+                
+                labels=labels[:,np.newaxis,:,:]
+                print(labels.shape)
+                #labels = labels.astype(np.float32)
+                #labels = labels[:,np.newaxis,:,np.newaxis]
                 #labels = torch.from_numpy(labels).cuda()
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
-                #print(batch_fake.shape,batch_real.shape)
+                batch_fake = torch.cat((batch_fake,labels),dim=1)
+                print(batch_fake.shape)
+                print(batch_real.shape)
+                quit()
+
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
