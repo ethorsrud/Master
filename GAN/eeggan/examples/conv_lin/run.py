@@ -187,7 +187,7 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if cur_ind>41 and cur_ind<(input_length-41):
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = float(templates[spike_templates[i],:,:])
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = np.float(templates[spike_templates[i],:,:])
 
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
@@ -392,7 +392,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = float(templates[random_temps[j],:,:])
+                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = np.float(templates[random_temps[j],:,:])
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
