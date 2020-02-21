@@ -164,12 +164,8 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
-print(spike_times.shape)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
-print(spike_templates.shape)
 templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
-print(templates.shape)
-quit()
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
@@ -183,6 +179,9 @@ mask = spike_times<(input_length*n_samples)
 #mask = np.where(mask==1)
 spike_templates = spike_templates[mask]
 #spike_templates = spike_templates[:,0]
+print(spikes_times.shape)
+print(spike_templates.shape)
+quit()
 
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
