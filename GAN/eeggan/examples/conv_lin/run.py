@@ -192,9 +192,9 @@ for i in range(spike_times.shape[0]):
         print(cur_ind,template_length)
         print(conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:].shape)
         print(templates[spike_templates[i],:(41+template_length),:].shape)
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:(41+template_length),:]
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i][0],:(41+template_length),:]
     else:
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:]
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i][0],:,:]
 print("Yeah")
 quit()
 
