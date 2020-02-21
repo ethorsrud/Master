@@ -179,7 +179,7 @@ mask = spike_times<(input_length*n_samples)
 #mask = np.where(mask==1)
 spike_templates = spike_templates[mask]
 #spike_templates = spike_templates[:,0]
-print(spikes_times.shape)
+print(spike_times.shape)
 print(spike_templates.shape)
 quit()
 
