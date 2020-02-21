@@ -224,7 +224,7 @@ if not os.path.exists(outputpath):
 
 #generator = Generator(n_chans,n_z*(1+conditional))
 generator = Generator(n_chans,n_z+input_length)
-discriminator = Discriminator(n_chans+1)
+discriminator = Discriminator(n_chans)
 fourier_discriminator = Fourier_Discriminator(n_chans)
 AC_discriminator = AC_Discriminator(n_chans)
 
