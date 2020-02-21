@@ -167,11 +167,10 @@ spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch_120_ch_180.npy").astype(np.float32)
 channelmap = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
-print("MAX_ch",np.max(templates))
-print("MIN_ch",np.min(templates))
-quit()
+
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
+conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans))
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
 #mask
@@ -186,7 +185,9 @@ for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
-
+    conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:]
+print("Yeah")
+quit()
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
