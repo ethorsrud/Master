@@ -294,7 +294,7 @@ if conditional:
         if n_spikes<0:
             n_spikes=0
         #Create n_spikes randomly timed spikes
-        random_times_im = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+        random_times_im = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
         random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
