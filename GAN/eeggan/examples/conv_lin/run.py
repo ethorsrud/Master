@@ -187,13 +187,14 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if template_length>0 and template_length<41:
-        print(templates.shape)
-        print(spike_templates[i])
         print(cur_ind,template_length)
         print(conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:].shape)
-        print(templates[spike_templates[i],:(41+template_length),:].shape)
+        print(templates[spike_templates[i][0],:(41+template_length),:].shape)
         conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i][0],:(41+template_length),:]
     else:
+        print(cur_ind,template_length)
+        print(conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:].shape)
+        print(templates[spike_templates[i][0],:,:].shape)
         conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i][0],:,:]
 print("Yeah")
 quit()
