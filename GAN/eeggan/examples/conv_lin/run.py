@@ -164,7 +164,9 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
 spike_times = np.load("spike_times_ch120_ch180.npy").astype(np.uint64)
+print(spike_times.shape)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
+print(spike_templates.shape)
 templates = np.load(code_path+os.sep+"templates_ch_120_ch_180.npy").astype(np.float32)
 channelmap = np.load(os.path.normpath(kilosort_path+os.sep+"channel_map.npy")).astype(np.int32)
 
@@ -176,9 +178,9 @@ conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans))
 #mask
 #spike_times = spike_times[spike_times<(input_length*n_samples)]
 
-mask = spike_times<(input_length*n_samples)
+#mask = spike_times<(input_length*n_samples)
 #mask = np.where(mask==1)
-spike_templates = spike_templates[mask]
+#spike_templates = spike_templates[mask]
 #spike_templates = spike_templates[:,0]
 
 for i in range(spike_times.shape[0]):
