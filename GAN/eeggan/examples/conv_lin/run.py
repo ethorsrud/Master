@@ -413,8 +413,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 labels = labels_big_new
-                for i in range(n_blocks-1-i_block):
-                    labels = block_reduce(labels,(1,2,1),np.mean)
+
+                blockreduction = [[4,4,2],[4,4],[4,2],[4],[2],[]]
+                for i in range(len(blockreduction[i_block])):
+                    labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
                 
                 labels=labels[:,np.newaxis,:,:]
                 labels = labels.astype(np.float32)

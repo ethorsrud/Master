@@ -421,8 +421,9 @@ class WGAN_I_Generator(GAN_Generator):
 		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
 		#labels[index] = 1.
 
-		for i in range(n_blocks-1-i_block):
-			labels = block_reduce(labels,(1,2,1),np.mean)
+		blockreduction = [[4,4,2],[4,4],[4,2],[4],[2],[]]
+		for i in range(len(blockreduction[i_block])):
+			labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
 
 
 		labels = labels.astype(np.float32)
