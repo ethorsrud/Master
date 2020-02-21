@@ -427,7 +427,7 @@ class WGAN_I_Generator(GAN_Generator):
 
 		labels = labels.astype(np.float32)
 		#labels = labels[:,np.newaxis,:,np.newaxis]
-		labels = labels[:,np.newaxis,:,np.newaxis]
+		labels = labels[:,np.newaxis,:,:]
 		labels = torch.from_numpy(labels).cuda()
 		
 		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
