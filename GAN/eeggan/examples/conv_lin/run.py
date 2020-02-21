@@ -471,17 +471,16 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = block_reduce(labels,(1,2,1),np.mean)
                 
                 labels=labels[:,np.newaxis,:,:]
-                print(labels.shape)
+
                 labels = labels.astype(np.float32)
                 #labels = labels[:,np.newaxis,:,np.newaxis]
                 labels = torch.from_numpy(labels).cuda()
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
                 batch_fake = torch.cat((batch_fake,labels),dim=1)
-                print(batch_fake.shape)
-                print(batch_real.shape)
-                quit()
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
+                print("yeah")
+                quit()
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
             
