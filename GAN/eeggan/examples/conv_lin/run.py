@@ -188,7 +188,7 @@ for i in range(spike_times.shape[0]):
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if template_length>0:
         print(cur_ind,template_length)
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:template_length,:]
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:(41+template_length),:]
     else:
         conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:]
 print("Yeah")
