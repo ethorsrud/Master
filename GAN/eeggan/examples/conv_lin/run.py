@@ -332,7 +332,6 @@ for i_block in range(i_block_tmp,n_blocks):
     fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
     #print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
-    print("yeah")
 
 
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
@@ -361,9 +360,9 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
-                idxes = np.nonzero(train_batches[:,:,:,-1])
-                idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
-                train_batches[:,:,:,-1][idxes] = 1.
+                #idxes = np.nonzero(train_batches[:,:,:,-1])
+                #idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
+                #train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
 
@@ -384,19 +383,23 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
+                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
                             n_spikes=0
-                        random_times = np.random.randint(0,input_length-80,size=(n_spikes)).astype(np.int)
+                        random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
+                        random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
+                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:]
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                     #labels[index] = 1.
                     #labels = labels.astype(np.float32)
-                    z_vars = np.concatenate((z_vars,labels_big),axis=1)
+                    z_vars = labels_big_new
+                    #z_vars = np.concatenate((z_vars,labels_big),axis=1)
 
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
@@ -407,6 +410,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
+                print(batch_fake.shape)
+                quit()
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
