@@ -411,10 +411,22 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real_old,2,3),1,normalized=False),2,3)
+                labels = labels_big_new
+                for i in range(n_blocks-1-i_epoch):
+                    labels = block_reduce(labels,(1,2,1),np.mean)
+                
+                labels=labels[:,np.newaxis,:,:]
+                labels = labels.astype(np.float32)
+                labels = torch.from_numpy(labels).cuda()
+                batch_fake = torch.cat((batch_fake,labels),dim=1)
+
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                
+                print(batch_fake_fft.shape)
+                print(batch_real_fft.shape)   
 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
@@ -461,22 +473,18 @@ for i_block in range(i_block_tmp,n_blocks):
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 
                 #Conditional
-                labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-                index = np.where(labels_big==1.)
-                index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
-                labels[index] = 1.
+                #labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
+                #index = np.where(labels_big==1.)
+                #index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
+                #labels[index] = 1.
 
-                labels = labels_big_new
-                for i in range(n_blocks-1-i_epoch):
-                    labels = block_reduce(labels,(1,2,1),np.mean)
-                
-                labels=labels[:,np.newaxis,:,:]
 
-                labels = labels.astype(np.float32)
+
+                #labels = labels.astype(np.float32)
                 #labels = labels[:,np.newaxis,:,np.newaxis]
-                labels = torch.from_numpy(labels).cuda()
+                #labels = torch.from_numpy(labels).cuda()
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
-                batch_fake = torch.cat((batch_fake,labels),dim=1)
+                #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 print("yeah")
