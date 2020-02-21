@@ -408,8 +408,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
-                print(z_vars.shape)
-                quit()
+
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 labels = labels_big_new
@@ -431,7 +430,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_real_fft = torch.log(batch_real_fft)
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze().view(1,2,1,57)
-                print(fake_mean.shape)
+
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
                 real_mean = torch.mean(batch_real_fft,(0,2)).squeeze().view(1,2,1,57)#fft_mean
@@ -517,7 +516,7 @@ for i_block in range(i_block_tmp,n_blocks):
                     #labels[index] = 1.
                     labels = labels.astype(np.float32)
                     #z_vars = np.concatenate((z_vars,labels),axis=1)
-                    z_vars = labels_new
+                    z_vars = labels_new.astype(np.float32)
 
                 #z_vars_label[np.arange(n_batch),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
@@ -547,6 +546,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((i_block_tmp,i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_.data'),compress=True)
             #joblib.dump((i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_%d.data'%i_epoch),compress=True)
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
+            train_tmp = old_train_tmp
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
             #Originally mean over channels, but removed
@@ -554,6 +554,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
+            batch_fake = batch_fake[:,0,:,:].view(batch_fake.shape[0],1,batch_fake.shape[2],batch_fake.shape[3])
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft

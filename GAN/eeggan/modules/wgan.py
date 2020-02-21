@@ -418,10 +418,16 @@ class WGAN_I_Generator(GAN_Generator):
 		
 		index = np.where(labels==1.)
 		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
-		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
-		labels[index] = 1.
+		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
+		#labels[index] = 1.
+
+		for i in range(n_blocks-1-i_epoch):
+			labels = block_reduce(labels,(1,2,1),np.mean)
+
+
 		labels = labels.astype(np.float32)
-		labels = labels[:,np.newaxis,:,np.newaxis]
+		#labels = labels[:,np.newaxis,:,np.newaxis]
+		labels = lables[:,np.newaxis,:,np.newaxis]
 		labels = torch.from_numpy(labels).cuda()
 		
 		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
@@ -441,15 +447,17 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
 		#conditional
+		#gen = torch.cat((gen,labels),3)
 		gen = torch.cat((gen,labels),3)
 
 		#NOT INCLUDING THE LABEL VECTOR
-		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
+		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
+		#fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
 
 		#fft = torch.log(fft)
 
-		fft_mean = torch.mean(fft,(0,2)).squeeze()
+		fft_mean = torch.mean(fft,(0,2)).squeeze().view(1,2,1,57)
 		fft_std = torch.sqrt(torch.mean((fft-fft_mean)**2,dim=(0,1,2)))
 		#NORMALIZING OVER BATCH ONLY
 		#fft_mean = torch.mean(fft,(0)).squeeze()
