@@ -321,7 +321,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
     old_train_tmp = train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3])
-    new_train_tmp = train_tmp.copy()
+    new_train_tmp = train_tmp.clone()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(old_train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
 
