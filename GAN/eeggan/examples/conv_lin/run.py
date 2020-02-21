@@ -484,7 +484,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #labels = torch.from_numpy(labels).cuda()
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
                 #batch_fake = torch.cat((batch_fake,labels),dim=1)
-                print(batch_real,batch_fake)
+                print(batch_real.dtype,batch_fake.dtype)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
                 print("yeah")
                 quit()
