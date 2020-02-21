@@ -320,19 +320,19 @@ for i_block in range(i_block_tmp,n_blocks):
     print("Block:",i_block)
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
-
+    old_train_tmp = train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3])
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3]),axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
-    print(train_tmp_fft.shape)
+    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(old_train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
+
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
     #train_tmp_fft = torch.log(train_tmp_fft)
-    train_mean = torch.mean(train_tmp,(0,2)).squeeze()
-    train_std = torch.sqrt(torch.mean((train_tmp-train_mean)**2,dim=(0,1,2)))
+    train_mean = torch.mean(old_train_tmp,(0,2)).squeeze()
+    train_std = torch.sqrt(torch.mean((old_train_tmp-train_mean)**2,dim=(0,1,2)))
     fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
     fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
     #print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
-
+    print("yeah")
 
 
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
