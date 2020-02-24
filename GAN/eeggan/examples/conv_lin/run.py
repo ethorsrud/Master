@@ -169,7 +169,8 @@ templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.floa
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
-conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+#conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
 #mask
@@ -287,7 +288,8 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
-    labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    #labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -384,7 +386,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     #labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
@@ -428,7 +431,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
-
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
 
@@ -449,25 +451,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-                """
-                plt.plot(batch_real_fft[0,0,:,0].cpu().detach().numpy(),label="real")
-                plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy(),label="fake")
-                plt.legend()
-                plt.show()
-                """
-                """
-                plt.figure()
-                plt.plot(batch_fake_fft[0,0,:,0].cpu().detach().numpy())
-                plt.plot(batch_real_fft[0,0,:,0].cpu().detach().numpy())
-                plt.legend(["Fake","Real"])
-                plt.savefig(os.path.join(outputpath+"test_epoch_%i_it_%i_icrit_%i.png"%(i_epoch,it,i_critic)))
-                plt.close()
-                """
-                
-                #print("MIN(Fake): ",torch.min(batch_fake_fft),"MIN(Real)",torch.min(batch_real_fft))
-                #print("MAX(Fake): ",torch.max(batch_fake_fft),"MAX(Real)",torch.max(batch_real_fft))
-                #batch_real_autocor = functions.autocorrelation(batch_real)
-                #batch_fake_autocor = functions.autocorrelation(batch_fake)
+
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
@@ -479,8 +463,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 #index = np.where(labels_big==1.)
                 #index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
                 #labels[index] = 1.
-
-
 
                 #labels = labels.astype(np.float32)
                 #labels = labels[:,np.newaxis,:,np.newaxis]
@@ -502,7 +484,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     #labels = np.zeros(shape=(n_batch,input_length))
-                    labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
+                    #labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
+                    labels_new = rng.normal(0,1,size=(n_batch,input_length,n_chans))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
