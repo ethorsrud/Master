@@ -30,7 +30,7 @@ from scipy import fftpack
 import seaborn as sns
 import json
 from skimage.measure import block_reduce
-
+print("yeah")
 #plt.switch_backend('agg')
 #Error tracebacking
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
@@ -414,7 +414,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 labels = labels_big_new
 
-                blockreduction = [[4,4,2],[4,4],[4,2],[4],[2],[]]
+                blockreduction = [[32],[16],[8],[4],[2],[]]
                 for i in range(len(blockreduction[i_block])):
                     labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
                 

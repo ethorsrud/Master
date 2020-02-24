@@ -142,10 +142,10 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],57,-1]),
-								weight_scale(nn.Conv1d(57,57,9,padding=4,stride=4),
+								weight_scale(nn.Conv1d(57,57,101,padding=50,stride=4),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(57,57,9,padding=4,stride=4),
+								weight_scale(nn.Conv1d(57,57,51,padding=25,stride=4),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 								weight_scale(nn.Conv1d(57,n_featuremaps,9,padding=4,stride=4),
