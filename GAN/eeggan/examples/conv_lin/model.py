@@ -139,8 +139,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								)
 	
 	"""
-	"""
-	"""
+
 	tmp_block = ProgressiveGeneratorBlock(
 								nn.Sequential(Reshape([[0],1,57,-1]),
 								weight_scale(nn.Conv2d(1,n_featuremaps,(57,51),padding=(0,25),stride=4),
