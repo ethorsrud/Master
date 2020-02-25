@@ -30,7 +30,7 @@ from scipy import fftpack
 import seaborn as sns
 import json
 from skimage.measure import block_reduce
-print("yeah")
+
 #plt.switch_backend('agg')
 #Error tracebacking
 os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
@@ -166,14 +166,13 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
-templates = (templates-np.mean(templates))/(np.std(templates))
-print(np.max(templates))
-print(np.min(templates))
+#templates = (templates-np.mean(templates))/(np.std(templates))
+
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
-#conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
-conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
+conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+#conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
 #mask
@@ -291,8 +290,8 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
-    #labels_im_new = np.zeros(shape=(700,input_length,n_chans))
-    labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
+    labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    #labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -389,8 +388,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     #labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
-                    labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    #labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
@@ -492,8 +491,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     #labels = np.zeros(shape=(n_batch,input_length))
-                    #labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
-                    labels_new = rng.normal(0,1,size=(n_batch,input_length,n_chans))
+                    labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
+                    #labels_new = rng.normal(0,1,size=(n_batch,input_length,n_chans))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
