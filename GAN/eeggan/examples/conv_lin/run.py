@@ -166,9 +166,9 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
-print("Max_template",np.max(templates))
-print("Min_template",np.min(templates))
+print(templates.shape)
 quit()
+
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
