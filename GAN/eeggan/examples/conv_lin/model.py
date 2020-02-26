@@ -154,7 +154,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 												nn.LeakyReLU(0.2),
 												Reshape([[0],-1]),
 												add_random_layer(),
-								weight_scale(nn.Linear(base,base*(n_featuremaps+conditional)),
+								weight_scale(nn.Linear(base*2,base*(n_featuremaps+conditional)),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],n_featuremaps,-1]),
