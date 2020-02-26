@@ -11,6 +11,7 @@ from eeggan.modules.progressive import ProgressiveGenerator,ProgressiveGenerator
 from eeggan.modules.wgan import WGAN_I_Generator,WGAN_I_Discriminator
 from torch.nn.init import calculate_gain
 from eeggan.modules.layers.xray import xrayscanner
+from eeggan.modules.layers.add_random_layer import add_random_layer
 
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
 n_featuremaps = 25#25
@@ -152,6 +153,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
 												Reshape([[0],-1]),
+												add_random_layer(),
 								weight_scale(nn.Linear(base,base*(n_featuremaps+conditional)),
 														gain=calculate_gain('leaky_relu')),
 												nn.LeakyReLU(0.2),
