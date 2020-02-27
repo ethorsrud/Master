@@ -291,7 +291,7 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
-    labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    labels_im_new = np.zeros(shape=(700,input_length,n_chans-1))
     #labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
@@ -389,7 +389,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     #labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans-1)).astype(np.float32)
                     #labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
