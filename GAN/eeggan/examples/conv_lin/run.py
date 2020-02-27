@@ -417,7 +417,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-
+                print(batch_fake.shape)
                 labels = labels_big
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
