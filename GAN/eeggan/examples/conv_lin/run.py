@@ -418,23 +418,24 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                labels = labels_big_new
+                labels = labels_big
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
                 """
                 for i in range(len(blockreduction[i_block])):
                     labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
                 """
-                #labels = labels[:,np.newaxis,:,:]
+                labels = labels[:,np.newaxis,:]
                 labels = labels.astype(np.float32)
-                print(labels.shape)
-                quit()
 
                 labels = torch.from_numpy(labels).cuda()
                 for i in range(len(blockreduction[i_block])):
                     labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
+                
+                labels = labels[:,:,:,np.newaxis]
+                print(labels.shape)
 
-                batch_fake = torch.cat((batch_fake,labels),dim=1)
+                batch_fake = torch.cat((batch_fake,labels),dim=2)
                 print(batch_fake.shape)
                 quit()
 
