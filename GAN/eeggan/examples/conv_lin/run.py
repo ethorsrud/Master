@@ -528,8 +528,6 @@ for i_block in range(i_block_tmp,n_blocks):
         losses_g.append(loss_g)
 
         if i_epoch%100 == 0:
-            print("yeah")
-            quit()
             generator.eval()
             discriminator.eval()
             fourier_discriminator.eval()
@@ -545,7 +543,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #joblib.dump((i_block_tmp,i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_.data'),compress=True)
             #joblib.dump((i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_%d.data'%i_epoch),compress=True)
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
-            train_tmp = old_train_tmp
+            #train_tmp = old_train_tmp
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
             #Originally mean over channels, but removed
@@ -553,8 +551,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
-            batch_fake = batch_fake[:,0,:,:].view(batch_fake.shape[0],1,batch_fake.shape[2],batch_fake.shape[3])
-            batch_real= batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
+            #batch_fake = batch_fake[:,0,:,:].view(batch_fake.shape[0],1,batch_fake.shape[2],batch_fake.shape[3])
+            #batch_real= batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
             #torch fft
@@ -739,7 +737,7 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.train()
             discriminator.train()
             fourier_discriminator.train()
-            train_tmp = new_train_tmp
+            #train_tmp = new_train_tmp
 
 
     fade_alpha = 0.
