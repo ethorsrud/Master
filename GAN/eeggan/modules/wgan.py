@@ -455,8 +455,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#conditional
 		gen = torch.cat((gen,labels),3)
 		#gen = torch.cat((gen,labels),1)
-		print(gen.shape)
-		quit()
+
 		#NOT INCLUDING THE LABEL VECTOR
 		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
