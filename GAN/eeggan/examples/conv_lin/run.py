@@ -435,7 +435,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 labels = labels[:,:,:,np.newaxis]
                 print(labels.shape)
 
-                batch_fake = torch.cat((batch_fake,labels),dim=2)
+                batch_fake = torch.cat((batch_fake,labels),dim=3)
                 print(batch_fake.shape)
                 quit()
 
