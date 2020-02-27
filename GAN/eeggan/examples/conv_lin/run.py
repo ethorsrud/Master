@@ -434,6 +434,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = torch.cat((batch_fake,labels),dim=1)
                 print(batch_fake.shape)
+                quit()
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
