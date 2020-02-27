@@ -171,7 +171,7 @@ templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.floa
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
-conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans-1)).astype(np.float32)
 #conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
