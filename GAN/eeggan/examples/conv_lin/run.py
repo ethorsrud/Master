@@ -192,6 +192,7 @@ for i in range(spike_times.shape[0]):
     if cur_ind>41 and cur_ind<(input_length-41):
         conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
 
+conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
@@ -208,7 +209,7 @@ np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
 """
 
 #train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-train = np.concatenate((train,conv_labels),axis=1).astype(np.float32)
+train = np.concatenate((train,conv_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
