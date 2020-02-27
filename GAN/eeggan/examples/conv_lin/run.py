@@ -425,8 +425,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 for i in range(len(blockreduction[i_block])):
                     labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
                 """
-                labels = labels[:,np.newaxis,:,:]
+                #labels = labels[:,np.newaxis,:,:]
                 labels = labels.astype(np.float32)
+                print(labels.shape)
+                quit()
 
                 labels = torch.from_numpy(labels).cuda()
                 for i in range(len(blockreduction[i_block])):
