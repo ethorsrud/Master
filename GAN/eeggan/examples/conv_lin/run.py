@@ -309,9 +309,9 @@ if conditional:
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     labels_im_new = labels_im_new.astype(np.float32)
-    z_vars_im = labels_im_new
-    #z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
-
+    labels_im = np.mean(labels_im_new,axis=2)
+    z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
+quit()
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
@@ -324,8 +324,8 @@ for i_block in range(i_block_tmp,n_blocks):
     print("Block:",i_block)
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
-    old_train_tmp = train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3])
-    new_train_tmp = train_tmp.clone()
+    #old_train_tmp = train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3])
+    #new_train_tmp = train_tmp.clone()
     #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
     train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(old_train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
 
@@ -404,8 +404,8 @@ for i_block in range(i_block_tmp,n_blocks):
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                     #labels[index] = 1.
                     #labels = labels.astype(np.float32)
-                    z_vars = labels_big_new
-                    #z_vars = np.concatenate((z_vars,labels_big),axis=1)
+                    labels_big = np.mean(labels_big_new,axis=2)
+                    z_vars = np.concatenate((z_vars,labels_big),axis=1)
 
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
