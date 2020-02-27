@@ -193,7 +193,7 @@ for i in range(spike_times.shape[0]):
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if cur_ind>41 and cur_ind<(input_length-41):
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates[spike_templates[i],:].astype(np.float32)
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates_new[spike_templates[i],:].astype(np.float32)
 
 #conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
 
