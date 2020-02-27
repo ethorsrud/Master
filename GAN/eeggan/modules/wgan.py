@@ -429,11 +429,12 @@ class WGAN_I_Generator(GAN_Generator):
 
 		labels = labels.astype(np.float32)
 		#labels = labels[:,np.newaxis,:,np.newaxis]
-		labels = labels[:,np.newaxis,:,:]
+		labels = labels[:,np.newaxis,:]
 		labels = torch.from_numpy(labels).cuda()
 		for i in range(len(blockreduction[i_block])):
-			labels = torch.nn.AvgPool2d((blockreduction[i_block][i],1),stride=(blockreduction[i_block][i],1))(labels)
-                    
+			labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
+        
+		labels = labels[:,:,:,np.newaxis]        
 		
 		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
 		#label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
@@ -452,9 +453,10 @@ class WGAN_I_Generator(GAN_Generator):
 		#appending_label = torch.from_numpy(appending_label).cuda()
 
 		#conditional
-		#gen = torch.cat((gen,labels),3)
-		gen = torch.cat((gen,labels),1)
-
+		gen = torch.cat((gen,labels),3)
+		#gen = torch.cat((gen,labels),1)
+		print(gen.shape)
+		quit()
 		#NOT INCLUDING THE LABEL VECTOR
 		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		#fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)

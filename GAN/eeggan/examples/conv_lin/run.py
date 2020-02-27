@@ -417,7 +417,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-                print(batch_fake.shape)
+
                 labels = labels_big
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
@@ -480,13 +480,12 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
-                print("yeah")
-                quit()
+
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
-                #z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
+                z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
                 #Conditional
                 #z_vars_label = np.zeros(shape=(n_batch,n_z))
@@ -510,9 +509,11 @@ for i_block in range(i_block_tmp,n_blocks):
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))
                     #labels[index] = 1.
-                    labels = labels_new.astype(np.float32)
-                    #z_vars = np.concatenate((z_vars,labels),axis=1)
-                    z_vars = labels_new.astype(np.float32)
+                    #labels = labels_new.astype(np.float32)
+                    labels = np.mean(labels_new.astype(np.float32),axis=2)
+                    z_vars = np.concatenate((z_vars,labels),axis=1)
+                    
+                    
 
                 #z_vars_label[np.arange(n_batch),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
