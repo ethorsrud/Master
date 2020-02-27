@@ -332,8 +332,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
     #train_tmp_fft = train_tmp_fft[:,:,:,:]
     #train_tmp_fft = torch.log(train_tmp_fft)
-    train_mean = torch.mean(old_train_tmp,(0,2)).squeeze()
-    train_std = torch.sqrt(torch.mean((old_train_tmp-train_mean)**2,dim=(0,1,2)))
+    train_mean = torch.mean(train_tmp,(0,2)).squeeze()
+    train_std = torch.sqrt(torch.mean((train_tmp-train_mean)**2,dim=(0,1,2)))
     fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
     fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
     #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
