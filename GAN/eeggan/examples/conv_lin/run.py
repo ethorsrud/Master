@@ -436,9 +436,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
 
-                print(batch_real.shape)
-                print(batch_fake.shape)
-
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
@@ -464,15 +461,12 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-                print(batch_fake_fft.shape)
-                print(batch_real_fft.shape)
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                print("yeah")
-                quit()
+
                 #Conditional
                 #labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
                 #index = np.where(labels_big==1.)
@@ -486,7 +480,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
-
+                print("yeah")
+                quit()
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
             
