@@ -171,7 +171,8 @@ templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.floa
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1))
 template_labels = np.zeros(shape=(n_samples,1,600,1))
-conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+#conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
+conv_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 #conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
@@ -183,6 +184,7 @@ mask = spike_times<(input_length*n_samples)
 spike_templates = spike_templates[mask]
 spike_templates = spike_templates[:,0]
 
+templates_new = np.mean(templates,axis=2)
 
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
@@ -190,9 +192,11 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if cur_ind>41 and cur_ind<(input_length-41):
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
+        #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
+        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates[spike_templates[i],:].astype(np.float32)
 
-conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
+#conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
+
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
@@ -291,7 +295,8 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
-    labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    #labels_im_new = np.zeros(shape=(700,input_length,n_chans))
+    labels_im_new = np.zeros(shape=(700,input_length))
     #labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
@@ -303,14 +308,15 @@ if conditional:
         random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
-            labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
+            #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
+            labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41)] = templates_new[random_templates_im[j],:]
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
     labels_im_new = labels_im_new.astype(np.float32)
-    labels_im = np.mean(labels_im_new,axis=2)
+    #labels_im = np.mean(labels_im_new,axis=2)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
 #random_times_im = np.random.randint(0,n_z,size=(1000))
@@ -371,7 +377,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
+                #batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
@@ -389,7 +395,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     #labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
+                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     #labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -399,14 +406,15 @@ for i_block in range(i_block_tmp,n_blocks):
                         random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             #labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
+                            #labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
+                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                     #labels[index] = 1.
                     #labels = labels.astype(np.float32)
-                    labels_big = np.mean(labels_big_new,axis=2)
-                    z_vars = np.concatenate((z_vars,labels_big),axis=1)
+                    #labels_big = np.mean(labels_big_new,axis=2)
+                    z_vars = np.concatenate((z_vars,labels_big_new),axis=1)
 
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
@@ -418,7 +426,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                labels = labels_big
+                labels = labels_big_new
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
                 """
@@ -493,7 +501,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     #labels = np.zeros(shape=(n_batch,input_length))
-                    labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
+                    #labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
+                    labels_new = np.zeros(shape=(n_batch,input_length))
                     #labels_new = rng.normal(0,1,size=(n_batch,input_length,n_chans))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -504,13 +513,14 @@ for i_block in range(i_block_tmp,n_blocks):
                         random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             #labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            labels_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
+                            #labels_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
+                            labels_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
                     #index = np.where(labels==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(n_batch,n_z))
                     #labels[index] = 1.
-                    #labels = labels_new.astype(np.float32)
-                    labels = np.mean(labels_new.astype(np.float32),axis=2)
+                    labels = labels_new.astype(np.float32)
+                    #labels = np.mean(labels_new.astype(np.float32),axis=2)
                     z_vars = np.concatenate((z_vars,labels),axis=1)
                     
                     
