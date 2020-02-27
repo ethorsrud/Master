@@ -417,8 +417,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-                print(batch_fake.shape)
-                quit()
+
                 labels = labels_big_new
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
@@ -431,9 +430,10 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 labels = torch.from_numpy(labels).cuda()
                 for i in range(len(blockreduction[i_block])):
-                    labels = torch.nn.AvgPool2d((blockreduction[i_block][i],1),stride=(blockreduction[i_block][i],1))(labels)
+                    labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
 
                 batch_fake = torch.cat((batch_fake,labels),dim=1)
+                print(batch_fake.shape)
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
