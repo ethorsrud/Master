@@ -312,7 +312,7 @@ if conditional:
     labels_im_new = labels_im_new.astype(np.float32)
     labels_im = np.mean(labels_im_new,axis=2)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
-quit()
+
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
 #z_vars_im_label = z_vars_im_label.astype(np.float32)
@@ -417,7 +417,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
-
+                print(batch_fake.shape)
+                quit()
                 labels = labels_big_new
 
                 blockreduction = [[32],[16],[8],[4],[2],[]]
