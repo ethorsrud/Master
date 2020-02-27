@@ -458,13 +458,13 @@ class WGAN_I_Generator(GAN_Generator):
 		print(gen.shape)
 		quit()
 		#NOT INCLUDING THE LABEL VECTOR
-		fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
-		#fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
+		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
+		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
 		fft = torch.sqrt(fft[:,:,1:,:,0]**2+fft[:,:,1:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
 
 		#fft = torch.log(fft)
 
-		fft_mean = torch.mean(fft,(0,2)).squeeze().view(1,2,1,57)
+		fft_mean = torch.mean(fft,(0,2)).squeeze()
 		fft_std = torch.sqrt(torch.mean((fft-fft_mean)**2,dim=(0,1,2)))
 		#NORMALIZING OVER BATCH ONLY
 		#fft_mean = torch.mean(fft,(0)).squeeze()

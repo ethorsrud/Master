@@ -528,6 +528,8 @@ for i_block in range(i_block_tmp,n_blocks):
         losses_g.append(loss_g)
 
         if i_epoch%100 == 0:
+            print("yeah")
+            quit()
             generator.eval()
             discriminator.eval()
             fourier_discriminator.eval()
