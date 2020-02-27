@@ -109,7 +109,7 @@ train = np.swapaxes(train,1,3)
 #Only first channel
 #train = train[:,:,:,0][:,:,:,np.newaxis]
 """
-n_chans = train.shape[3]#+1 # +1 FOR CONDITIONAL
+n_chans = train.shape[3]+1 # +1 FOR CONDITIONAL
 print("Number of channels:",n_chans)
 print(train.shape)
 #Spike data end
@@ -433,25 +433,25 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
                 
                 labels = labels[:,:,:,np.newaxis]
-                print(labels.shape)
 
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
-                print(batch_fake.shape)
-                quit()
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real,2,3),1,normalized=False),2,3)
+                print(batch_real.shape)
+                print(batch_fake.shape)
+
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake,2,3),1,normalized=False),2,3)
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
 
-                fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze().view(1,2,1,57)
+                fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
 
                 #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
-                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze().view(1,2,1,57)#fft_mean
+                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
                 real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
                 #NORMALIZING OVER BATCH ONLY
                 #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
@@ -464,13 +464,15 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-
+                print(batch_fake_fft.shape)
+                print(batch_real_fft.shape)
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                
+                print("yeah")
+                quit()
                 #Conditional
                 #labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
                 #index = np.where(labels_big==1.)
