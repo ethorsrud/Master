@@ -20,9 +20,10 @@ torch.backends.cudnn.benchmark=True
 torch.cuda.set_device(3)
 
 kilosort_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
-templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
-
-
+#templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
+templates = np.load("templates_ch120_ch180.npy").astype(np.float32)
+print(templates.shape)
+quit()
 n_z = 128
 datafreq = 30000
 n_blocks = 6
@@ -44,8 +45,6 @@ mean_std = np.load("real_mean_std_dataset.npy")
 spike_mean = mean_std[0]
 spike_std = mean_std[1]
 rng = np.random.RandomState(0)
-print("Yeah")
-quit()
 
 z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
 labels = np.zeros(shape=(768,input_length))
