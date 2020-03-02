@@ -44,6 +44,9 @@ mean_std = np.load("real_mean_std_dataset.npy")
 spike_mean = mean_std[0]
 spike_std = mean_std[1]
 rng = np.random.RandomState(0)
+print("Yeah")
+quit()
+
 z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
 labels = np.zeros(shape=(768,input_length))
 for i in range(768):
