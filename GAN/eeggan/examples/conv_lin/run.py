@@ -91,8 +91,9 @@ channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
-#np.save("spike_data_ch220_ch260.npy",spike_data_small)
-#quit()
+np.save("spike_data_ch120_ch180_57.npy",spike_data_small)
+
+quit()
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 #train = lfilter(b,a,train,axis=2)
