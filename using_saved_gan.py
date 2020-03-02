@@ -28,7 +28,7 @@ datafreq = 30000
 n_blocks = 6
 t_multiple = 3
 input_length = 4096#8192
-n_chans = 60
+n_chans = 57
 
 generator = Generator(n_chans,128+input_length) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
