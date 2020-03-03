@@ -363,7 +363,7 @@ for i_block in range(i_block_tmp,n_blocks):
         
         anim_idx = np.where(labels_im==1.)
         anim_idx = (anim_idx[0],np.floor(anim_idx[1]/(2**(n_blocks-1-i_block))).astype(np.int))
-        anim_labels = np.zeros(shape=(700,input_length/(2**(n_blocks-1-i_block))))
+        anim_labels = np.zeros(shape=(700,int(input_length/(2**(n_blocks-1-i_block)))))
         anim_labels[anim_idx]=1.
         np.save("Animate/labels_block_%i.npy"%i_block,anim_labels)
         if i_epoch%10 == 0:
