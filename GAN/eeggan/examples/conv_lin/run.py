@@ -672,7 +672,7 @@ for i_block in range(i_block_tmp,n_blocks):
             sns.heatmap(
                 corr_fake, 
                 ax=ax[0],
-                vmin=0, vmax=1, center=0.5,
+                vmin=-1, vmax=1, center=0.5,
                 cmap=sns.diverging_palette(20, 220, n=200),
                 square=True,
                 cbar=False
@@ -680,7 +680,7 @@ for i_block in range(i_block_tmp,n_blocks):
             sns.heatmap(
                 corr_real, 
                 ax=ax[1],
-                vmin=0, vmax=1, center=0.5,
+                vmin=-1, vmax=1, center=0.5,
                 cmap=sns.diverging_palette(20, 220, n=200),
                 square=True
             )
