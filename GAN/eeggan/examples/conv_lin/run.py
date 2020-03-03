@@ -361,7 +361,11 @@ for i_block in range(i_block_tmp,n_blocks):
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
         
-        print(labels_im.shape)
+        anim_idx = np.where(labels_im==1.)
+        anim_idx = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
+        anim_labels = np.zeros(shape=(700,128))
+        anim_labels[anim_idx]=1.
+        np.save("Animate/labels.npy"%(i_block,i_epoch),animated_signal)
         if i_epoch%10 == 0 and i_block==0:
             #writing for animation
             animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
