@@ -418,14 +418,10 @@ class WGAN_I_Generator(GAN_Generator):
 		
 		index = np.where(labels==1.)
 		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
-		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
-		#labels[index] = 1.
-
+		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
+		labels[index] = 1.
+		"""
 		blockreduction = [[32],[16],[8],[4],[2],[]]
-		"""
-		for i in range(len(blockreduction[i_block])):
-			labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
-		"""
 
 		labels = labels.astype(np.float32)
 		#labels = labels[:,np.newaxis,:,np.newaxis]
@@ -433,14 +429,14 @@ class WGAN_I_Generator(GAN_Generator):
 		labels = torch.from_numpy(labels).cuda()
 		for i in range(len(blockreduction[i_block])):
 			labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
-        
-		labels = labels[:,:,:,np.newaxis]        
+        """
+		#labels = labels[:,:,:,np.newaxis]        
 		
 		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
 		#label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
 		#labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
-		#labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
-		#labels = torch.from_numpy(labels).cuda()
+		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
+		labels = torch.from_numpy(labels).cuda()
 
 		#label_index = batch_noise.cpu().detach().numpy()
 		#label_index = label_index[:,:,1]
