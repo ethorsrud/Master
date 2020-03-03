@@ -50,7 +50,7 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 1000#400.#2000.
+rampup = 400.#1000#400.#2000.
 block_epochs = [400,800,800,800,800,4000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
@@ -616,7 +616,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
             #peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
             for channel_i in range(2):
-                plt.figure(figsize=(40,30))
+                plt.figure(figsize=(45,30))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
