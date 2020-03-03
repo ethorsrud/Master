@@ -50,7 +50,7 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 400.#1000#400.#2000.
+rampup = 1000#400.#2000.
 block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
@@ -362,11 +362,11 @@ for i_block in range(i_block_tmp,n_blocks):
         print("n_batches: ",len(batches))
         
         anim_idx = np.where(labels_im==1.)
-        anim_idx = (anim_idx[0],np.floor(anim_idx[1]/(2**6)).astype(np.int))
-        anim_labels = np.zeros(shape=(700,128))
+        anim_idx = (anim_idx[0],np.floor(anim_idx[1]/(2**(n_blocks-1-i_block))).astype(np.int))
+        anim_labels = np.zeros(shape=(700,input_length/(2**(n_blocks-1-i_block))))
         anim_labels[anim_idx]=1.
-        np.save("Animate/labels.npy",anim_labels)
-        if i_epoch%10 == 0 and i_block==0:
+        np.save("Animate/labels_block_%i.npy"%i_block,anim_labels)
+        if i_epoch%10 == 0:
             #writing for animation
             animate_z_var = Variable(torch.from_numpy(z_vars_im[0,:][np.newaxis,:]),requires_grad=False).cuda()
             animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
