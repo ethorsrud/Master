@@ -616,7 +616,7 @@ for i_block in range(i_block_tmp,n_blocks):
             #peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
             #peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
             for channel_i in range(2):
-                plt.figure(figsize=(20,20))
+                plt.figure(figsize=(40,30))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
