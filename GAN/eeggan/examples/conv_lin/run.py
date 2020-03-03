@@ -91,9 +91,9 @@ channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
-np.save("spike_data_ch120_ch180_57.npy",spike_data_small)
+#np.save("spike_data_ch120_ch180_57.npy",spike_data_small)
 
-quit()
+#quit()
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 #train = lfilter(b,a,train,axis=2)
@@ -170,10 +170,10 @@ templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.floa
 #templates = (templates-np.mean(templates))/(np.std(templates))
 
 
-time_labels = np.zeros(shape=(n_samples,1,input_length,1))
+time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 template_labels = np.zeros(shape=(n_samples,1,600,1))
 #conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
-conv_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
+#conv_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 #conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #Only spikes with selected template
 #spike_times = spike_times[temp_index]
@@ -193,8 +193,9 @@ for i in range(spike_times.shape[0]):
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     if cur_ind>41 and cur_ind<(input_length-41):
+        time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
-        conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates_new[spike_templates[i],:].astype(np.float32)
+        #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates_new[spike_templates[i],:].astype(np.float32)
 
 #conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
 
@@ -214,7 +215,7 @@ np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
 """
 
 #train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
-train = np.concatenate((train,conv_labels),axis=3).astype(np.float32)
+train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
 fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
 #fft_train = np.log(fft_train)
@@ -297,7 +298,7 @@ if conditional:
     ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
     labels_im = np.zeros(shape=(700,input_length))
     #labels_im_new = np.zeros(shape=(700,input_length,n_chans))
-    labels_im_new = np.zeros(shape=(700,input_length))
+    #labels_im_new = np.zeros(shape=(700,input_length))
     #labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
     for i in range(700):
         #Random number of spikes
@@ -306,17 +307,17 @@ if conditional:
             n_spikes=0
         #Create n_spikes randomly timed spikes
         random_times_im = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
-        random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
+        #random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
             #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
-            labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41)] = templates_new[random_templates_im[j],:]
+            #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41)] = templates_new[random_templates_im[j],:]
     #index_im = np.where(labels_im==1.)
     #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
     #labels_im = np.zeros(shape=(1000,n_z))
     #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
-    labels_im_new = labels_im_new.astype(np.float32)
+    #labels_im_new = labels_im_new.astype(np.float32)
     #labels_im = np.mean(labels_im_new,axis=2)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
@@ -373,9 +374,9 @@ for i_block in range(i_block_tmp,n_blocks):
             for i_critic in range(n_critic):
                 train_batches = train_tmp[batches[it*n_critic+i_critic]]
                 #Fixing labels getting downsampled
-                #idxes = np.nonzero(train_batches[:,:,:,-1])
-                #idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
-                #train_batches[:,:,:,-1][idxes] = 1.
+                idxes = np.nonzero(train_batches[:,:,:,-1])
+                idxes = (idxes[:,0],idxes[:,1],idxes[:,2])
+                train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 #batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
@@ -395,27 +396,27 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
                 if conditional:
                     ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
-                    #labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
+                    labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
-                    labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
+                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
                     #labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
                             n_spikes=0
                         random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
-                        random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
+                        #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            #labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
+                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
                             #labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
-                            labels_big_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
+                            #labels_big_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
                     #index = np.where(labels_big==1.)
                     #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
                     #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
                     #labels[index] = 1.
-                    #labels = labels.astype(np.float32)
+                    labels = labels_big.astype(np.float32)
                     #labels_big = np.mean(labels_big_new,axis=2)
-                    z_vars = np.concatenate((z_vars,labels_big_new),axis=1)
+                    z_vars = np.concatenate((z_vars,labels_big),axis=1)
 
 
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
@@ -427,13 +428,10 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                labels = labels_big_new
-
+                #labels = labels_big_new
+                """
                 blockreduction = [[32],[16],[8],[4],[2],[]]
-                """
-                for i in range(len(blockreduction[i_block])):
-                    labels = block_reduce(labels,(1,blockreduction[i_block][i],1),np.mean)
-                """
+
                 labels = labels[:,np.newaxis,:]
                 labels = labels.astype(np.float32)
 
@@ -442,8 +440,22 @@ for i_block in range(i_block_tmp,n_blocks):
                     labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
                 
                 labels = labels[:,:,:,np.newaxis]
+                """
+                #Conditional
+                labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
+                index = np.where(labels_big==1.)
+                index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
+                labels[index] = 1.
 
+                labels = labels.astype(np.float32)
+                labels = labels[:,np.newaxis,:,np.newaxis]
+                labels = torch.from_numpy(labels).cuda()
                 batch_fake = torch.cat((batch_fake,labels),dim=3)
+                #batch_fake = torch.cat((batch_fake,labels),dim=1)
+                print(batch_fake.shape)
+                quit()
+
+                #batch_fake = torch.cat((batch_fake,labels),dim=3)
 
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
@@ -475,18 +487,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-
-                #Conditional
-                #labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-                #index = np.where(labels_big==1.)
-                #index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
-                #labels[index] = 1.
-
-                #labels = labels.astype(np.float32)
-                #labels = labels[:,np.newaxis,:,np.newaxis]
-                #labels = torch.from_numpy(labels).cuda()
-                #batch_fake = torch.cat((batch_fake,labels),dim=3)
-                #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
 

@@ -73,10 +73,11 @@ dataset = dataset.squeeze()
 dataset = dataset.reshape((input_length*768,n_chans))
 labels = labels.reshape(-1)
 labels_ones = labels_ones.reshape(-1)
-spike_times = np.where(labels==1.)[0]
+spike_times = np.where(labels_ones==1.)[0]
 
 np.save("fake_dataset_ch120_ch160_57.npy",dataset)
-np.save("fake_dataset_ch120_ch160_labels_57.npy",spike_times)
+np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
+np.save("fake_dataset_ch120_ch160_labels_57.npy",labels)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
