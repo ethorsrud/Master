@@ -362,7 +362,7 @@ for i_block in range(i_block_tmp,n_blocks):
         print("n_batches: ",len(batches))
         
         anim_idx = np.where(labels_im==1.)
-        anim_idx = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
+        anim_idx = (anim_idx[0],np.floor(anim_idx[1]/(2**6)).astype(np.int))
         anim_labels = np.zeros(shape=(700,128))
         anim_labels[anim_idx]=1.
         np.save("Animate/labels.npy"%(i_block,i_epoch),animated_signal)
