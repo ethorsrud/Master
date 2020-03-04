@@ -168,7 +168,7 @@ spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
-
+print(spike_times.shape)
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 template_labels = np.zeros(shape=(n_samples,1,600,1))
