@@ -487,7 +487,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                #loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
