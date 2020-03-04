@@ -39,7 +39,7 @@ torch.backends.cudnn.benchmark=True
 cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
-n_critic = 1
+n_critic = 5#1
 n_gen = 1
 n_batch = 64#56#64
 input_length = 4096#8192#10240#12288#30720#1536#768
@@ -242,7 +242,7 @@ generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
-                        one_sided_penalty=True,distance_weighting=True,lambd=1)
+                        one_sided_penalty=True,distance_weighting=True)
 AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
 generator = generator.apply(weight_filler)
@@ -487,7 +487,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                #loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
 
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
@@ -496,6 +496,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
+                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
                 #Conditional
