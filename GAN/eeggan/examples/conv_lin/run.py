@@ -234,7 +234,7 @@ if not os.path.exists(outputpath):
 #generator = Generator(n_chans,n_z*(1+conditional))
 generator = Generator(n_chans,n_z+input_length)
 discriminator = Discriminator(n_chans+1)
-fourier_discriminator = Fourier_Discriminator(n_chans)
+fourier_discriminator = Fourier_Discriminator(n_chans+1)
 AC_discriminator = AC_Discriminator(n_chans)
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
@@ -458,9 +458,9 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
                 #batch_fake_fft = torch.log(batch_fake_fft)
