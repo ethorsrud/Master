@@ -40,7 +40,7 @@ cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
 n_critic = 1
-n_gen = 5
+n_gen = 1
 n_batch = 64#56#64
 input_length = 4096#8192#10240#12288#30720#1536#768
 jobid = 0
@@ -164,11 +164,10 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
+spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180_new.npy").astype(np.uint64)
 spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
-print(spike_times.shape)
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 template_labels = np.zeros(shape=(n_samples,1,600,1))
