@@ -487,6 +487,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
+                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
 
@@ -496,7 +497,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 assert np.all(np.isfinite(loss_d))
             
             for i_gen in range(n_gen):
-                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                
                 z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
                 #Conditional
