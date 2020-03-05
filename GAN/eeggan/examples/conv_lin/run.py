@@ -85,15 +85,15 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,120:180]
+spike_data_small = spike_data[:input_length*n_samples,0:60]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
-channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.uint32)
+#channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.uint32)
 #remove bad channels
-train = train[:,:,:,channel_map[:,0]]
+#train = train[:,:,:,channel_map[:,0]]
 
-#np.save("spike_data_ch120_ch180_57.npy",spike_data_small)
+np.save("spike_data_ch0_ch60.npy",spike_data_small)
 
-#quit()
+quit()
 #FILTERING
 #b,a = butter(10,6000/(0.5*sample_rate),btype="low")
 #train = lfilter(b,a,train,axis=2)
