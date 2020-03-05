@@ -85,9 +85,9 @@ sample_rate = 30000
 hp_filtered = False
 
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,0:60]
+spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
-channel_map = np.load(code_path+os.sep+"channel_map_ch0_ch60.npy").astype(np.uint32)
+channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.uint32)
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
@@ -164,7 +164,7 @@ train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).s
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_ch0_ch60.npy").astype(np.uint64)
+spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
 #spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 #templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
@@ -234,7 +234,7 @@ if not os.path.exists(outputpath):
 #generator = Generator(n_chans,n_z*(1+conditional))
 generator = Generator(n_chans,n_z+input_length)
 discriminator = Discriminator(n_chans+1)
-fourier_discriminator = Fourier_Discriminator(n_chans)
+fourier_discriminator = Fourier_Discriminator(n_chans+1)
 AC_discriminator = AC_Discriminator(n_chans)
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
@@ -458,10 +458,10 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
 
-                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,1:,:,0]**2+batch_real_fft[:,:,1:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
-                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,1:,:,0]**2+batch_fake_fft[:,:,1:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:],2,3),1,normalized=False),2,3)
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:],2,3),1,normalized=False),2,3)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
                 #batch_fake_fft = torch.log(batch_fake_fft)
                 #batch_real_fft = torch.log(batch_real_fft)
