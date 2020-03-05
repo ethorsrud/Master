@@ -48,7 +48,7 @@ rng = np.random.RandomState(0)
 
 z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
 labels = np.zeros(shape=(768,input_length))
-labels_ones = np.zeros(shape=(768,input_length))
+#labels_ones = np.zeros(shape=(768,input_length))
 for i in range(768):
     #Random number of spikes
     n_spikes = int(np.random.normal(spike_mean,spike_std))
@@ -56,13 +56,13 @@ for i in range(768):
         n_spikes=0
     #Create n_spikes randomly times spikes
     random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
-    random_templates = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
+    #random_templates = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
     for j in range(n_spikes):
-        labels_ones[i,random_times[j]:(random_times[j]+1)] = 1.
-        labels[i,(random_times[j]-41):(random_times[j]+41)] = templates[random_templates[j],:]
+        labels[i,random_times[j]:(random_times[j]+1)] = 1.
+        #labels[i,(random_times[j]-41):(random_times[j]+41)] = templates[random_templates[j],:]
 
 labels = labels.astype(np.float32)
-labels_ones = labels_ones.astype(np.float32)
+#labels_ones = labels_ones.astype(np.float32)
 z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
 z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
 batch_fake = generator(z_vars)
@@ -72,12 +72,12 @@ dataset = dataset.squeeze()
 
 dataset = dataset.reshape((input_length*768,n_chans))
 labels = labels.reshape(-1)
-labels_ones = labels_ones.reshape(-1)
-spike_times = np.where(labels_ones==1.)[0]
+#labels_ones = labels_ones.reshape(-1)
+#spike_times = np.where(labels_ones==1.)[0]
 
-np.save("fake_dataset_ch120_ch160_57.npy",dataset)
-np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
-np.save("fake_dataset_ch120_ch160_labels_57.npy",labels)
+np.save("fake_dataset_ch120_ch180_new.npy",dataset)
+#np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
+np.save("fake_dataset_ch120_ch180_labels_new.npy",labels)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
