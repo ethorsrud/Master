@@ -523,10 +523,8 @@ for i_block in range(i_block_tmp,n_blocks):
                         #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             if 1. not in labels[i,(random_times[j]-41):(random_times[j]+41)]:
-                                print("yeah")
                                 labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
                             else:
-                                print("no")
                                 pass
                             #labels_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
                             #labels_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
