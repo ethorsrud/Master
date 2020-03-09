@@ -308,10 +308,7 @@ if conditional:
         random_times_im = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
         #random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
-            if 1. not in labels_im[i,(random_times_im[j]-41):(random_times_im[j]+41)]:
-                labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
-            else:
-                pass
+            labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
             #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
             #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41)] = templates_new[random_templates_im[j],:]
     #index_im = np.where(labels_im==1.)
@@ -413,10 +410,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
                         #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            if 1. not in labels_big[i,(random_times[j]-41):(random_times[j]+41)]:
-                                labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            else:
-                                pass
+                            labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
                             #labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
                             #labels_big_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
                     #index = np.where(labels_big==1.)
@@ -492,7 +486,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
 
-                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                #loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
 
@@ -522,10 +516,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
                         #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
-                            if 1. not in labels[i,(random_times[j]-41):(random_times[j]+41)]:
-                                labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            else:
-                                pass
+                            labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
                             #labels_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
                             #labels_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
                     #index = np.where(labels==1.)
