@@ -49,9 +49,9 @@ conditional = True
 
 n_z = 128#200
 lr = 0.001#0.001
-n_blocks = 3#6
+n_blocks = 4#6
 rampup = 1000.#400.#2000.
-block_epochs = [1000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [1000,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -480,7 +480,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
-                print(batch_fake.shape,batch_real.shape,batch_fake_fft.shape,batch_real_fft.shape)
+                #print(batch_fake.shape,batch_real.shape,batch_fake_fft.shape,batch_real_fft.shape)
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
 
