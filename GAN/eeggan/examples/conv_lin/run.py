@@ -50,7 +50,7 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 2000#400.#2000.
+rampup = 1000.#400.#2000.
 block_epochs = [1000,2000,2000,2000,2000,2000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
