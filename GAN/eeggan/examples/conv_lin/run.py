@@ -40,7 +40,7 @@ cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
 n_critic = 1
-n_gen = 5
+n_gen = 1
 n_batch = 64#56#64
 input_length = 4096#8192#10240#12288#30720#1536#768
 jobid = 0
@@ -463,8 +463,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
-                #batch_fake_fft = torch.log(batch_fake_fft)
-                #batch_real_fft = torch.log(batch_real_fft)
+                batch_fake_fft = torch.log(batch_fake_fft)
+                batch_real_fft = torch.log(batch_real_fft)
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
 
