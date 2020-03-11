@@ -39,7 +39,7 @@ torch.backends.cudnn.benchmark=True
 cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
-n_critic = 1
+n_critic = 5
 n_gen = 1
 n_batch = 64#56#64
 input_length = 4096#8192#10240#12288#30720#1536#768
@@ -50,8 +50,8 @@ conditional = True
 n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
-rampup = 200.#400.#2000.
-block_epochs = [200,400,400,400,400,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
+rampup = 1000.#400.#2000.
+block_epochs = [1000,2000,2000,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
