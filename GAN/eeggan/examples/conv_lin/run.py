@@ -49,9 +49,9 @@ conditional = True
 
 n_z = 128#200
 lr = 0.001#0.001
-n_blocks = 6
+n_blocks = 3
 rampup = 2000.#400.#2000.
-block_epochs = [2000,4000,4000,4000,4000,4000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [1000,2000,2000]#[2000,4000,4000,4000,4000,4000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -158,7 +158,7 @@ for i in range(n_samples):
 """
 train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
 train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
-train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+#train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
 
 #spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
