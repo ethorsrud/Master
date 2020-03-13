@@ -490,7 +490,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 if i_epoch>500:
                     loss_d = discriminator.train_batch(batch_real,batch_fake)
                 else:
-                    pass
+                    loss_d = (0,0,0,0)
 
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
