@@ -480,6 +480,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
                 #batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
+
                 #print(batch_fake.shape,batch_real.shape,batch_fake_fft.shape,batch_real_fft.shape)
                 #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
                 #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
@@ -489,10 +490,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                if i_epoch>500:
-                    loss_d = discriminator.train_batch(batch_real,batch_fake)
-                else:
-                    loss_d = (0,0,0,0,0)
+                loss_d = discriminator.train_batch(batch_real,batch_fake)
 
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))

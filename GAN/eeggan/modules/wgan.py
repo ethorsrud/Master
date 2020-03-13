@@ -464,7 +464,9 @@ class WGAN_I_Generator(GAN_Generator):
 		#NORMALIZING OVER BATCH ONLY
 		#fft_mean = torch.mean(fft,(0)).squeeze()
 		#fft_std = torch.std(fft,0).squeeze()
+
 		#fft = (fft-fft_mean)/fft_std
+
 		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
@@ -478,11 +480,8 @@ class WGAN_I_Generator(GAN_Generator):
 		#loss3 = disc3.mean()
 
 		#print("loss:",loss,"Loss2:",loss2)
-		if i_epoch>500:
-			loss = loss2+loss
-		else:
-			loss = loss2
-		#loss = loss2+loss#0.2*loss2+0.8*loss#(1./(300/10+1))*loss2+loss#(loss+loss2)/2.0
+
+		loss = loss2+loss#0.2*loss2+0.8*loss#(1./(300/10+1))*loss2+loss#(loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
