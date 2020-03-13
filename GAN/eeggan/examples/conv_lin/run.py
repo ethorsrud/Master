@@ -487,10 +487,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-                if i_epoch>10:
+                if i_epoch>500:
                     loss_d = discriminator.train_batch(batch_real,batch_fake)
                 else:
-                    loss_d = (0,0,0,0)
+                    loss_d = (0,0,0,0,0)
                 print(loss_d)
 
                 #print("loss_d",loss_d)
