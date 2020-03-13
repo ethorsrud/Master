@@ -49,9 +49,9 @@ conditional = True
 
 n_z = 128#200
 lr = 0.001#0.001
-n_blocks = 3
-rampup = 2000.#400.#2000.
-block_epochs = [1000,2000,2000]#[2000,4000,4000,4000,4000,4000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
+n_blocks = 6
+rampup = 1000.#400.#2000.
+block_epochs = [1000,2000,2000,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -286,8 +286,7 @@ AC_discriminator.train()
 
 losses_d = []
 losses_g = []
-
-losses_fourier = []
+losses_f = []
 
 i_epoch = 0
 z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
@@ -540,6 +539,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
+        losses_f.append(loss_f)
 
         if i_epoch%100 == 0:
             generator.eval()
@@ -746,6 +746,32 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.legend()
             plt.tight_layout()
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses.png'))
+            plt.close()
+
+            plt.figure(figsize=(10,15))
+            plt.subplot(3,2,1)
+            plt.plot(np.asarray(losses_f)[:,0],label='Loss Real')
+            plt.plot(np.asarray(losses_f)[:,1],label='Loss Fake')
+            plt.title('Losses Discriminator')
+            plt.legend()
+            plt.subplot(3,2,2)
+            plt.plot(np.asarray(losses_f)[:,0]+np.asarray(losses_f)[:,1]+np.asarray(losses_f)[:,2],label='Loss')
+            plt.title('Loss Discriminator')
+            plt.legend()
+            plt.subplot(3,2,3)
+            plt.plot(np.asarray(losses_f)[:,2],label='Penalty Loss')
+            plt.title('Penalty')
+            plt.legend()
+            plt.subplot(3,2,4)
+            plt.plot(-np.asarray(losses_f)[:,0]-np.asarray(losses_f)[:,1],label='Wasserstein Distance')
+            plt.title('Wasserstein Distance')
+            plt.legend()
+            plt.subplot(3,2,5)
+            plt.plot(np.asarray(losses_f),label='Loss Generator')
+            plt.title('Loss Generator')
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses_fourier.png'))
             plt.close()
 
             generator.train()
