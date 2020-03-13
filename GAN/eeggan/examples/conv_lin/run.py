@@ -191,6 +191,7 @@ for i in range(spike_times.shape[0]):
     cur_ind = int(spike_times[i]%input_length)
     time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
+    cur_ind = int(cur_ind-label_length/2)
     if cur_ind>41 and cur_ind<(input_length-41):
         time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
