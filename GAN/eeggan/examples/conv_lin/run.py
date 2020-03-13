@@ -95,8 +95,8 @@ train = train[:,:,:,channel_map[:,0]]
 
 #quit()
 #FILTERING
-#b,a = butter(10,6000/(0.5*sample_rate),btype="low")
-#train = lfilter(b,a,train,axis=2)
+b,a = butter(10,300/(0.5*sample_rate),btype="high")
+train = lfilter(b,a,train,axis=2)
 
 """
 train_new = []
@@ -766,7 +766,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.title('Wasserstein Distance')
             plt.legend()
             plt.subplot(3,2,5)
-            plt.plot(np.asarray(losses_f),label='Loss Generator')
+            plt.plot(np.asarray(losses_g),label='Loss Generator')
             plt.title('Loss Generator')
             plt.legend()
             plt.tight_layout()
