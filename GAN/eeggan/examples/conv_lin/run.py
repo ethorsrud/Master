@@ -487,8 +487,10 @@ for i_block in range(i_block_tmp,n_blocks):
                 loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
-
-                loss_d = discriminator.train_batch(batch_real,batch_fake)
+                if i_epoch>500:
+                    loss_d = discriminator.train_batch(batch_real,batch_fake)
+                else:
+                    pass
 
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
