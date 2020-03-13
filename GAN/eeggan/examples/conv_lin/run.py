@@ -491,7 +491,6 @@ for i_block in range(i_block_tmp,n_blocks):
                     loss_d = discriminator.train_batch(batch_real,batch_fake)
                 else:
                     loss_d = (0,0,0,0,0)
-                print(loss_d)
 
                 #print("loss_d",loss_d)
                 assert np.all(np.isfinite(loss_d))
