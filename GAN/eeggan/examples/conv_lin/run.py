@@ -95,8 +95,8 @@ train = train[:,:,:,channel_map[:,0]]
 
 #quit()
 #FILTERING
-b,a = butter(10,300/(0.5*sample_rate),btype="high")
-train = lfilter(b,a,train,axis=2)
+#b,a = butter(10,300/(0.5*sample_rate),btype="high")
+#train = lfilter(b,a,train,axis=2)
 
 """
 train_new = []
@@ -141,7 +141,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 1#1#80#1
+label_length = 20#1#80#1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
