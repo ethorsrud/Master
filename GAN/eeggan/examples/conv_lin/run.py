@@ -170,6 +170,7 @@ spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.
 #templates = (templates-np.mean(templates))/(np.std(templates))
 
 time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
+time_labels2 = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 #template_labels = np.zeros(shape=(n_samples,1,600,1))
 #conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
 #conv_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
@@ -189,7 +190,7 @@ mask = spike_times<(input_length*n_samples)
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
-    time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
+    #time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     cur_ind = int(cur_ind-label_length/2)
     if cur_ind>41 and cur_ind<(input_length-41):
