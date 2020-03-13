@@ -427,7 +427,6 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
-                print(z_vars.shape)
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
                 #labels = labels_big_new
