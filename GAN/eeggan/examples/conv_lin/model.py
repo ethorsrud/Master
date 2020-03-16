@@ -14,7 +14,7 @@ from eeggan.modules.layers.xray import xrayscanner
 from eeggan.modules.layers.add_random_layer import add_random_layer
 import numpy as np
 #INSTEAD OF kernel=5 and pad=2, originial: kernel=9 and pad=4
-n_featuremaps = 25#25
+n_featuremaps = 50#25
 #base = starting samples => base = input_size/(2**N_blocks)
 base = int(4096/(2**6))#int(1536/(2**6))
 """
