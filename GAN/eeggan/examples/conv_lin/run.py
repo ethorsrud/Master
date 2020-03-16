@@ -87,7 +87,7 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
-channel_map = np.load(code_path+os.sep+"channel_map_th10.npy").astype(np.uint32)
+channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180_new.npy").astype(np.uint32)
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
@@ -164,7 +164,7 @@ train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_th10.npy").astype(np.uint64)
+spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180_new.npy").astype(np.uint64)
 #spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 #templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
