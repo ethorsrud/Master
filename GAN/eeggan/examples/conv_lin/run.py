@@ -87,7 +87,7 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
-channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180.npy").astype(np.uint32)
+channel_map = np.load(code_path+os.sep+"channel_map_sparse.npy").astype(np.uint32)
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
@@ -141,7 +141,7 @@ n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
 """
-label_length = 20#1#80#1
+label_length = 1#1#80#1
 """
 peak = np.linspace(0,2*np.pi,80)
 peak = np.sin(peak)*200
@@ -164,7 +164,7 @@ train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180.npy").astype(np.uint64)
+spike_times = np.load(code_path+os.sep+"spike_times_sparse.npy").astype(np.uint64)
 #spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 #templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
@@ -192,7 +192,7 @@ for i in range(spike_times.shape[0]):
     cur_ind = int(spike_times[i]%input_length)
     #time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
-    cur_ind = int(cur_ind-label_length/2)
+    #cur_ind = int(cur_ind-label_length/2)
     if cur_ind>41 and cur_ind<(input_length-41):
         time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
