@@ -87,7 +87,7 @@ hp_filtered = False
 spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
 spike_data_small = spike_data[:input_length*n_samples,120:180]
 train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
-channel_map = np.load(code_path+os.sep+"channel_map_sparse.npy").astype(np.uint32)
+channel_map = np.load(code_path+os.sep+"channel_map_th10.npy").astype(np.uint32)
 #remove bad channels
 train = train[:,:,:,channel_map[:,0]]
 
@@ -164,7 +164,7 @@ train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
 #selected_template = 0
 #temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_sparse.npy").astype(np.uint64)
+spike_times = np.load(code_path+os.sep+"spike_times_th10.npy").astype(np.uint64)
 #spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
 #templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
 #templates = (templates-np.mean(templates))/(np.std(templates))
@@ -193,7 +193,7 @@ for i in range(spike_times.shape[0]):
     #time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
     template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
     #cur_ind = int(cur_ind-label_length/2)
-    if cur_ind>41 and cur_ind<(input_length-41):
+    if cur_ind>21 and cur_ind<(input_length-21):
         time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
         #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates_new[spike_templates[i],:].astype(np.float32)
@@ -306,7 +306,7 @@ if conditional:
         if n_spikes<0:
             n_spikes=0
         #Create n_spikes randomly timed spikes
-        random_times_im = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
+        random_times_im = np.random.randint(21,input_length-21,size=(n_spikes)).astype(np.int)
         #random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
@@ -408,7 +408,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
                             n_spikes=0
-                        random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
+                        random_times = np.random.randint(21,input_length-21,size=(n_spikes)).astype(np.int)
                         #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
@@ -513,7 +513,7 @@ for i_block in range(i_block_tmp,n_blocks):
                         if n_spikes<0:
                             n_spikes=0
                         #Create n_spikes randomly timed spikes
-                        random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
+                        random_times = np.random.randint(21,input_length-21,size=(n_spikes)).astype(np.int)
                         #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
