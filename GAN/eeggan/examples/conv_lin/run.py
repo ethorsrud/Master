@@ -47,7 +47,7 @@ jobid = 0
 n_samples = 768 #Samples from dataset
 conditional = True
 
-n_z = 128#200
+n_z = 256#128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 1000.#400.#2000.

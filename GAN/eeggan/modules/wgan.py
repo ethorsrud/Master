@@ -236,13 +236,12 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 
 		batch_real,one,mone = utils.cuda_check([batch_real,one,mone])
 		fx_real = self(batch_real)
-		#loss_real = fx_real.mean()
-		loss_real = torch.pow(fx_real.mean()-10,2)/100
-		loss_real.backward(retain_graph=(self.eps_drift>0 or self.eps_center>0))
-		"""
+		loss_real = fx_real.mean()
+
+
 		loss_real.backward(mone,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
-		"""
+
 		#print("Loss_real:",loss_real)
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
@@ -485,12 +484,8 @@ class WGAN_I_Generator(GAN_Generator):
 		
 		#print("loss:",loss,"Loss2:",loss2)
 
-		loss = torch.pow(loss-10,2)/100
-		loss2 = torch.pow(loss2-10,2)/100
 
-		loss.backward(retain_graph=True)
-		loss2.backward()
-		#loss = loss2+loss#0.2*loss2+0.8*loss#(1./(300/10+1))*loss2+loss#(loss+loss2)/2.0
+		loss = loss2+loss#0.2*loss2+0.8*loss#(1./(300/10+1))*loss2+loss#(loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		#loss.backward(mone)
