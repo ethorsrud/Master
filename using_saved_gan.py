@@ -17,7 +17,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(0)
+torch.cuda.set_device(3)
 
 kilosort_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
 #templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
@@ -55,7 +55,7 @@ for i in range(768):
     if n_spikes<0:
         n_spikes=0
     #Create n_spikes randomly times spikes
-    random_times = np.random.randint(41,input_length-41,size=(n_spikes)).astype(np.int)
+    random_times = np.random.randint(21,input_length-21,size=(n_spikes)).astype(np.int)
     #random_templates = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
     for j in range(n_spikes):
         labels[i,random_times[j]:(random_times[j]+1)] = 1.
@@ -75,9 +75,9 @@ labels = labels.reshape(-1)
 #labels_ones = labels_ones.reshape(-1)
 #spike_times = np.where(labels_ones==1.)[0]
 
-np.save("fake_dataset_ch120_ch180_new.npy",dataset)
+np.save("fake_dataset_ch120_ch180_new_loss.npy",dataset)
 #np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
-np.save("fake_dataset_ch120_ch180_labels_new.npy",labels)
+np.save("fake_dataset_ch120_ch180_labels_new_loss.npy",labels)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
