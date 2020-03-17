@@ -488,7 +488,7 @@ class WGAN_I_Generator(GAN_Generator):
 		loss = loss2+loss#0.2*loss2+0.8*loss#(1./(300/10+1))*loss2+loss#(loss+loss2)/2.0
 		#print("GENLOSS",loss)
 		# Backprop gradient
-		#loss.backward(mone)
+		loss.backward(mone)
 		# Update parameters
 		"""
 		for p in self.parameters():
