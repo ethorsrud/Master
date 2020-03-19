@@ -55,32 +55,32 @@ def create_disc_blocks(n_chans,base,conditional):
 		
 	blocks = []
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**5),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**4),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**3),
 							create_in_sequence(n_chans,n_featuremaps+conditional),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**2),
 							create_in_sequence(n_chans,n_featuremaps+conditional),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
@@ -167,31 +167,31 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	"""
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**2),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**3),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**4),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9*2**5),
 								create_out_sequence(n_chans,n_featuremaps),
 								None
 								)
