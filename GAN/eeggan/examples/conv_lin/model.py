@@ -111,7 +111,7 @@ REMOVED (after Pixelnorm)
 #removed upsample_layer(mode='linear',scale_factor=2) at the beginning and put in convtransp with lrelu
 def create_gen_blocks(n_chans,z_vars,conditional):
 	def create_conv_sequence(in_filters,out_filters,kernel):
-		return nn.Sequential(weight_scale(nn.ConvTranspose1d(in_filters,out_filters,kernel-1,stride=2,padding=kernel//2-1)),
+		return nn.Sequential(weight_scale(nn.ConvTranspose1d(in_filters,out_filters,kernel-1,stride=2,padding=kernel//2-1),gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 								weight_scale(nn.Conv1d(in_filters,out_filters,kernel,padding=kernel//2),
 														gain=calculate_gain('leaky_relu')),
