@@ -55,32 +55,32 @@ def create_disc_blocks(n_chans,base,conditional):
 		
 	blocks = []
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**5-1),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**4-1),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**3-1),
+							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 							create_in_sequence(n_chans,n_featuremaps+conditional),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	
 	tmp_block = ProgressiveDiscriminatorBlock(
-							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**2-1),
+							create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 							create_in_sequence(n_chans,n_featuremaps+conditional),
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveDiscriminatorBlock(
-							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2-1),
+							  create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 							  create_in_sequence(n_chans,n_featuremaps+conditional),
 							  create_fade_sequence(2)
 							  )
@@ -108,9 +108,11 @@ REMOVED (after Pixelnorm)
 								nn.LeakyReLU(0.2),
 								PixelNorm()
 """
+#removed upsample_layer(mode='linear',scale_factor=2) at the beginning and put in convtransp with lrelu
 def create_gen_blocks(n_chans,z_vars,conditional):
 	def create_conv_sequence(in_filters,out_filters,kernel):
-		return nn.Sequential(upsample_layer(mode='linear',scale_factor=2),
+		return nn.Sequential(weight_scale(nn.ConvTranspose1d(in_filters,out_filters,kernel-1,padding=kernel//2-1)),
+								nn.LeakyReLU(0.2),
 								weight_scale(nn.Conv1d(in_filters,out_filters,kernel,padding=kernel//2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
@@ -167,31 +169,31 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	"""
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2-1),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**2-1),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**3-1),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**4-1),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
 	tmp_block = ProgressiveGeneratorBlock(
-								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,21*2**5-1),
+								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
 								None
 								)
