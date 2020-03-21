@@ -113,6 +113,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 	def create_conv_sequence(in_filters,out_filters,kernel):
 		return nn.Sequential(weight_scale(nn.ConvTranspose1d(in_filters,out_filters,kernel-1,stride=2,padding=kernel//2-1),gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
+								PixelNorm(),
 								weight_scale(nn.Conv1d(in_filters,out_filters,kernel,padding=kernel//2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
