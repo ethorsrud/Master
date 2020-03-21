@@ -42,7 +42,7 @@ torch.cuda.set_device(cuda_device)
 n_critic = 1
 n_gen = 1
 n_batch = 64#56#64
-input_length = 4096#8192#10240#12288#30720#1536#768
+input_length = 2048#4096#8192#10240#12288#30720#1536#768
 jobid = 0
 n_samples = 768 #Samples from dataset
 conditional = True
