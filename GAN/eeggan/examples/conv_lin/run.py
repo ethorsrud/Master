@@ -468,6 +468,9 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
+
+                batch_fake_fft = batch_fake_fft*2**(n_blocks-1-i_block)
+                batch_real_fft = batch_real_fft*2**(n_blocks-1-i_block)
                 #batch_fake_fft = torch.log(batch_fake_fft+1e-3)
                 #batch_real_fft = torch.log(batch_real_fft+1e-3)
 
