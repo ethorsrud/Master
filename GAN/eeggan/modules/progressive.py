@@ -53,7 +53,7 @@ class ProgressiveDiscriminator(nn.Module):
 					label = np.zeros(shape=(tmp.shape[0],1,tmp.shape[2])).astype(np.float32)
 					idxes_2 = np.floor(idxes[2]/factor)
 					idxes_2 = (idxes[0],idxes[2],idxes_2.astype(np.int))
-					label[idxes] = 1.
+					label[idxes_2] = 1.
 					label = torch.from_numpy(label).cuda()
 					tmp[:,:,:,-1] = label
 
