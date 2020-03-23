@@ -63,6 +63,7 @@ class ProgressiveDiscriminator(nn.Module):
 			tmp_mean = torch.mean(tmp_input,(0,2)).squeeze()
 			tmp_std = torch.sqrt(torch.mean((tmp_input-tmp_mean)**2,dim=(0,1,2)))
 			tmp_input = ((tmp_input-tmp_mean)/tmp_std)
+			print(tmp_input.shape)
 
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
