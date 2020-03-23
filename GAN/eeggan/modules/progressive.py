@@ -51,7 +51,6 @@ class ProgressiveDiscriminator(nn.Module):
 				if self.conditional:
 					factor = orig_label.shape[-1]/tmp.shape[-2]
 					label = np.zeros(shape=(tmp.shape[0],1,tmp.shape[2])).astype(np.float32)
-					print(label.shape)
 					idxes[2] = np.floor(idxes[2]/factor)
 					#idxes_2 = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes_2.astype(np.int))
 					label[idxes] = 1.
