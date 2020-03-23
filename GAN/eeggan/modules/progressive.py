@@ -47,6 +47,7 @@ class ProgressiveDiscriminator(nn.Module):
 			orig_label_np = orig_label.cpu().detach().numpy()
 			idxes = np.where(orig_label_np==1.)
 		if self.fft:
+			print("yes")
 			input_numpy = input.cpu().detach().numpy()
 			input = torch.transpose(torch.rfft(torch.transpose(input[:,:,:,:-1],2,3),1,normalized=False),2,3)
 			input = torch.sqrt(input[:,:,:,:,0]**2+input[:,:,:,:,1]**2)
