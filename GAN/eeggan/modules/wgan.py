@@ -485,7 +485,7 @@ class WGAN_I_Generator(GAN_Generator):
 		
 		#print("loss:",loss,"Loss2:",loss2)
 
-		loss = loss#+loss2
+		loss = loss+loss2
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)

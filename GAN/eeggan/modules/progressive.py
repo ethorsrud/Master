@@ -47,15 +47,14 @@ class ProgressiveDiscriminator(nn.Module):
 			orig_label_np = orig_label.cpu().detach().numpy()
 			idxes = np.where(orig_label_np==1.)
 		if self.fft:
-			input_numpy = input.cpu().detach().numpy()
+			input_clone = input.clone()
 			input = torch.transpose(torch.rfft(torch.transpose(input[:,:,:,:-1],2,3),1,normalized=False),2,3)
 			input = torch.sqrt(input[:,:,:,:,0]**2+input[:,:,:,:,1]**2+1e-16)
 			mean = torch.mean(input,(0,2)).squeeze()
 			std = torch.sqrt(torch.mean((input-mean)**2,dim=(0,1,2)))
 			input = ((input-mean)/std)
 
-			tmp_input = block_reduce(input_numpy,(1,1,2,1),np.mean)
-			tmp_input = torch.from_numpy(tmp_input).cuda()
+			tmp_input = torch.nn.AvgPool2d((2,1),stride=(2,1))(input_clone)#block_reduce(input_numpy,(1,1,2,1),np.mean)
 			tmp_input = torch.transpose(torch.rfft(torch.transpose(tmp_input[:,:,:,:-1],2,3),1,normalized=False),2,3)
 			tmp_input = torch.sqrt(tmp_input[:,:,:,:,0]**2+tmp_input[:,:,:,:,1]**2+1e-16)
 			tmp_mean = torch.mean(tmp_input,(0,2)).squeeze()
