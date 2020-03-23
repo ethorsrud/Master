@@ -100,7 +100,8 @@ class ProgressiveDiscriminator(nn.Module):
 				input = torch.cat((input,label),1)	
 			"""
 			print(input.shape)
-			print(tmp.shape)
+			if alpha<1:
+				print(tmp.shape)
 			if fade and i==self.cur_block+1:
 				input = alpha*input+(1.-alpha)*tmp
 			
