@@ -51,7 +51,8 @@ class ProgressiveDiscriminator(nn.Module):
 				tmp = self.blocks[i].fade_sequence(input)
 
 				if self.conditional:
-					factor = orig_label.shape[-1]/input.shape[-1]
+					print(tmp.shape)
+					factor = orig_label.shape[-1]/tmp.shape[-1]
 					print(factor)
 
 
