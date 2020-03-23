@@ -42,6 +42,7 @@ class ProgressiveDiscriminator(nn.Module):
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
 			orig_label = input[:,:,:,-1]
+			print(orig_label.shape)
 			orig_label_np = orig_label.cpu().detach().numpy()
 			idxes = np.where(orig_label_np==1.)[2]
 
