@@ -313,7 +313,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		gradient_penalty : autograd.Variable
 			Gradient penalties
 		"""
-		print(self.fft)
+		print(self.FFT)
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
 		alpha = alpha.expand(batch_real.data.size())
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
