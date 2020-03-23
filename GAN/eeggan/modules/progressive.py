@@ -52,7 +52,7 @@ class ProgressiveDiscriminator(nn.Module):
 
 				if self.conditional:
 					print(tmp.shape)
-					factor = orig_label.shape[-1]/tmp.shape[-1]
+					factor = orig_label.shape[-1]/tmp.shape[-2]
 					print(factor)
 
 
