@@ -462,7 +462,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
-
+                """
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
@@ -480,22 +480,13 @@ for i_block in range(i_block_tmp,n_blocks):
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
                 real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
                 real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
-                #NORMALIZING OVER BATCH ONLY
-                #fake_mean = torch.mean(batch_fake_fft,(0)).squeeze()
-                #fake_std = torch.std(batch_fake_fft,0).squeeze()
-                #real_mean = torch.mean(batch_real_fft,(0)).squeeze()
-                #real_std = torch.std(batch_real_fft,0).squeeze()
+
 
                 batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
+                """
 
-                #print(batch_fake.shape,batch_real.shape,batch_fake_fft.shape,batch_real_fft.shape)
-                #batch_fake_fft = torch.mean(batch_fake_fft,dim=0).view(1,batch_fake_fft.shape[1],batch_fake_fft.shape[2],batch_fake_fft.shape[3])
-                #batch_real_fft = torch.mean(batch_real_fft,dim=0).view(1,batch_real_fft.shape[1],batch_real_fft.shape[2],batch_real_fft.shape[3])
-
-                #print("FFT-shape",batch_real_fft.shape,"Autocor shape",batch_real_autocor.shape)
-
-                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                loss_f = fourier_discriminator.train_batch(batch_real,batch_fake)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
