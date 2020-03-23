@@ -83,8 +83,8 @@ class ProgressiveDiscriminator(nn.Module):
 					tmp[:,:,:,-1] = label
 
 				tmp = self.blocks[i+1].in_sequence(tmp)
-				print(input.shape)
-				print(tmp.shape)
+				if self.fft:
+					tmp = tmp[:-1]
 				fade = True
 			"""
 			if self.conditional and i!=self.cur_block:
