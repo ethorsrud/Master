@@ -315,6 +315,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		gradient_penalty : autograd.Variable
 			Gradient penalties
 		"""
+		print(batch_fake.shape,batch_real.shape)
 		if self.fft:
 			batch_real = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
 			batch_real = torch.sqrt(batch_real[:,:,:,:,0]**2+batch_real[:,:,:,:,1]**2+1e-16)
@@ -327,7 +328,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			mean = torch.mean(batch_fake,(0,2)).squeeze()
 			std = torch.sqrt(torch.mean((batch_fake-mean)**2,dim=(0,1,2)))
 			batch_fake = ((batch_fake-mean)/std)
-
+		print(batch_fake.shape,batch_real.shape)
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
 		alpha = alpha.expand(batch_real.data.size())
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
