@@ -454,7 +454,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#conditional
 		gen = torch.cat((gen,labels),3)
 		#gen = torch.cat((gen,labels),1)
-
+		"""
 		#NOT INCLUDING THE LABEL VECTOR
 		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
@@ -471,13 +471,14 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft_std = torch.std(fft,0).squeeze()
 
 		fft = (fft-fft_mean)/fft_std
-
+		"""
 		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
 		
 		disc = discriminator1(gen)
-		disc2 = discriminator2(fft)
+		disc2 = discriminator2(gen)
+		#disc2 = discriminator2(fft)
 		#disc3 = discriminator3(autocor)
 
 		loss = disc.mean()
