@@ -47,11 +47,12 @@ class ProgressiveDiscriminator(nn.Module):
 			idxes = np.where(orig_label_np==1.)
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
+				"""
 				if self.fft:
 					tmp = input[:,:,:(int(input.shape[2]/2)),:]
 				else:
 					tmp = self.blocks[i].fade_sequence(input)
-				
+				"""	
 
 				if self.conditional:
 					factor = orig_label.shape[-1]/tmp.shape[-2]
