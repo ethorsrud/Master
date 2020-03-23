@@ -54,7 +54,9 @@ class ProgressiveDiscriminator(nn.Module):
 			std = torch.sqrt(torch.mean((input-mean)**2,dim=(0,1,2)))
 			input = ((input-mean)/std)
 
+			print(input_numpy.shape)
 			tmp_input = block_reduce(input_numpy,(1,1,2,1),np.mean)
+			print(tmp_input.shape)
 			tmp_input = torch.from_numpy(tmp_input).cuda()
 			tmp_input = torch.transpose(torch.rfft(torch.transpose(tmp_input[:,:,:,:-1],2,3),1,normalized=False),2,3)
 			tmp_input = torch.sqrt(tmp_input[:,:,:,:,0]**2+tmp_input[:,:,:,:,1]**2+1e-16)
