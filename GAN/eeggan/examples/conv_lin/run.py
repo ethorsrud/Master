@@ -486,7 +486,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
 
 
-                loss_f = fourier_discriminator.train_batch(batch_real,batch_fake)
+                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
