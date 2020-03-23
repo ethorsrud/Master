@@ -204,7 +204,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		self.eps_center = eps_center
 		self.lambd_consistency_term = lambd_consistency_term
 
-	def train_batch(self, batch_real, batch_fake):
+	def train_batch(self, batch_real, batch_fake,generator,FFT):
 		"""
 		Train discriminator for one batch of real and fake data
 
@@ -228,6 +228,8 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_center : float
 			Center penalty
 		"""
+		self.fft = FFT
+		self.generator = generator
 
 		self.pre_train()
 
@@ -314,6 +316,10 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		gradient_penalty : autograd.Variable
 			Gradient penalties
 		"""
+		if self.fft:
+			batch_real = self.generator(batch_real)
+			batch_fake = self.generator(batch_fake)
+
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
 		alpha = alpha.expand(batch_real.data.size())
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
