@@ -204,7 +204,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		self.eps_center = eps_center
 		self.lambd_consistency_term = lambd_consistency_term
 
-	def train_batch(self, batch_real, batch_fake,generator,FFT):
+	def train_batch(self, batch_real, batch_fake,FFT):
 		"""
 		Train discriminator for one batch of real and fake data
 
@@ -229,7 +229,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			Center penalty
 		"""
 		self.fft = FFT
-		self.generator = generator
 
 		self.pre_train()
 
@@ -317,8 +316,17 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			Gradient penalties
 		"""
 		if self.fft:
-			batch_real = self.generator(batch_real)
-			batch_fake = self.generator(batch_fake)
+			batch_real = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
+			batch_real = torch.sqrt(batch_real[:,:,:,:,0]**2+batch_real[:,:,:,:,1]**2+1e-16)
+			mean = torch.mean(batch_real,(0,2)).squeeze()
+			std = torch.sqrt(torch.mean((batch_real-mean)**2,dim=(0,1,2)))
+			batch_real = ((batch_real-mean)/std)
+
+			batch_fake = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
+			batch_fake = torch.sqrt(batch_fake[:,:,:,:,0]**2+batch_fake[:,:,:,:,1]**2+1e-16)
+			mean = torch.mean(batch_fake,(0,2)).squeeze()
+			std = torch.sqrt(torch.mean((batch_fake-mean)**2,dim=(0,1,2)))
+			batch_fake = ((batch_fake-mean)/std)
 
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
 		alpha = alpha.expand(batch_real.data.size())
