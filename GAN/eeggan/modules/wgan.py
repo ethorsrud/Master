@@ -204,7 +204,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		self.eps_center = eps_center
 		self.lambd_consistency_term = lambd_consistency_term
 
-	def train_batch(self, batch_real, batch_fake,FFT):
+	def train_batch(self, batch_real, batch_fake):
 		"""
 		Train discriminator for one batch of real and fake data
 
@@ -228,8 +228,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_center : float
 			Center penalty
 		"""
-		self.fft = FFT
-
 		self.pre_train()
 
 		one = torch.FloatTensor([1])
@@ -315,26 +313,11 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		gradient_penalty : autograd.Variable
 			Gradient penalties
 		"""
-		print(batch_fake.shape,batch_real.shape)
-		if self.fft:
-			batch_real = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
-			batch_real = torch.sqrt(batch_real[:,:,:,:,0]**2+batch_real[:,:,:,:,1]**2+1e-16)
-			mean = torch.mean(batch_real,(0,2)).squeeze()
-			std = torch.sqrt(torch.mean((batch_real-mean)**2,dim=(0,1,2)))
-			batch_real = ((batch_real-mean)/std)
-
-			batch_fake = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
-			batch_fake = torch.sqrt(batch_fake[:,:,:,:,0]**2+batch_fake[:,:,:,:,1]**2+1e-16)
-			mean = torch.mean(batch_fake,(0,2)).squeeze()
-			std = torch.sqrt(torch.mean((batch_fake-mean)**2,dim=(0,1,2)))
-			batch_fake = ((batch_fake-mean)/std)
-		print(batch_fake.shape,batch_real.shape)
 		alpha = torch.rand(batch_real.data.size(0),*((len(batch_real.data.size())-1)*[1]))
 		alpha = alpha.expand(batch_real.data.size())
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
 
 		interpolates = alpha * batch_real.data + ((1 - alpha) * batch_fake.data)
-		print(interpolates.shape)
 		#conditional
 		#if interpolates.shape[-1]==3: interpolates[:,:,:,-1] = 0
 
@@ -502,7 +485,7 @@ class WGAN_I_Generator(GAN_Generator):
 		
 		#print("loss:",loss,"Loss2:",loss2)
 
-		loss = loss+loss2
+		loss = loss#+loss2
 		#print("GENLOSS",loss)
 		# Backprop gradient
 		loss.backward(mone)
