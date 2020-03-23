@@ -462,14 +462,14 @@ for i_block in range(i_block_tmp,n_blocks):
                 #batch_fake = torch.cat((batch_fake,labels),dim=1)
 
                 #batch_fake = torch.cat((batch_fake,labels),dim=3)
-                """
+
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
-                batch_fake_fft = batch_fake_fft/(2**i_block)
-                batch_real_fft = batch_real_fft/(2**i_block)
+                #batch_fake_fft = batch_fake_fft/(2**i_block)
+                #batch_real_fft = batch_real_fft/(2**i_block)
 
                 #batch_fake_fft = torch.log(batch_fake_fft+1e-3)
                 #batch_real_fft = torch.log(batch_real_fft+1e-3)
@@ -484,7 +484,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
                 batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
-                """
+
 
                 loss_f = fourier_discriminator.train_batch(batch_real,batch_fake)
                 
