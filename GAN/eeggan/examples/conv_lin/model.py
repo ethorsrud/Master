@@ -211,7 +211,7 @@ class Generator(WGAN_I_Generator):
 class Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=False),conditional=True)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=False),conditional=True,FFT=False)
 
 	def forward(self,input):
 		return self.model(input)
@@ -219,7 +219,7 @@ class Discriminator(WGAN_I_Discriminator):
 class Fourier_Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Fourier_Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False,FFT=True)
 
 	def forward(self,input):
 		return self.model(input)
@@ -227,7 +227,7 @@ class Fourier_Discriminator(WGAN_I_Discriminator):
 class AC_Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(AC_Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2),conditional=False),conditional=False,FFT=False)
 
 	def forward(self,input):
 		return self.model(input)

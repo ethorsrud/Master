@@ -28,13 +28,14 @@ class ProgressiveDiscriminator(nn.Module):
 	blocks : int
 		Number of progression stages
 	"""
-	def __init__(self,blocks,conditional=False):
+	def __init__(self,blocks,conditional=False,FFT=False):
 		super(ProgressiveDiscriminator,self).__init__()
 		self.blocks = nn.ModuleList(blocks)
 		self.cur_block = len(self.blocks)-1
 		self.alpha = 1.
 		#To make sure labels arent added to the fourier discriminator
 		self.conditional = conditional
+		self.fft = FFT
 
 	def forward(self,input):
 		fade = False
@@ -47,7 +48,9 @@ class ProgressiveDiscriminator(nn.Module):
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
 				tmp = self.blocks[i].fade_sequence(input)
-
+				if self.fft:
+					print(tmp.shape)
+					print(input.shape)
 				if self.conditional:
 					factor = orig_label.shape[-1]/tmp.shape[-2]
 					label = np.zeros(shape=(tmp.shape[0],1,tmp.shape[2])).astype(np.float32)
