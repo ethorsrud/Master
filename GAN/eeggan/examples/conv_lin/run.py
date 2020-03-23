@@ -51,7 +51,7 @@ n_z = 128#200
 lr = 0.001#0.001
 n_blocks = 6
 rampup = 500.#1000.#400.#2000.
-block_epochs = [1000,2000,2000,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
+block_epochs = [10,10,10,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
 task_ind = 0#subj_ind
 
@@ -291,7 +291,7 @@ losses_g = []
 losses_f = []
 
 i_epoch = 0
-z_vars_im = rng.normal(0,0.2,size=(700,n_z)).astype(np.float32)
+z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 
 #Conditional
 if conditional:
@@ -321,8 +321,8 @@ if conditional:
     #labels_im = np.mean(labels_im_new,axis=2)
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
-    n_zeros_im = np.nonzero(z_vars_im==0)[0].shape[0]
-    z_vars_im[np.nonzero(z_vars_im==0)] = np.random.normal(0,0.2,size=(n_zeros_im))
+    #n_zeros_im = np.nonzero(z_vars_im==0)[0].shape[0]
+    #z_vars_im[np.nonzero(z_vars_im==0)] = np.random.normal(0,0.2,size=(n_zeros_im))
 
 #random_times_im = np.random.randint(0,n_z,size=(1000))
 #z_vars_im_label[np.arange(1000),random_times_im] = 1.
@@ -388,7 +388,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
                 #batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
-                z_vars = rng.normal(0,0.2,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
+                z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
                 """
                 #Conditional
                 z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
@@ -429,8 +429,8 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
                 #z_vars_label = z_vars_label.astype(np.float32)
                 #z_vars_label = torch.from_numpy(z_vars_label).cuda()
-                n_zeros = np.nonzero(z_vars==0)[0].shape[0]
-                z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
+                #n_zeros = np.nonzero(z_vars==0)[0].shape[0]
+                #z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
                 
                 #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
@@ -469,8 +469,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
                 
 
-                batch_fake_fft = batch_fake_fft/(2**(i_block))
-                batch_real_fft = batch_real_fft/(2**(i_block))
                 #batch_fake_fft = torch.log(batch_fake_fft+1e-3)
                 #batch_real_fft = torch.log(batch_real_fft+1e-3)
 
@@ -505,7 +503,7 @@ for i_block in range(i_block_tmp,n_blocks):
             
             for i_gen in range(n_gen):
                 
-                z_vars = rng.normal(0,0.2,size=(n_batch,n_z)).astype(np.float32)
+                z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
                 #Conditional
                 #z_vars_label = np.zeros(shape=(n_batch,n_z))
@@ -536,8 +534,8 @@ for i_block in range(i_block_tmp,n_blocks):
 
                     z_vars = np.concatenate((z_vars,labels),axis=1)
                     
-                    n_zeros = np.nonzero(z_vars==0)[0].shape[0]
-                    z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
+                    #n_zeros = np.nonzero(z_vars==0)[0].shape[0]
+                    #z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
                     
 
                 #z_vars_label[np.arange(n_batch),random_times] = 1.

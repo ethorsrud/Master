@@ -48,6 +48,12 @@ class ProgressiveDiscriminator(nn.Module):
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
 				tmp = self.blocks[i].fade_sequence(input)
+
+				if self.conditional:
+					factor = orig_label.shape[-1]/input.shape[-1]
+					print(factor)
+
+
 				tmp = self.blocks[i+1].in_sequence(tmp)
 				fade = True
 			"""

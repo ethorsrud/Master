@@ -468,8 +468,6 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft_mean = torch.mean(fft,(0)).squeeze()
 		#fft_std = torch.std(fft,0).squeeze()
 
-		fft = fft/(2**i_block)
-
 		fft = (fft-fft_mean)/fft_std
 
 		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]

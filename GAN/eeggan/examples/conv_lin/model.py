@@ -211,7 +211,7 @@ class Generator(WGAN_I_Generator):
 class Discriminator(WGAN_I_Discriminator):
 	def __init__(self,n_chans):
 		super(Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=False),conditional=False)
+		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,base,conditional=False),conditional=True)
 
 	def forward(self,input):
 		return self.model(input)
