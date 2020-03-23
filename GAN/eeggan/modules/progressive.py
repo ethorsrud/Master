@@ -42,11 +42,8 @@ class ProgressiveDiscriminator(nn.Module):
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
 			orig_label = input[:,:,:,-1]
-			print(input.shape)
 			orig_label_np = orig_label.cpu().detach().numpy()
-			print(orig_label_np.shape)
-			print(np.where(orig_label_np==1.))
-			idxes = np.where(orig_label_np==1.)[2]
+			idxes = np.where(orig_label_np==1.)
 		for i in range(self.cur_block,len(self.blocks)):
 			if alpha<1. and i==self.cur_block:
 				tmp = self.blocks[i].fade_sequence(input)
@@ -55,10 +52,9 @@ class ProgressiveDiscriminator(nn.Module):
 					factor = orig_label.shape[-1]/tmp.shape[-2]
 					label = np.zeros(shape=(tmp.shape[0],1,tmp.shape[2])).astype(np.float32)
 					print(label.shape)
-					idxes_2 = np.floor(idxes/factor)
-					idxes_2 = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes_2.astype(np.int))
-					print(idxes_2)
-					label[idxes_2] = 1.
+					idxes[2] = np.floor(idxes[2]/factor)
+					#idxes_2 = (np.arange(label.shape[0]).astype(np.int),np.zeros(label.shape[0]).astype(np.int),idxes_2.astype(np.int))
+					label[idxes] = 1.
 					label = torch.from_numpy(label).cuda()
 					tmp[:,:,:,-1] = label
 
