@@ -67,6 +67,7 @@ class ProgressiveDiscriminator(nn.Module):
 				if self.fft:
 					tmp = tmp_input#input[:,:,:(int(input.shape[2]/2)),:]
 				else:
+					print(input[:,:,:,-1])
 					tmp = self.blocks[i].fade_sequence(input)
 
 				if self.conditional:
