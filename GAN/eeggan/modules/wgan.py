@@ -234,6 +234,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		mone = one * -1
 
 		batch_real,one,mone = utils.cuda_check([batch_real,one,mone])
+		print("batch_real disc")
 		fx_real = self(batch_real)
 		loss_real = fx_real.mean()
 
@@ -242,6 +243,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
 
 		#print("Loss_real:",loss_real)
+		print("batch_fake disc")
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
 		#print("Loss_fake:",loss_fake)
@@ -323,6 +325,7 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 
 		interpolates = Variable(interpolates, requires_grad=True)
 		alpha,interpolates = utils.cuda_check([alpha,interpolates])
+		print("interpolates disc")
 		disc_interpolates = self(interpolates)
 
 		ones = torch.ones(disc_interpolates.size())
@@ -473,7 +476,7 @@ class WGAN_I_Generator(GAN_Generator):
 		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
 		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
 		#autocor = functions.autocorrelation(gen)
-		
+		print("gen")
 		disc = discriminator1(gen)
 		#disc2 = discriminator2(gen)
 		disc2 = discriminator2(fft)
