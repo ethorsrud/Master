@@ -79,8 +79,8 @@ class ProgressiveDiscriminator(nn.Module):
 					label = torch.from_numpy(label).cuda()
 					tmp[:,:,:,-1] = label
 					"""
-					print(input[:,:,:,-1])
-					print(tmp[:,:,:,-1])
+					print("input:",input[:,:,:,-1])
+					print("tmp:",tmp[:,:,:,-1])
 					#tmp[:,:,:,-1]*=2
 
 				tmp = self.blocks[i+1].in_sequence(tmp)
