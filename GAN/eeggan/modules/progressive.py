@@ -81,8 +81,6 @@ class ProgressiveDiscriminator(nn.Module):
 					"""
 					idx = (torch.nonzero(tmp[:,:,:,-1])[:,0],torch.nonzero(tmp[:,:,:,-1])[:,1],torch.nonzero(tmp[:,:,:,-1])[:,2])
 					tmp[:,:,:,-1][idx] = 1.
-					print("tmp",tmp[:,:,:,-1])
-					print(tmp[:,:,:,-1])
 					#tmp[:,:,:,-1]*=2
 
 				tmp = self.blocks[i+1].in_sequence(tmp)
