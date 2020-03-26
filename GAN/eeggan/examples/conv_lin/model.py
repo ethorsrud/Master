@@ -40,7 +40,7 @@ def create_disc_blocks(n_chans,base,conditional):
 		return nn.Sequential(weight_scale(nn.Conv1d(in_filters,out_filters,21,padding=21//2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
-								weight_scale(nn.Conv1d(in_filters,out_filters,9,padding=9//2),
+								weight_scale(nn.Conv1d(out_filters,out_filters,9,padding=9//2),
 														gain=calculate_gain('leaky_relu')),
 								nn.LeakyReLU(0.2),
 
