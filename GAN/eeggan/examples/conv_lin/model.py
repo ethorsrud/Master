@@ -43,7 +43,7 @@ def create_disc_blocks(n_chans,base,conditional):
 
 								weight_scale(nn.Conv1d(out_filters,out_filters,2,stride=2),
 														gain=calculate_gain('leaky_relu')),
-								nn.LeakyReLU(0.2),xrayscanner())
+								nn.LeakyReLU(0.2))
 	def create_in_sequence(n_chans,out_filters):
 		return nn.Sequential(weight_scale(nn.Conv2d(1,out_filters,(21,3),padding=(10,1)),
 														gain=calculate_gain('leaky_relu')),nn.LeakyReLU(0.2),
@@ -93,8 +93,8 @@ def create_disc_blocks(n_chans,base,conditional):
 
 	tmp_block = ProgressiveDiscriminatorBlock(
 							  nn.Sequential(StdMap1d(),
-											create_conv_sequence(n_featuremaps+1,n_featuremaps,9),
-											Reshape([[0],-1]),
+											create_conv_sequence(n_featuremaps+1,n_featuremaps,9),xrayscanner(),
+											Reshape([[0],-1]),xrayscanner(),
 											weight_scale(nn.Linear((n_featuremaps)*base,1),
 															gain=calculate_gain('linear'))),
 							  create_in_sequence(n_chans,n_featuremaps),
