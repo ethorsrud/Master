@@ -43,9 +43,10 @@ class ProgressiveDiscriminator(nn.Module):
 		alpha = self.alpha
 		#MAKE NUMPY ARRAY OF LABEL
 		if self.conditional:
-			orig_label = input[:,:,:,-1]
-			orig_label_np = orig_label.cpu().detach().numpy()
-			idxes = np.where(orig_label_np==1.)
+			#orig_label = input[:,:,:,-1]
+			#orig_label_np = orig_label.cpu().detach().numpy()
+			#idxes = np.where(orig_label_np==1.)
+			pass
 		if self.fft:
 			input_clone = input.clone()
 			input = torch.transpose(torch.rfft(torch.transpose(input[:,:,:,:-1],2,3),1,normalized=False),2,3)
