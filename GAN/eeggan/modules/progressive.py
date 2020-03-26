@@ -80,9 +80,7 @@ class ProgressiveDiscriminator(nn.Module):
 					label = torch.from_numpy(label).cuda()
 					tmp[:,:,:,-1] = label
 					"""
-					print("start")
 					idx = (torch.nonzero(tmp[:,:,:,-1])[:,0],torch.nonzero(tmp[:,:,:,-1])[:,1],torch.nonzero(tmp[:,:,:,-1])[:,2])
-					print("end")
 					tmp[:,:,:,-1][idx] = 1.
 					#tmp[:,:,:,-1]*=2
 
