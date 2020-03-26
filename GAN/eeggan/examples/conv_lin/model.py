@@ -56,6 +56,7 @@ def create_disc_blocks(n_chans,base,conditional):
 		return nn.AvgPool2d((factor,1),stride=(factor,1))
 		
 	blocks = []
+	"""
 	tmp_block = ProgressiveDiscriminatorBlock(
 							  create_conv_sequence(n_featuremaps,n_featuremaps,9),
 							  create_in_sequence(n_chans,n_featuremaps),
@@ -74,7 +75,7 @@ def create_disc_blocks(n_chans,base,conditional):
 							create_fade_sequence(2)
 							)
 	blocks.append(tmp_block)
-	
+	"""
 	tmp_block = ProgressiveDiscriminatorBlock(
 							create_conv_sequence(n_featuremaps,n_featuremaps,9),
 							create_in_sequence(n_chans,n_featuremaps),
@@ -181,6 +182,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								create_fade_sequence(2)
 								)
 	blocks.append(tmp_block)
+	"""
 	tmp_block = ProgressiveGeneratorBlock(
 								create_conv_sequence(n_featuremaps+conditional,n_featuremaps,9),
 								create_out_sequence(n_chans,n_featuremaps),
@@ -199,6 +201,7 @@ def create_gen_blocks(n_chans,z_vars,conditional):
 								None
 								)
 	blocks.append(tmp_block)
+	"""
 	return blocks
 
 
