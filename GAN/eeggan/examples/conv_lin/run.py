@@ -187,7 +187,7 @@ for line in cluster_file:
     if line[1] == "good":
         good_clusters.append(eval(line[0]))
 cluster_file.close()
-spike_clusters = np.load("spike_clusters.npy").astype(np.int32)
+spike_clusters = np.load(code_path+os.sep+"spike_clusters.npy").astype(np.int32)
 mask_good_clusters = np.in1d(spike_clusters,good_clusters)
 spike_times = spike_times[mask_good_clusters]
 
