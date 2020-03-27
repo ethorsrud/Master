@@ -180,7 +180,7 @@ time_labels2 = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 #mask
 spike_times = spike_times[spike_times<(input_length*n_samples)]
 
-cluster_file = open("cluster_KSLabel.tsv","r")
+cluster_file = open(code_path+os.sep+"cluster_KSLabel.tsv","r")
 good_clusters = []
 for line in cluster_file:
     line = line.split()
