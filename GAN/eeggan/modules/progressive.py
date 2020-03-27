@@ -42,6 +42,7 @@ class ProgressiveDiscriminator(nn.Module):
 		fade = False
 		alpha = self.alpha
 		#MAKE NUMPY ARRAY OF LABEL
+		"""
 		if self.conditional:
 			#orig_label = input[:,:,:,-1]
 			#orig_label_np = orig_label.cpu().detach().numpy()
@@ -61,15 +62,18 @@ class ProgressiveDiscriminator(nn.Module):
 			tmp_mean = torch.mean(tmp_input,(0,2)).squeeze()
 			tmp_std = torch.sqrt(torch.mean((tmp_input-tmp_mean)**2,dim=(0,1,2)))
 			tmp_input = ((tmp_input-tmp_mean)/tmp_std)
+		"""
 
 		for i in range(self.cur_block,len(self.blocks)):
 
 			if alpha<1. and i==self.cur_block:
+				"""
 				if self.fft:
 					tmp = tmp_input#input[:,:,:(int(input.shape[2]/2)),:]
 				else:
 					tmp = self.blocks[i].fade_sequence(input)
-
+				"""
+				tmp = self.blocks[i].fade_sequence(input)
 				if self.conditional:
 					"""
 					factor = orig_label.shape[-1]/tmp.shape[-2]
