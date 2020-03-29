@@ -366,7 +366,8 @@ for i_block in range(i_block_tmp,n_blocks):
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
         i_epoch_tmp = 0
         print("Epoch:",i_epoch)
-        if fade_alpha<1:
+        #if fade_alpha<1.:
+        if fade_alpha<0.5:
             fade_alpha += 1./rampup
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
