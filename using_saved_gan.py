@@ -28,8 +28,9 @@ n_z = 128
 datafreq = 30000
 n_blocks = 6
 t_multiple = 3
-input_length = 4096#8192
+input_length = 2048#4096#8192
 n_chans = 57
+label_length = 20
 
 generator = Generator(n_chans,128+input_length) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
@@ -46,6 +47,8 @@ spike_mean = mean_std[0]
 spike_std = mean_std[1]
 rng = np.random.RandomState(0)
 
+print("Mean:",spike_mean,"Std:",spike_std)
+
 z_vars_im = rng.normal(0,1,size=(768,n_z)).astype(np.float32)
 labels = np.zeros(shape=(768,input_length))
 #labels_ones = np.zeros(shape=(768,input_length))
@@ -55,10 +58,10 @@ for i in range(768):
     if n_spikes<0:
         n_spikes=0
     #Create n_spikes randomly times spikes
-    random_times = np.random.randint(21,input_length-21,size=(n_spikes)).astype(np.int)
+    random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
     #random_templates = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
     for j in range(n_spikes):
-        labels[i,random_times[j]:(random_times[j]+1)] = 1.
+        labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
         #labels[i,(random_times[j]-41):(random_times[j]+41)] = templates[random_templates[j],:]
 
 labels = labels.astype(np.float32)
@@ -75,9 +78,9 @@ labels = labels.reshape(-1)
 #labels_ones = labels_ones.reshape(-1)
 #spike_times = np.where(labels_ones==1.)[0]
 
-np.save("fake_dataset_ch120_ch180_new_loss.npy",dataset)
+np.save("fake_dataset_ch120_ch180_alpha.npy",dataset)
 #np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
-np.save("fake_dataset_ch120_ch180_labels_new_loss.npy",labels)
+np.save("fake_dataset_ch120_ch180_labels_alpha.npy",labels)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)
