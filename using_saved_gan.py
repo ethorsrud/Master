@@ -17,7 +17,7 @@ os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 torch.backends.cudnn.enabled=True
 torch.backends.cudnn.benchmark=True
 
-torch.cuda.set_device(3)
+torch.cuda.set_device(2)
 
 kilosort_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
 #templates = np.load(os.path.normpath(kilosort_path+os.sep+"templates.npy")).astype(np.float32) #[nTemplates,nTimePoints,nTempChannels]
@@ -42,7 +42,7 @@ generator.model.alpha = fade_alpha
 
 generator.cuda()
 
-mean_std = np.load("real_mean_std_dataset.npy")
+mean_std = np.load("real_mean_std_dataset_alpha.npy")
 spike_mean = mean_std[0]
 spike_std = mean_std[1]
 rng = np.random.RandomState(0)
