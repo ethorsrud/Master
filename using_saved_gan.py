@@ -34,7 +34,7 @@ label_length = 20
 
 generator = Generator(n_chans,128+input_length) #Channels, random vector input size
 generator.train_init(alpha=1e-3,betas=(0.,0.99))
-generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:0")
+generator.load_model(os.path.join(model_path,"Progressive0.gen"),location="cuda:2")
 i_block,fade_alpha = joblib.load(os.path.join(model_path,"Progressive0"+'.data'))
 
 generator.model.cur_block = i_block
