@@ -512,7 +512,7 @@ for i_block in range(i_block_tmp,n_blocks):
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
-        losses_f.append(loss_f)
+        #losses_f.append(loss_f)
 
         if i_epoch%100 == 0:
             generator.eval()
@@ -720,7 +720,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.tight_layout()
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses.png'))
             plt.close()
-
+            """
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
             plt.plot(np.asarray(losses_f)[:,0],label='Loss Real')
@@ -746,7 +746,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.tight_layout()
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses_fourier.png'))
             plt.close()
-
+            """
             generator.train()
             discriminator.train()
             fourier_discriminator.train()
