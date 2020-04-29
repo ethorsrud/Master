@@ -242,17 +242,9 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_real.backward(mone,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
 
-		#print("Loss_real:",loss_real)
-
 		fx_fake = self(batch_fake)
 		loss_fake = fx_fake.mean()
-		#print("Loss_fake:",loss_fake)
-		#loss_fake_for_print = loss_fake.data.item()
-		#batch_fake_for_check = batch_fake.data.cpu().numpy()
-		"""
-		if not np.isfinite(loss_fake_for_print):
-			print(batch_fake_for_check)
-		"""
+
 		loss_fake.backward(one,
 						   retain_graph=(self.eps_drift>0 or self.eps_center>0))
 		loss_drift = 0
@@ -266,11 +258,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 			tmp_center = self.eps_center*tmp_center**2
 			tmp_center.backward()
 			loss_center = tmp_center.data.item()
-		#print("Loss_center:",loss_center)
-		#print("Loss_drift:",loss_drift)
-		#loss_consistency_term
-		#if self.lambd_consistency_term>0:
-		#	batch_real_1
 		
 		dist = 1
 		if self.distance_weighting:
@@ -279,23 +266,13 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		loss_penalty = self.calc_gradient_penalty(batch_real, batch_fake)
 		loss_penalty = self.lambd*dist*loss_penalty
 		loss_penalty.backward()
-		#print("Loss_penalty:",loss_penalty)
-		
-		"""
-		for p in self.parameters():
-			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
-			try:
-				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
-			except:
-				continue	
-		"""
+
 		# Update parameters
 		self.update_parameters()
 
 		loss_real = -loss_real.data.item()
 		loss_fake = loss_fake.data.item()
 		loss_penalty = loss_penalty.data.item()
-		#loss_penalty=0
 		return loss_real,loss_fake,loss_penalty,loss_drift,loss_center # return loss
 
 
@@ -320,8 +297,6 @@ class WGAN_I_Discriminator(GAN_Discriminator):
 		batch_real,alpha = utils.cuda_check([batch_real,alpha])
 
 		interpolates = alpha * batch_real.data + ((1 - alpha) * batch_fake.data)
-		#conditional
-		#if interpolates.shape[-1]==3: interpolates[:,:,:,-1] = 0
 
 		interpolates = Variable(interpolates, requires_grad=True)
 		alpha,interpolates = utils.cuda_check([alpha,interpolates])
@@ -377,13 +352,7 @@ class WGAN_I_Generator(GAN_Generator):
 		self.loss = None
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
-	#NEW
-	"""
-	def update_parameters(self):
-		super(WGAN_I_Generator,self).update_parameters()
-		for p in self.parameters():
-			p.data.clamp_(-self.c,self.c)
-	"""
+
 	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,block_info,labels):
 		"""
 		Train generator for one batch of latent noise
@@ -403,8 +372,7 @@ class WGAN_I_Generator(GAN_Generator):
 		"""
 		self.pre_train(discriminator1)
 		self.pre_train(discriminator2)
-		#self.pre_train(discriminator3)
-		#with autograd.detect_anomaly():
+
 		mone = torch.FloatTensor([1]) * -1
 		batch_noise,mone = utils.cuda_check([batch_noise,mone])
 		# Generate and discriminate
@@ -413,95 +381,38 @@ class WGAN_I_Generator(GAN_Generator):
 
         #Conditional
 		i_block,n_blocks,i_epoch = block_info
-		"""
-		labels = np.zeros(shape=(gen.shape[0],4096))
-		for i in range(gen.shape[0]):
-			labels[i,random_times[i]:(random_times[i]+1)] = 1.
-		"""
-
 		
 		index = np.where(labels==1.)
 		index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
 		labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
 		labels[index] = 1.
-		"""
-		blockreduction = [[32],[16],[8],[4],[2],[]]
 
-		labels = labels.astype(np.float32)
-		#labels = labels[:,np.newaxis,:,np.newaxis]
-		labels = labels[:,np.newaxis,:]
-		labels = torch.from_numpy(labels).cuda()
-		for i in range(len(blockreduction[i_block])):
-			labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
-        """
-		#labels = labels[:,:,:,np.newaxis]        
-		
-		#labels = np.zeros(shape=(gen.shape[0],gen.shape[2]))
-		#label_downsampled = np.floor(random_times/(2**(n_blocks-1-i_block))).astype(np.int)
-		#labels[(np.arange(gen.shape[0]).astype(np.int),label_downsampled)] = 1.
 		labels = labels[:,np.newaxis,:,np.newaxis].astype(np.float32)
 		labels = torch.from_numpy(labels).cuda()
 
-		#label_index = batch_noise.cpu().detach().numpy()
-		#label_index = label_index[:,:,1]
-		#label_index = np.where(label_index==1)
-		#label_index = label_index[1]*2**(i_block+1)
-		#label_index = (np.arange(gen.shape[0]).astype(np.int),label_index.astype(np.int),np.zeros(gen.shape[0]).astype(np.int))
-		#appending_label = np.zeros(shape=(gen.shape[0],gen.shape[2],1))
-		#appending_label[label_index] = 1.
-		#appending_label = appending_label[:,np.newaxis,:,:].astype(np.float32)
-		#appending_label = torch.from_numpy(appending_label).cuda()
-
-		#conditional
+		#Adding conditional labels
 		gen = torch.cat((gen,labels),3)
-		#gen = torch.cat((gen,labels),1)
 
 		#NOT INCLUDING THE LABEL VECTOR
-		#fft = torch.transpose(torch.rfft(torch.transpose(gen,2,3),1,normalized=False),2,3)
 		fft = torch.transpose(torch.rfft(torch.transpose(gen[:,:,:,:-1],2,3),1,normalized=False),2,3)
-		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2+1e-16)#fft[:,:,:,:,0]**2
-
-
-		#fft = fft/(2**i_block)
-		#fft = torch.log(fft+1e-3)
+		fft = torch.sqrt(fft[:,:,:,:,0]**2+fft[:,:,:,:,1]**2+1e-16)
 
 		fft_mean = torch.mean(fft,(0,2)).squeeze()
 		fft_std = torch.sqrt(torch.mean((fft-fft_mean)**2,dim=(0,1,2)))
-		#NORMALIZING OVER BATCH ONLY
-		#fft_mean = torch.mean(fft,(0)).squeeze()
-		#fft_std = torch.std(fft,0).squeeze()
 
+		#NORMALIZING OVER BATCH ONLY
 		fft = (fft-fft_mean)/fft_std
 
-		#fft = ((fft-MSM[0])/MSM[1])#/MSM[2]
-		#fft = torch.mean(fft,dim=0).view(1,fft.shape[1],fft.shape[2],fft.shape[3])
-		#autocor = functions.autocorrelation(gen)
-
 		disc = discriminator1(gen)
-		#disc2 = discriminator2(gen)
-		disc2 = discriminator2(fft)
-		#disc3 = discriminator3(autocor)
+		#disc2 = discriminator2(fft)
 
 		loss = disc.mean()
-		loss2 = disc2.mean()
-		#loss3 = disc3.mean()
-		
-		#print("loss:",loss,"Loss2:",loss2)
+		#loss2 = disc2.mean()
 
-		loss = loss+loss2
-		#print("GENLOSS",loss)
+		#loss = loss+loss2
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
-		"""
-		for p in self.parameters():
-			print("MAX param:",np.max(np.abs(p.detach().cpu().numpy())),"MIN param:",np.min(np.abs(p.detach().cpu().numpy())))
-			try:
-				print("MAX param_grad",np.max(np.abs(p.grad.data.cpu().numpy())),"MIN param_grad",np.min(np.abs(p.grad.data.cpu().numpy())))
-			except:
-				continue
-		"""		
-
 		self.update_parameters()
 
 		loss = loss.data.item()

@@ -3,7 +3,6 @@
 import os
 import joblib
 import sys
-#import mne
 code_path = os.path.normpath(os.getcwd()+4*(os.sep+os.pardir))
 other_path = os.path.normpath(code_path+os.sep+os.pardir)
 sys.path.append(os.path.join(code_path,"GAN"))
@@ -22,7 +21,6 @@ import random
 import scipy.io
 from scipy.signal import butter,lfilter
 from  datetime import datetime
-#from torchviz import make_dot
 from my_utils import functions
 from scipy import signal
 from scipy.fftpack import fft
@@ -39,22 +37,25 @@ torch.backends.cudnn.benchmark=True
 cuda_device = 3
 torch.cuda.set_device(cuda_device)
 
-n_critic = 1
-n_gen = 1
-n_batch = 64#56#64
-input_length = 2048#4096#8192#10240#12288#30720#1536#768
+
+n_critic = 1 #Number of critic iterations per batch
+n_gen = 1 #Number of generator iterations per batch
+n_batch = 64 #Batch size
+input_length = 2048 #Signal length to generate
 jobid = 0
-n_samples = 1536#768 #Samples from dataset
+n_samples = 1536 #Samples from dataset
 conditional = True
 
-n_z = 128#200
-lr = 0.001#0.001
-n_blocks = 3#6
-rampup = 1000.#400.#2000.
-block_epochs = [1000,2000,2000]#[1000,2000,2000,2000,2000,2000]#[500,1000,1000,1000,1000,1000]#[2000,4000,4000,4000,4000,4000]
 
-task_ind = 0#subj_ind
+n_z = 128 #Random input vector size
+lr = 0.001
+n_blocks = 3 #Number of blocks for network
+rampup = 1000. #Fade speed -> 1/rampup is added to alpha every epoch
+block_epochs = [1000,2000,2000] #Number of epochs per block
 
+task_ind = 0
+
+#Config file to keep track of different model settings for different runs
 config_data = {"n_critic":n_critic,
                 "n_gen":n_gen,
                 "n_batch":n_batch,
@@ -67,16 +68,18 @@ config_data = {"n_critic":n_critic,
                 "block_epochs":block_epochs,
                 "cuda_device:":cuda_device}
 
-modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN")
-outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN")
+modelpath = os.path.normpath(other_path+os.sep+"Models"+os.sep+"GAN") #Path for model-saving
+outputpath = os.path.normpath(other_path+os.sep+"Output"+os.sep+"GAN") #Path for outputs like plots etc.
 
+#Config file save into model-path
 with open(os.path.normpath(modelpath+os.sep+"config.txt"),"w") as fp:
     json.dump(config_data,fp,indent=4)
 
-#Spike data start
+#Loading dataset from specific path on server
 kilosort_path = os.path.normpath(os.getcwd()+7*(os.sep+os.pardir)+os.sep+"shared"+os.sep+"users"+os.sep+"eirith"+os.sep+"kilosort2_results"+os.sep)
 dat_path = os.path.normpath(kilosort_path+os.sep+os.pardir+os.sep+"continuous.dat")
 
+#Dataset info
 n_channels_dat = 384
 data_len = 112933688832
 dtype = 'int16'
@@ -84,81 +87,34 @@ offset = 0
 sample_rate = 30000
 hp_filtered = False
 
-spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat))
-spike_data_small = spike_data[:input_length*n_samples,120:180]
-train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:]
+spike_data = np.memmap(dat_path, dtype, "r", offset, (data_len//n_channels_dat,n_channels_dat)) #Memorymap of data since the size is above 200GB
+spike_data_small = spike_data[:input_length*n_samples,120:180] #Portion of the data -> 60 channels
+train = spike_data_small.reshape((n_samples,input_length,60))[:,np.newaxis,:,:] #Reshape into [samples,1,input_length,channels]
 channel_map = np.load(code_path+os.sep+"channel_map_ch120_ch180_new.npy").astype(np.uint32)
-#remove bad channels
-train = train[:,:,:,channel_map[:,0]]
 
-#np.save("spike_data_ch0_ch60.npy",spike_data_small)
+train = train[:,:,:,channel_map[:,0]] #remove bad channels detected by spikesorter
 
-#quit()
-#FILTERING
-#b,a = butter(10,300/(0.5*sample_rate),btype="high")
-#train = lfilter(b,a,train,axis=2)
+#np.save("spike_data_ch0_ch60.npy",spike_data_small) #For saving datasets for later
 
-"""
-train_new = []
-for i in range(int(spike_data_small.shape[0]/input_length)):
-    train_new.append(spike_data_small[i*input_length:i*input_length+input_length])
-print("creating array")
-train_new = np.array(train_new)
-train = train_new[:,:,:,np.newaxis]
-train = np.swapaxes(train,1,2)
-train = np.swapaxes(train,1,3)
-#Only first channel
-#train = train[:,:,:,0][:,:,:,np.newaxis]
-"""
-n_chans = train.shape[3]#+1 # +1 FOR CONDITIONAL
+n_chans = train.shape[3]
 print("Number of channels:",n_chans)
 print(train.shape)
-#Spike data end
 train = train.astype(np.float32)
 
-
+#Random seeds
 np.random.seed(task_ind)
 torch.manual_seed(task_ind)
 torch.cuda.manual_seed_all(task_ind)
 random.seed(task_ind)
 rng = np.random.RandomState(task_ind)
 
-datafreq = 30000#500#250#128 #hz
-"""
-data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"All_channels_500Hz.npy")
-#data = os.path.normpath(other_path+os.sep+"Dataset"+os.sep+"Two_channels_500hz.npy")
-train = np.load(data).astype(np.float32)
-train_new = []
-for i in range(int(train.shape[0]/input_length)):
-    train_new.append(train[i*input_length:i*input_length+input_length])
-train_new = np.array(train_new)
-train = train_new[:,:,:,np.newaxis]
-train = np.swapaxes(train,1,2)
-train = np.swapaxes(train,1,3)
-#Only first channel
-#train = train[:,:,:,0][:,:,:,np.newaxis]
-n_chans = train.shape[3]
-print("Number of channels:",n_chans)
-print(train.shape)
-"""
-label_length = 20#1#1#80#1
-"""
-peak = np.linspace(0,2*np.pi,80)
-peak = np.sin(peak)*200
-#peak+=np.random.normal(size=(80))*70
+datafreq = 30000#Sampling frequency
+label_length = 20#Length of each spike position condition. [0,0,0,0,1,1,1,1,0,0,0,0] would be spike position at index 4 and label_length of 4
 
-#peak_train = train.copy()
-time_labels = np.zeros(shape=(n_samples,1,input_length,1))
-#train = np.concatenate((train,peak_train),axis=0)
-#Placing random peaks
-for i in range(n_samples):
-    peak_location = np.random.randint(0,input_length-80)
-    time_labels[i,0,peak_location:(peak_location+label_length),0] = 1
-    train[i,0,(peak_location):(peak_location+80),0] += peak
-"""
-train = train-np.mean(train,axis=(0,2)).squeeze()#-train.mean()
-train = train/np.std(train,axis=(0,2)).squeeze()#train.std()
-#train = train/np.max(np.abs(train)).squeeze()#np.max(np.abs(train),axis=(0,2)).squeeze()#np.abs(train).max()
+#Normalization
+train = train-np.mean(train,axis=(0,2)).squeeze()
+train = train/np.std(train,axis=(0,2)).squeeze()
+#train = train/np.max(np.abs(train)).squeeze()
 
 #spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
 #spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
@@ -500,7 +456,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
 
 
-                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                #loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
                 #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
