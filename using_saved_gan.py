@@ -78,9 +78,9 @@ labels = labels.reshape(-1)
 #labels_ones = labels_ones.reshape(-1)
 #spike_times = np.where(labels_ones==1.)[0]
 
-np.save("fake_dataset_ch120_ch180_alpha.npy",dataset)
+np.save("fake_dataset_nofourier_ch120_ch180_alpha.npy",dataset)
 #np.save("fake_dataset_ch120_ch160_labels_ones_57.npy",spike_times)
-np.save("fake_dataset_ch120_ch180_labels_alpha.npy",labels)
+np.save("fake_dataset_nofourier_ch120_ch180_labels_alpha.npy",labels)
 """
 rng = np.random.RandomState(0)
 z_vars_im = rng.normal(0,1,size=(500,n_z)).astype(np.float32)

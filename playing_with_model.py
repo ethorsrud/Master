@@ -51,7 +51,7 @@ print("Mean:",spike_mean,"Std:",spike_std)
 #STATIC
 #n_spikes = 10
 #random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-for i in range(10):
+for i in range(700):
     z_vars_im = rng.normal(0,1,size=(1,n_z)).astype(np.float32)
     labels = np.zeros(shape=(1,input_length))
     #Random number of spikes
