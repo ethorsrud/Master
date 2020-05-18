@@ -1,16 +1,21 @@
 # Master
 
+### playing_with_model.py
+Example on how to use the trained model to create a plot of all channels of one time signal
+
+### playing_with_model2.py
+Example on how to use the trained model to create an image of 10 random signals
+
+### using_saved_gan.py
+File used to create different datasets
+
 ## /GAN
 
-Code for
+The code is a further developed and modificated version of the original code from
+
 Hartmann, K. G., Schirrmeister, R. T., & Ball, T. (2018).
 EEG-GAN: Generative adversarial networks for electroencephalograhic (EEG) brain signals.
 Retrieved from https://arxiv.org/abs/1806.01875
 
-## /VAE
-
-Just testing varational autoencoder for image generation.
-Currently configured for images using dataset from https://kaggle.com/chetankv/dogs-cats-images
-Can be configured for LFP/EEG in the future. Use `VAE_new` as your VAE
 
 

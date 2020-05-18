@@ -45,13 +45,8 @@ rng = np.random.RandomState(0)
 
 print("Mean:",spike_mean,"Std:",spike_std)
 
-
-#labels_ones = np.zeros(shape=(768,input_length))
-
-#STATIC
-#n_spikes = 10
-#random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-for i in range(10):
+#n_spikes = #10 STATIC
+for i in range(1):
     z_vars_im = rng.normal(0,1,size=(1,n_z)).astype(np.float32)
     labels = np.zeros(shape=(1,input_length))
     #Random number of spikes
@@ -61,10 +56,8 @@ for i in range(10):
         n_spikes=0
     #Create n_spikes randomly times spikes
     random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-    #random_templates = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
     for j in range(n_spikes):
         labels[0,random_times[j]:(random_times[j]+label_length)] = 1.
-        #labels[i,(random_times[j]-41):(random_times[j]+41)] = templates[random_templates[j],:]
 
     labels = labels.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
