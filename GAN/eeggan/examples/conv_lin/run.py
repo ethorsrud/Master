@@ -140,7 +140,7 @@ for i in range(spike_times.shape[0]):
     cur_ind = int(spike_times[i]%input_length)
     if cur_ind>0 and cur_ind<(input_length-21):
         time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
-        
+
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
@@ -148,24 +148,8 @@ spikes_std = np.sqrt(np.mean((n_spikes_per_samp-spikes_mean)**2))
 print("Spikes_mean",spikes_mean,"Spikes_std",spikes_std)
 np.save("real_mean_std_dataset.npy",np.array([spikes_mean,spikes_std]))
 
-"""
-n_templates_per_channel = np.sum(template_labels,axis=2).squeeze()
-template_mean = np.mean(n_templates_per_channel)
-template_std = np.sqrt(np.mean((n_templates_per_channel-template_mean)**2))
-print("Templates_mean",template_mean,"Templates_std",template_std)
-np.save("real_mean_std_templates.npy",np.array([template_mean,template_std]))
-"""
-
-#train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 train = np.concatenate((train,time_labels),axis=3).astype(np.float32)
 print("train_shape",train.shape)
-fft_train = np.real(np.fft.rfft(train,axis=2))**2#np.abs(np.fft.rfft(train,axis=2))
-#fft_train = np.log(fft_train)
-#fft_mean = fft_train.mean()
-#fft_std = fft_train.std()
-#fft_max = np.abs(fft_train).max()
-
-
 
 modelname = 'Progressive%s'
 if not os.path.exists(modelpath):
@@ -174,11 +158,9 @@ if not os.path.exists(modelpath):
 if not os.path.exists(outputpath):
     os.makedirs(outputpath)
 
-#generator = Generator(n_chans,n_z*(1+conditional))
-generator = Generator(n_chans,n_z+input_length)
-discriminator = Discriminator(n_chans+1)
-fourier_discriminator = Fourier_Discriminator(n_chans)
-#AC_discriminator = AC_Discriminator(n_chans)
+generator = Generator(n_chans,n_z+input_length) #128+2048
+discriminator = Discriminator(n_chans+1) # n_channels + conditional label
+fourier_discriminator = Fourier_Discriminator(n_chans) # no conditional label
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
@@ -252,20 +234,7 @@ for i_block in range(i_block_tmp,n_blocks):
     print("Block:",i_block)
 
     train_tmp = discriminator.model.downsample_to_block(Variable(torch.from_numpy(train).cuda(),requires_grad=False),discriminator.model.cur_block).data.cpu()
-    #old_train_tmp = train_tmp[:,0,:,:].view(train_tmp.shape[0],1,train_tmp.shape[2],train_tmp.shape[3])
-    #new_train_tmp = train_tmp.clone()
-    #train_tmp_fft = fourier_discriminator.model.downsample_to_block(Variable(torch.from_numpy(fft_train).cuda(),requires_grad=False),fourier_discriminator.model.cur_block).data.cpu()
-    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()#torch.tensor(np.real(np.fft.rfft(train_tmp,axis=2))**2)
-
-    #train_tmp_fft = train_tmp_fft[:,:,:,:]
-    #train_tmp_fft = torch.log(train_tmp_fft)
-    train_mean = torch.mean(train_tmp,(0,2)).squeeze()
-    train_std = torch.sqrt(torch.mean((train_tmp-train_mean)**2,dim=(0,1,2)))
-    fft_mean = torch.mean(train_tmp_fft,(0,2)).squeeze().cuda()
-    fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))#torch.std(torch.std(train_tmp_fft,0),1).squeeze().cuda()
-    #fft_max = torch.max(torch.max(torch.abs(train_tmp_fft),0)[0],1)[0].squeeze().cuda()
-    #print("MEAN",fft_mean,"STD",fft_std,"MAX",fft_max)
-
+    train_tmp_fft = torch.tensor(np.abs(np.fft.rfft(train_tmp,axis=2))).cuda()
 
     for i_epoch in range(i_epoch_tmp,block_epochs[i_block]):
         i_epoch_tmp = 0
