@@ -116,26 +116,12 @@ train = train-np.mean(train,axis=(0,2)).squeeze()
 train = train/np.std(train,axis=(0,2)).squeeze()
 #train = train/np.max(np.abs(train)).squeeze()
 
-#spike_times = np.load(os.path.normpath(kilosort_path+os.sep+"spike_times.npy")).astype(np.uint64) #[nSpikes,]
-#spike_templates = np.load(os.path.normpath(kilosort_path+os.sep+"spike_templates.npy")).astype(np.uint32) #[nSpikes,]
-#selected_template = 0
-#temp_index = np.where(spike_templates==selected_template)[0]
-spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180_new.npy").astype(np.uint64)
-#spike_templates = np.load(code_path+os.sep+"spike_templates_ch120_ch180.npy").astype(np.uint32)
-#templates = np.load(code_path+os.sep+"templates_ch120_ch180.npy").astype(np.float32)
-#templates = (templates-np.mean(templates))/(np.std(templates))
+spike_times = np.load(code_path+os.sep+"spike_times_ch120_ch180_new.npy").astype(np.uint64) #[nSpikes,]
 
-time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
-time_labels2 = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
-#template_labels = np.zeros(shape=(n_samples,1,600,1))
-#conv_labels = np.zeros(shape=(n_samples,1,input_length,n_chans)).astype(np.float32)
-#conv_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
-#conv_labels = rng.normal(0,1,size=(n_samples,1,input_length,n_chans)).astype(np.float32)
-#Only spikes with selected template
-#spike_times = spike_times[temp_index]
-#mask
+#masking unnecessary data
 spike_times = spike_times[spike_times<(input_length*n_samples)]
 
+#Keeping spike times labeled as "good" (masking out MUA)
 cluster_file = open(code_path+os.sep+"cluster_KSLabel.tsv","r")
 good_clusters = []
 for line in cluster_file:
@@ -147,27 +133,14 @@ spike_clusters = np.load(code_path+os.sep+"spike_clusters.npy").astype(np.int32)
 mask_good_clusters = np.in1d(spike_clusters,good_clusters)
 spike_times = spike_times[mask_good_clusters]
 
-
-mask = spike_times<(input_length*n_samples)
-#mask = np.where(mask==1)
-#spike_templates = spike_templates[mask]
-#spike_templates = spike_templates[:,0]
-
-#templates_new = np.mean(templates,axis=2)
-
+#Creating labels for real data
+time_labels = np.zeros(shape=(n_samples,1,input_length,1)).astype(np.float32)
 for i in range(spike_times.shape[0]):
     cur_sample = int(spike_times[i]//input_length)
     cur_ind = int(spike_times[i]%input_length)
-    #time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
-    template_length = input_length-cur_ind#82-((cur_ind+41)-input_length)
-    #cur_ind = int(cur_ind-label_length/2)
     if cur_ind>0 and cur_ind<(input_length-21):
         time_labels[cur_sample,0,cur_ind:(cur_ind+label_length),0] = 1.
-        #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),:] = templates[spike_templates[i],:,:].astype(np.float32)
-        #conv_labels[cur_sample,0,(cur_ind-41):(cur_ind+41),0] = templates_new[spike_templates[i],:].astype(np.float32)
-
-#conv_labels = np.mean(conv_labels,axis=3)[:,:,:,np.newaxis]
-
+        
 
 n_spikes_per_samp = np.sum(time_labels,axis=2).squeeze()/label_length
 spikes_mean = np.mean(n_spikes_per_samp)
@@ -212,31 +185,24 @@ discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=False,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=False,distance_weighting=True)
-"""
-AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
-                        one_sided_penalty=True,distance_weighting=True)
-"""
+
 generator = generator.apply(weight_filler)
 discriminator = discriminator.apply(weight_filler)
 fourier_discriminator = fourier_discriminator.apply(weight_filler)
-#AC_discriminator = AC_discriminator.apply(weight_filler)
 
 i_block_tmp = 0
 i_epoch_tmp = 0
 generator.model.cur_block = i_block_tmp
 discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fourier_discriminator.model.cur_block = n_blocks-1-i_block_tmp
-#AC_discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fade_alpha = 1.
 generator.model.alpha = fade_alpha
 discriminator.model.alpha = fade_alpha
 fourier_discriminator.model.alpha = fade_alpha
-#AC_discriminator.model.alpha = fade_alpha
 
 generator = generator.cuda()
 discriminator = discriminator.cuda()
 fourier_discriminator = fourier_discriminator.cuda()
-#AC_discriminator = AC_discriminator.cuda()
 """
 #LOAD
 try:
@@ -254,7 +220,6 @@ except:
 generator.train()
 discriminator.train()
 fourier_discriminator.train()
-#AC_discriminator.train()
 
 losses_d = []
 losses_g = []
@@ -265,11 +230,7 @@ z_vars_im = rng.normal(0,1,size=(700,n_z)).astype(np.float32)
 
 #Conditional
 if conditional:
-    ##random_times_im = np.random.randint(0,input_length-80,size=(700)).astype(np.int)
-    labels_im = np.zeros(shape=(700,input_length))
-    #labels_im_new = np.zeros(shape=(700,input_length,n_chans))
-    #labels_im_new = np.zeros(shape=(700,input_length))
-    #labels_im_new = rng.normal(0,1,size=(700,input_length,n_chans))
+    labels_im = np.zeros(shape=(700,input_length)) #the labelvector [700,2048]
     for i in range(700):
         #Random number of spikes
         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
@@ -277,29 +238,14 @@ if conditional:
             n_spikes=0
         #Create n_spikes randomly timed spikes
         random_times_im = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-        #random_templates_im = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
         for j in range(n_spikes):
+            #Placing the spike labels
             labels_im[i,random_times_im[j]:(random_times_im[j]+label_length)] = 1.
-            #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41),:] = templates[random_templates_im[j],:,:]
-            #labels_im_new[i,(random_times_im[j]-41):(random_times_im[j]+41)] = templates_new[random_templates_im[j],:]
-    #index_im = np.where(labels_im==1.)
-    #index_im = (index_im[0],np.floor(index_im[1]/(2**6)).astype(np.int))
-    #labels_im = np.zeros(shape=(1000,n_z))
-    #labels_im[index_im] = 1.
     labels_im = labels_im.astype(np.float32)
-    #labels_im_new = labels_im_new.astype(np.float32)
-    #labels_im = np.mean(labels_im_new,axis=2)
+    #Putting together label and random vector
     z_vars_im = np.concatenate((z_vars_im,labels_im),axis=1)
 
-    #n_zeros_im = np.nonzero(z_vars_im==0)[0].shape[0]
-    #z_vars_im[np.nonzero(z_vars_im==0)] = np.random.normal(0,0.2,size=(n_zeros_im))
 
-#random_times_im = np.random.randint(0,n_z,size=(1000))
-#z_vars_im_label[np.arange(1000),random_times_im] = 1.
-#z_vars_im_label = z_vars_im_label.astype(np.float32)
-#z_vars_im = z_vars_im[:,:,np.newaxis]
-#z_vars_im_label = z_vars_im_label[:,:,np.newaxis]
-#z_vars_im = np.concatenate((z_vars_im,z_vars_im_label),axis=2)
 
 for i_block in range(i_block_tmp,n_blocks):
     c = 0
@@ -330,11 +276,13 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
             fourier_discriminator.model.alpha = fade_alpha
-            #AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
+
         """
+        #USED FOR MAKING ANIMATION
+
         anim_idx = np.where(labels_im==1.)
         anim_idx = (anim_idx[0],np.floor(anim_idx[1]/(2**(n_blocks-1-i_block))).astype(np.int))
         anim_labels = np.zeros(shape=(700,int(input_length/(2**(n_blocks-1-i_block)))))
@@ -346,7 +294,7 @@ for i_block in range(i_block_tmp,n_blocks):
             animated_signal = generator(animate_z_var).data.detach().cpu().numpy().squeeze()
             np.save("Animate/block_%i_epoch_%i.npy"%(i_block,i_epoch),animated_signal)
         """
-        #batches = functions.get_batches_new(input_length,n_batch,[0],train)
+
         iters = int(len(batches)/n_critic)
         for it in range(iters):
             for i_critic in range(n_critic):
