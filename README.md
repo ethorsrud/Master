@@ -11,7 +11,7 @@ File used to create different datasets
 
 ## /GAN
 
-The code is a further developed and modificated version of the original code from
+The code is a further developed and modificated version of the original code from https://github.com/kahartma/GAN 
 
 Hartmann, K. G., Schirrmeister, R. T., & Ball, T. (2018).
 EEG-GAN: Generative adversarial networks for electroencephalograhic (EEG) brain signals.
