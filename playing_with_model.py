@@ -51,12 +51,12 @@ print("Mean:",spike_mean,"Std:",spike_std)
 #STATIC
 #n_spikes = 10
 #random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-for i in range(700):
+for i in range(10):
     z_vars_im = rng.normal(0,1,size=(1,n_z)).astype(np.float32)
     labels = np.zeros(shape=(1,input_length))
     #Random number of spikes
     n_spikes = int(np.random.normal(spike_mean,spike_std))
-    """
+
     if n_spikes<0:
         n_spikes=0
     #Create n_spikes randomly times spikes
@@ -65,7 +65,7 @@ for i in range(700):
     for j in range(n_spikes):
         labels[0,random_times[j]:(random_times[j]+label_length)] = 1.
         #labels[i,(random_times[j]-41):(random_times[j]+41)] = templates[random_templates[j],:]
-    """
+
     labels = labels.astype(np.float32)
     z_vars_im = np.concatenate((z_vars_im,labels),axis=1)
     z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
@@ -74,13 +74,14 @@ for i in range(700):
 
     dataset = dataset.squeeze()
 
-    plt.plot(dataset[:,0]-17*i,color="steelblue")
-    """
-    for t in random_times:
-        plt.plot(np.arange(t,t+label_length),dataset[int(t):int(t)+label_length,0]-17*i,color="orangered",alpha=0.7)
-    """
-plt.yticks([])
-plt.xticks(fontsize=15)
-plt.title("10 Randomly generated signals from channel 0(120)",fontsize=15)
-plt.xlabel("Sample no.",fontsize=15)
-plt.show()
+    for j in range(57):
+        plt.plot(dataset[:,j]-5*j,color="steelblue",linewidth=0.1)
+
+        for t in random_times:
+            plt.plot(np.arange(t,t+label_length),dataset[int(t):int(t)+label_length,j]-5*j,color="red",alpha=0.5,linewidth=0.1)
+
+    plt.yticks([])
+    plt.xticks(fontsize=15)
+    plt.title("A view of all channels of a single time signal",fontsize=15)
+    plt.xlabel("Time sample i",fontsize=15)
+    plt.show()

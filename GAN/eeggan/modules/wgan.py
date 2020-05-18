@@ -353,7 +353,7 @@ class WGAN_I_Generator(GAN_Generator):
 		self.optimizer = optim.Adam(self.parameters(),lr=alpha,betas=betas)
 		self.did_init_train = True
 
-	def train_batch(self, batch_noise, discriminator1,discriminator2,discriminator3,block_info,labels):
+	def train_batch(self, batch_noise, discriminator1,discriminator2,block_info,labels):
 		"""
 		Train generator for one batch of latent noise
 

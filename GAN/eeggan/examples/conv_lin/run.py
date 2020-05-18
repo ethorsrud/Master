@@ -10,7 +10,7 @@ sys.path.append(code_path)
 sys.path.append("/home/eirith/.local/lib/python3.5/site-packages")
 #sys.path.append("/usr/local/lib/python3.5/dist-packages")
 from braindecode.datautil.iterators import get_balanced_batches
-from eeggan.examples.conv_lin.model import Generator,Discriminator,Fourier_Discriminator,AC_Discriminator
+from eeggan.examples.conv_lin.model import Generator,Discriminator,Fourier_Discriminator
 from eeggan.util import weight_filler
 import torch
 import torch.nn as nn
@@ -42,18 +42,18 @@ n_critic = 1 #Number of critic iterations per batch
 n_gen = 1 #Number of generator iterations per batch
 n_batch = 64 #Batch size
 input_length = 2048 #Signal length to generate
-jobid = 0
+jobid = 0 
 n_samples = 1536 #Samples from dataset
 conditional = True
 
 
 n_z = 128 #Random input vector size
-lr = 0.001
+lr = 0.001 #Learning rate
 n_blocks = 3 #Number of blocks for network
 rampup = 1000. #Fade speed -> 1/rampup is added to alpha every epoch
 block_epochs = [1000,2000,2000] #Number of epochs per block
 
-task_ind = 0
+seed = 0
 
 #Config file to keep track of different model settings for different runs
 config_data = {"n_critic":n_critic,
@@ -98,15 +98,15 @@ train = train[:,:,:,channel_map[:,0]] #remove bad channels detected by spikesort
 
 n_chans = train.shape[3]
 print("Number of channels:",n_chans)
-print(train.shape)
+print("Data shape:",train.shape)
 train = train.astype(np.float32)
 
 #Random seeds
-np.random.seed(task_ind)
-torch.manual_seed(task_ind)
-torch.cuda.manual_seed_all(task_ind)
-random.seed(task_ind)
-rng = np.random.RandomState(task_ind)
+np.random.seed(seed)
+torch.manual_seed(seed)
+torch.cuda.manual_seed_all(seed)
+random.seed(seed)
+rng = np.random.RandomState(seed)
 
 datafreq = 30000#Sampling frequency
 label_length = 20#Length of each spike position condition. [0,0,0,0,1,1,1,1,0,0,0,0] would be spike position at index 4 and label_length of 4
@@ -205,36 +205,38 @@ if not os.path.exists(outputpath):
 generator = Generator(n_chans,n_z+input_length)
 discriminator = Discriminator(n_chans+1)
 fourier_discriminator = Fourier_Discriminator(n_chans)
-AC_discriminator = AC_Discriminator(n_chans)
+#AC_discriminator = AC_Discriminator(n_chans)
 
 generator.train_init(alpha=lr,betas=(0.,0.99))
 discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=False,distance_weighting=True)
 fourier_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=False,distance_weighting=True)
+"""
 AC_discriminator.train_init(alpha=lr,betas=(0.,0.99),eps_center=0.001,
                         one_sided_penalty=True,distance_weighting=True)
+"""
 generator = generator.apply(weight_filler)
 discriminator = discriminator.apply(weight_filler)
 fourier_discriminator = fourier_discriminator.apply(weight_filler)
-AC_discriminator = AC_discriminator.apply(weight_filler)
+#AC_discriminator = AC_discriminator.apply(weight_filler)
 
 i_block_tmp = 0
 i_epoch_tmp = 0
 generator.model.cur_block = i_block_tmp
 discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fourier_discriminator.model.cur_block = n_blocks-1-i_block_tmp
-AC_discriminator.model.cur_block = n_blocks-1-i_block_tmp
+#AC_discriminator.model.cur_block = n_blocks-1-i_block_tmp
 fade_alpha = 1.
 generator.model.alpha = fade_alpha
 discriminator.model.alpha = fade_alpha
 fourier_discriminator.model.alpha = fade_alpha
-AC_discriminator.model.alpha = fade_alpha
+#AC_discriminator.model.alpha = fade_alpha
 
 generator = generator.cuda()
 discriminator = discriminator.cuda()
 fourier_discriminator = fourier_discriminator.cuda()
-AC_discriminator = AC_discriminator.cuda()
+#AC_discriminator = AC_discriminator.cuda()
 """
 #LOAD
 try:
@@ -252,7 +254,7 @@ except:
 generator.train()
 discriminator.train()
 fourier_discriminator.train()
-AC_discriminator.train()
+#AC_discriminator.train()
 
 losses_d = []
 losses_g = []
@@ -328,7 +330,7 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.model.alpha = fade_alpha
             discriminator.model.alpha = fade_alpha
             fourier_discriminator.model.alpha = fade_alpha
-            AC_discriminator.model.alpha = fade_alpha
+            #AC_discriminator.model.alpha = fade_alpha
         
         batches = get_balanced_batches(train.shape[0], rng, True, batch_size=n_batch)
         print("n_batches: ",len(batches))
@@ -508,7 +510,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
-                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,AC_discriminator,[i_block,n_blocks,i_epoch],labels)
+                loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,[i_block,n_blocks,i_epoch],labels)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
@@ -757,4 +759,4 @@ for i_block in range(i_block_tmp,n_blocks):
     generator.model.cur_block += 1
     discriminator.model.cur_block -= 1
     fourier_discriminator.model.cur_block -=1
-    AC_discriminator.model.cur_block -=1
+    #AC_discriminator.model.cur_block -=1
