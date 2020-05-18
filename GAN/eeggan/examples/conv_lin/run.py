@@ -19,15 +19,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import scipy.io
-from scipy.signal import butter,lfilter
-from  datetime import datetime
 from my_utils import functions
 from scipy import signal
-from scipy.fftpack import fft
-from scipy import fftpack
+#from scipy.fftpack import fft
+#from scipy import fftpack
 import seaborn as sns
 import json
-from skimage.measure import block_reduce
+#from skimage.measure import block_reduce
 
 #plt.switch_backend('agg')
 #Error tracebacking
@@ -275,70 +273,25 @@ for i_block in range(i_block_tmp,n_blocks):
                 train_batches[:,:,:,-1][idxes] = 1.
 
                 batch_real = Variable(train_batches,requires_grad=True).cuda()
-                #batch_real_old = batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
                 z_vars = rng.normal(0,1,size=(len(batches[it*n_critic+i_critic]),n_z)).astype(np.float32)
-                """
-                #Conditional
-                z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
-                random_times = np.random.randint(0,n_z,size=(len(batches[it*n_critic+i_critic])))
-                z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
-                z_vars_label = z_vars_label.astype(np.float32)
-                z_vars = z_vars[:,:,np.newaxis]
-                z_vars_label = z_vars_label[:,:,np.newaxis]
-                z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
-                """
-                #New_conditional
-                #z_vars_label = np.zeros(shape=(len(batches[it*n_critic+i_critic]),input_length))
+
                 if conditional:
-                    ##random_times = np.random.randint(0,input_length-80,size=(len(batches[it*n_critic+i_critic]))).astype(np.int)
                     labels_big = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
-                    #labels_big_new = np.zeros(shape=(batch_real.shape[0],input_length)).astype(np.float32)
-                    #labels_big_new = rng.normal(0,1,size=(batch_real.shape[0],input_length,n_chans)).astype(np.float32)
                     for i in range(len(batches[it*n_critic+i_critic])):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
                             n_spikes=0
                         random_times = np.random.randint(0,input_length-21,size=(n_spikes)).astype(np.int)
-                        #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels_big[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            #labels_big_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
-                            #labels_big_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
-                    #index = np.where(labels_big==1.)
-                    #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
-                    #labels = np.zeros(shape=(len(batches[it*n_critic+i_critic]),n_z))
-                    #labels[index] = 1.
                     labels = labels_big.astype(np.float32)
-                    #labels_big = np.mean(labels_big_new,axis=2)
                     z_vars = np.concatenate((z_vars,labels_big),axis=1)
-
-
-                #z_vars_label[np.arange(len(batches[it*n_critic+i_critic])),random_times] = 1.
-                #z_vars_label = z_vars_label.astype(np.float32)
-                #z_vars_label = torch.from_numpy(z_vars_label).cuda()
-                #n_zeros = np.nonzero(z_vars==0)[0].shape[0]
-                #z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
                 
-                #test_array = torch.from_numpy(np.ones(shape=(len(batches[it*n_critic+i_critic]),1,256,1)).astype(np.float32)).cuda()
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=False).cuda()
                 batch_fake = Variable(generator(z_vars).data,requires_grad=True).cuda()
 
-                #labels = labels_big_new
-                """
-                blockreduction = [[32],[16],[8],[4],[2],[]]
-
-                labels = labels[:,np.newaxis,:]
-                labels = labels.astype(np.float32)
-
-                labels = torch.from_numpy(labels).cuda()
-                for i in range(len(blockreduction[i_block])):
-                    labels = torch.nn.AvgPool1d(blockreduction[i_block][i],stride=blockreduction[i_block][i])(labels)
-                
-                labels = labels[:,:,:,np.newaxis]
-                """
-                #Conditional
+                #Downsample the conditional label for the current generator stage
                 labels = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
                 index = np.where(labels_big==1.)
                 index = (index[0],np.floor(index[1]/(2**(n_blocks-1-i_block))).astype(np.int))
@@ -347,37 +300,25 @@ for i_block in range(i_block_tmp,n_blocks):
                 labels = labels.astype(np.float32)
                 labels = labels[:,np.newaxis,:,np.newaxis]
                 labels = torch.from_numpy(labels).cuda()
-                batch_fake = torch.cat((batch_fake,labels),dim=3)
-                #batch_fake = torch.cat((batch_fake,labels),dim=1)
+                batch_fake = torch.cat((batch_fake,labels),dim=3) #Adding the labels as channel
 
-                #batch_fake = torch.cat((batch_fake,labels),dim=3)
-
+                #Taking the fourier transform of fake and real batch without the conditional label
                 batch_real_fft = torch.transpose(torch.rfft(torch.transpose(batch_real[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)#batch_real_fft[:,:,:,:,0]**2
+                batch_real_fft = torch.sqrt(batch_real_fft[:,:,:,:,0]**2+batch_real_fft[:,:,:,:,1]**2)
                 batch_fake_fft = torch.transpose(torch.rfft(torch.transpose(batch_fake[:,:,:,:-1],2,3),1,normalized=False),2,3)
-                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)#batch_fake_fft[:,:,:,:,0]**2
-                
-                #batch_fake_fft = batch_fake_fft/(2**i_block)
-                #batch_real_fft = batch_real_fft/(2**i_block)
-
-                #batch_fake_fft = torch.log(batch_fake_fft+1e-3)
-                #batch_real_fft = torch.log(batch_real_fft+1e-3)
+                batch_fake_fft = torch.sqrt(batch_fake_fft[:,:,:,:,0]**2+batch_fake_fft[:,:,:,:,1]**2)
 
                 fake_mean = torch.mean(batch_fake_fft,(0,2)).squeeze()
-
-                #fft_std = torch.sqrt(torch.mean((train_tmp_fft-fft_mean)**2,dim=(0,1,2)))
                 fake_std = torch.sqrt(torch.mean((batch_fake_fft-fake_mean)**2,dim=(0,1,2)))
-                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()#fft_mean
-                real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))#fft_std
+                real_mean = torch.mean(batch_real_fft,(0,2)).squeeze()
+                real_std = torch.sqrt(torch.mean((batch_real_fft-real_mean)**2,dim=(0,1,2)))
 
+                #Normalizing FFT-batches
+                batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)
+                batch_real_fft = ((batch_real_fft-real_mean)/real_std)
 
-                batch_fake_fft = ((batch_fake_fft-fake_mean)/fake_std)#/fake_max
-                batch_real_fft = ((batch_real_fft-real_mean)/real_std)#/real_max
-
-
-                #loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
+                loss_f = fourier_discriminator.train_batch(batch_real_fft,batch_fake_fft)
                 
-                #AC_discriminator.train_batch(batch_real_autocor,batch_fake_autocor)
                 loss_d = discriminator.train_batch(batch_real,batch_fake)
 
                 #print("loss_d",loss_d)
@@ -387,51 +328,26 @@ for i_block in range(i_block_tmp,n_blocks):
                 
                 z_vars = rng.normal(0,1,size=(n_batch,n_z)).astype(np.float32)
 
-                #Conditional
-                #z_vars_label = np.zeros(shape=(n_batch,n_z))
-                
                 if conditional:
-                    ##random_times = np.random.randint(0,input_length-80,size=(n_batch)).astype(np.int)
                     labels = np.zeros(shape=(n_batch,input_length))
-                    #labels_new = np.zeros(shape=(n_batch,input_length,n_chans))
-                    #labels_new = np.zeros(shape=(n_batch,input_length))
-                    #labels_new = rng.normal(0,1,size=(n_batch,input_length,n_chans))
                     for i in range(n_batch):
                         n_spikes = int(np.random.normal(spikes_mean,spikes_std))
                         if n_spikes<0:
                             n_spikes=0
                         #Create n_spikes randomly timed spikes
                         random_times = np.random.randint(11,input_length-11,size=(n_spikes)).astype(np.int)
-                        #random_temps = np.random.randint(0,templates.shape[0],size=(n_spikes)).astype(np.int)
                         for j in range(n_spikes):
                             labels[i,random_times[j]:(random_times[j]+label_length)] = 1.
-                            #labels_new[i,(random_times[j]-41):(random_times[j]+41),:] = templates[random_temps[j],:,:].astype(np.float32)
-                            #labels_new[i,(random_times[j]-41):(random_times[j]+41)] = templates_new[random_temps[j],:].astype(np.float32)
-                    #index = np.where(labels==1.)
-                    #index = (index[0],np.floor(index[1]/(2**6)).astype(np.int))
-                    #labels = np.zeros(shape=(n_batch,n_z))
-                    #labels[index] = 1.
+
                     labels = labels.astype(np.float32)
-                    #labels = np.mean(labels_new.astype(np.float32),axis=2)
-
                     z_vars = np.concatenate((z_vars,labels),axis=1)
-                    
-                    #n_zeros = np.nonzero(z_vars==0)[0].shape[0]
-                    #z_vars[np.nonzero(z_vars==0)] = np.random.normal(0,0.2,size=(n_zeros))
-                    
-
-                #z_vars_label[np.arange(n_batch),random_times] = 1.
-                #z_vars_label = z_vars_label.astype(np.float32)
-                #z_vars = z_vars[:,:,np.newaxis]
-                #z_vars_label = z_vars_label[:,:,np.newaxis]
-                #z_vars = np.concatenate((z_vars,z_vars_label),axis=2)
 
                 z_vars = Variable(torch.from_numpy(z_vars),requires_grad=True).cuda()
                 loss_g = generator.train_batch(z_vars,discriminator,fourier_discriminator,[i_block,n_blocks,i_epoch],labels)
 
         losses_d.append(loss_d)
         losses_g.append(loss_g)
-        #losses_f.append(loss_f)
+        losses_f.append(loss_f)
 
         if i_epoch%100 == 0:
             generator.eval()
@@ -446,37 +362,25 @@ for i_block in range(i_block_tmp,n_blocks):
                 print("Error Removing old data-file")
                 pass
             """
+            #SAVING MODEL DATA FILES
             #joblib.dump((i_block_tmp,i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_.data'),compress=True)
             #joblib.dump((i_epoch,losses_d,losses_g),os.path.join(modelpath,modelname%jobid+'_%d.data'%i_epoch),compress=True)
             #joblib.dump((n_epochs,n_z,n_critic,batch_size,lr),os.path.join(modelpath,modelname%jobid+'_%d.params'%i_epoch),compress=True)
-            #train_tmp = old_train_tmp
             freqs_tmp = np.fft.rfftfreq(train_tmp.numpy().shape[2],d=1/(datafreq/np.power(2,n_blocks-1-i_block)))
             train_fft = np.fft.rfft(train_tmp.numpy(),axis=2)
-            #Originally mean over channels, but removed
             train_amps = np.abs(train_fft).mean(axis=0).squeeze()#(np.real(train_fft)**2).mean(axis=3).mean(axis=0).squeeze()
 
             z_vars = Variable(torch.from_numpy(z_vars_im),requires_grad=False).cuda()
             batch_fake = generator(z_vars)
-            #batch_fake = batch_fake[:,0,:,:].view(batch_fake.shape[0],1,batch_fake.shape[2],batch_fake.shape[3])
-            #batch_real= batch_real[:,0,:,:].view(batch_real.shape[0],1,batch_real.shape[2],batch_real.shape[3])
 
             print("Frechet inception distance:",functions.FID(batch_fake[:760,0,:,0].cpu().detach().numpy(),train_tmp[:,0,:,0].numpy()))
-            #torch fft
+
             torch_fake_fft = np.swapaxes(torch.rfft(np.swapaxes(batch_fake.data.cpu(),2,3),1),2,3)
-            torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)#torch_fake_fft[:,:,:,:,0]**2
+            torch_fake_fft = torch.sqrt(torch_fake_fft[:,:,:,:,0]**2+torch_fake_fft[:,:,:,:,1]**2)
             
-            #Originally mean over channels, but removed
             fake_amps = torch_fake_fft.data.cpu().numpy().mean(axis=0).squeeze()
-            #numpy fft
-            #fake_fft = np.fft.rfft(batch_fake.data.cpu().numpy(),axis=2)
-            #fake_amps = np.abs(fake_fft).mean(axis=3).mean(axis=0).squeeze()
-            """
-            plt.figure()
-            plt.plot(freqs_tmp,np.log(fake_amps),label='numpy')
-            plt.plot(freqs_tmp,np.log(torch_fake_amps),label='torch')
-            plt.show()
-            """
-            
+
+            #FFT FAKE VS REAL FIGURE
             for channel_i in range(2):
                 plt.figure()
                 log_std_fake = np.std(torch_fake_fft.data.cpu().numpy(),axis=0).squeeze()
@@ -497,27 +401,16 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.savefig(os.path.join(outputpath,"Channel_%d"%channel_i+'_fft_%d_%d.png'%(i_block,i_epoch)))
                 plt.close()
 
-            """
-            graph = make_dot(batch_fake[0].data.cpu().numpy(),params = dict(generator.named_parameters()))
-            graph.format = 'png'
-            graph.view(filename='digraph',directory='./')
-            """
+
             batch_fake = batch_fake.data.cpu().numpy()
             batch_real = batch_real.data.cpu().numpy()
 
-            #peak_loc_idx = np.where(z_vars_im_label==1)[1]*2**(i_block+1)
-            #peak_loc_idx = (np.arange(z_vars_im_label.shape[0]).astype(np.int),peak_loc_idx.astype(np.int),np.zeros(z_vars_im_label.shape[2]).astype(np.int))
-            #peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2],1))
-            #peak_loc[peak_loc_idx] = 1.
-            #peak_loc = np.zeros(shape=(batch_fake.shape[0],batch_fake.shape[2]))
-            #peak_loc_idx = np.floor(random_times_im/(2**(n_blocks-1-i_block))).astype(np.int)
-            #peak_loc[(np.arange(batch_fake.shape[0]),peak_loc_idx)] = 1.
+            #FAKES VS REAL FIGURE
             for channel_i in range(2):
                 plt.figure(figsize=(45,30))
                 for i in range(1,21,2):
                     plt.subplot(20,2,i)
                     plt.plot(batch_fake[i,:,:,channel_i].squeeze())
-                    #plt.plot(peak_loc[i,:]*0.05,alpha=0.5)
                     if i==1:
                         plt.title("Fakes")
                     plt.xticks((),())
@@ -531,8 +424,6 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.subplots_adjust(hspace=0)
                 plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_fakes_%d_%d.png'%(i_block,i_epoch)))
                 plt.close()
-
-
 
             #WELCH GRAPH
             sf = 500
@@ -561,7 +452,7 @@ for i_block in range(i_block_tmp,n_blocks):
                 plt.savefig(os.path.join(outputpath,'channel_%d'%channel_i+'_Fourier_Welch_%d_%d.png'%(i_block,i_epoch)))          
                 plt.close()
 
-            #CHANNEL CORRELATION
+            #CHANNEL CORRELATION FIGURE
             fig,ax = plt.subplots(1,2,figsize=(8,3))
             corr_fake = functions.channel_correlation(batch_fake)
             corr_real = functions.channel_correlation(batch_real)
@@ -585,18 +476,8 @@ for i_block in range(i_block_tmp,n_blocks):
             ax[1].title.set_text('Real')
             plt.savefig(os.path.join(outputpath,'Correlation_matrix'+'_Block_%d_epoch_%d.png'%(i_block,i_epoch)))          
             plt.close()
-            """
+
             
-            plt.figure(figsize=(10,10))
-            for i in range(10):
-                plt.subplot(10,1,i+1)
-                plt.plot(batch_real[i].squeeze())
-                plt.xticks((),())
-                plt.yticks((),())
-            plt.subplots_adjust(hspace=0)
-            plt.savefig(os.path.join(outputpath,modelname%jobid+'_reals_%d_%d.png'%(i_block,i_epoch)))
-            plt.close()
-            """
             """
             try:
                 os.remove(modelpath+"\\"+modelname%jobid+'.disc')
@@ -607,13 +488,14 @@ for i_block in range(i_block_tmp,n_blocks):
                 pass
             """
 
+            #SAVING MODEL FILES
             #torch.save((generator.state_dict(),generator.optimizer.state_dict(),generator.did_init_train),os.path.join(modelpath,modelname%jobid+'.gen'))
             #torch.save((discriminator.state_dict(),discriminator.optimizer.state_dict(),discriminator.did_init_train),os.path.join(modelpath,modelname%jobid+'.disc'))
-
             #discriminator.save_model(os.path.join(modelpath,modelname%jobid+'.disc'))
             generator.save_model(os.path.join(modelpath,modelname%jobid+'.gen'))
             joblib.dump((i_block,fade_alpha),os.path.join(modelpath,modelname%jobid+'.data'),compress=True)
 
+            #Normal critic metrics
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
             plt.plot(np.asarray(losses_d)[:,0],label='Loss Real')
@@ -639,6 +521,7 @@ for i_block in range(i_block_tmp,n_blocks):
             plt.tight_layout()
             plt.savefig(os.path.join(outputpath,modelname%jobid+'_losses.png'))
             plt.close()
+            #Fourier critic metrics
             """
             plt.figure(figsize=(10,15))
             plt.subplot(3,2,1)
@@ -669,11 +552,9 @@ for i_block in range(i_block_tmp,n_blocks):
             generator.train()
             discriminator.train()
             fourier_discriminator.train()
-            #train_tmp = new_train_tmp
 
 
     fade_alpha = 0.
     generator.model.cur_block += 1
     discriminator.model.cur_block -= 1
     fourier_discriminator.model.cur_block -=1
-    #AC_discriminator.model.cur_block -=1

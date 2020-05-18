@@ -404,12 +404,12 @@ class WGAN_I_Generator(GAN_Generator):
 		fft = (fft-fft_mean)/fft_std
 
 		disc = discriminator1(gen)
-		#disc2 = discriminator2(fft)
+		disc2 = discriminator2(fft)
 
 		loss = disc.mean()
-		#loss2 = disc2.mean()
+		loss2 = disc2.mean()
 
-		#loss = loss+loss2
+		loss = loss+loss2
 		# Backprop gradient
 		loss.backward(mone)
 		# Update parameters
