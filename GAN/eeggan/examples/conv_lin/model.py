@@ -144,12 +144,3 @@ class Fourier_Discriminator(WGAN_I_Discriminator):
 
 	def forward(self,input):
 		return self.model(input)
-"""
-class AC_Discriminator(WGAN_I_Discriminator):
-	def __init__(self,n_chans):
-		super(AC_Discriminator,self).__init__()
-		self.model = ProgressiveDiscriminator(create_disc_blocks(n_chans,int(base/2)),conditional=False)
-
-	def forward(self,input):
-		return self.model(input)
-"""

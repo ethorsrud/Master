@@ -25,7 +25,7 @@ from scipy.fftpack import fft
 from scipy import fftpack
 import seaborn as sns
 import json
-#from skimage.measure import block_reduce
+
 
 #plt.switch_backend('agg')
 #Error tracebacking
