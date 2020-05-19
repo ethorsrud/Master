@@ -7,7 +7,9 @@
 `using_saved_gan.py` - File used to create different datasets
 
 `real_mean_std_dataset.npy` - Unfiltered mean and std for spike times
+
 `real_mean_std_dataset_alpha.npy` - mean and std for filtered spike times [Only "good" units]
+
 `mean_std_time_dataset.npy` - Channelwise mean and std for dataset
 
 ## /GAN
