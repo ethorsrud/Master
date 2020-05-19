@@ -1,10 +1,14 @@
 # Master
-*`playing_with_model.py` - Example on how to use the trained model to create a plot of all channels of one time signal
+`playing_with_model.py` - Example on how to use the trained model to create a plot of all channels of one time signal
 
 
-*`playing_with_model2.py` - Example on how to use the trained model to create an image of 10 random signals
+`playing_with_model2.py` - Example on how to use the trained model to create an image of 10 random signals
 
-*`using_saved_gan.py` - File used to create different datasets
+`using_saved_gan.py` - File used to create different datasets
+
+`real_mean_std_dataset.npy` - Unfiltered mean and std for spike times
+`real_mean_std_dataset_alpha.npy` - mean and std for filtered spike times [Only "good" units]
+`mean_std_time_dataset.npy` - Channelwise mean and std for dataset
 
 ## /GAN
 
